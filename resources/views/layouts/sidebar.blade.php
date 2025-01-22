@@ -138,6 +138,37 @@
             border-radius: 4px;
         }
 
+        .sidebar-links li form {
+    display: flex;
+    align-items: center;
+    gap: 0 20px;
+    color: #fff;
+    font-weight: 500;
+    white-space: nowrap;
+    padding: 15px 10px;
+    text-decoration: none;
+    transition: 0.2s ease;
+    background: none; /* Hapus background default button */
+    border: none; /* Hapus border default button */
+    cursor: pointer;
+}
+
+.sidebar-links li form:hover {
+    color: #161a2d;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.sidebar-links li form button {
+    all: unset; /* Hapus semua default styling dari button */
+    display: flex;
+    align-items: center;
+    gap: 0 20px;
+    width: 100%; /* Sesuaikan lebar button agar seperti elemen <a> */
+    cursor: pointer;
+}
+
+
         .user-account {
             margin-top: auto;
             padding: 12px 10px;
@@ -232,7 +263,12 @@
                 <a href="#"><span class="material-symbols-outlined"> settings </span>Pengaturan</a>
             </li>
             <li>
-                <a href="#"><span class="material-symbols-outlined"> logout </span>Keluar</a>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit">
+                        <span class="material-symbols-outlined">logout</span> Keluar
+                    </button>
+                </form>
             </li>
             </ul>
             <div class="user-account">

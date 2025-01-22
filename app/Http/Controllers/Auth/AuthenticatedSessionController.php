@@ -3,18 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class LoginController extends Controller
+class AuthenticatedSessionController extends Controller
 {
-    public function showLoginForm()
-    {
-        return view('auth.login'); // Pastikan halaman login berada di resources/views/login.blade.php
-    }
-
-    public function login(Request $request)
+    // Menangani login pengguna
+    public function store(Request $request)
     {
         $credentials = $request->only('email', 'password');
         
@@ -28,7 +23,7 @@ class LoginController extends Controller
     }
 
     // Menangani logout pengguna
-    public function logout(Request $request)
+    public function destroy(Request $request)
     {
         Auth::logout(); // logout pengguna
         $request->session()->invalidate(); // menghapus sesi
