@@ -143,7 +143,6 @@
         <div class="logo-container">
             <img src="img/pgn.png" alt="Logo" class="logo">
         </div>
-        <h2 class="heading-section">{{ __('Login') }}</h2>
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
