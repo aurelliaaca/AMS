@@ -11,8 +11,8 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-    <!-- Custom CSS -->
     <style>
+        /* Global Styles */
         * {
             margin: 0;
             padding: 0;
@@ -20,7 +20,7 @@
         }
 
         body {
-            font-family: 'Lato', sans-serif;
+            font-family: "Inter", serif;
             background-image: url('img/bg.jpg');
             background-size: cover;
             background-repeat: no-repeat;
@@ -33,22 +33,15 @@
         }
 
         .login-wrap {
-            background: rgba(255, 255, 255, 0.5);
-            padding: 50px;
-            border-radius: 15px;
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.2);
-            transform: scale(1.1);
-            transition: all 0.5s ease-in;
-        }
-
-        h2.heading-section {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 30px;
-            color: #002855;
+        background: rgba(255, 255, 255, 0.5);
+        padding: 50px;
+        border-radius: 15px;
+        width: 100%;
+        max-width: 500px;
+         text-align: center;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.2);
+        transform: scale(1.1);
+        transition: all 0.5s ease-in;
         }
 
         .form-group {
@@ -67,6 +60,7 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
+            padding-left: 45px; /* Space for left icon */
         }
 
         .form-control:focus {
@@ -74,8 +68,6 @@
             border-color: #002855;
             box-shadow: 0 0 10px rgba(0, 40, 85, 0.5);
             background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
         }
 
         .btn-primary {
@@ -96,35 +88,68 @@
 
         .checkbox-wrap {
             display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px; /* Adjust gap between elements */
+            margin-bottom: 15px;
+        }
+
+        .checkbox-wrap label, 
+        .checkbox-wrap a {
+            font-family: 'Lato', sans-serif;
+            font-size: 14px;
+            color: #002855;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+
+        .checkbox-wrap a:active {
+            color: #FFD700; /* Yellow */
+        }
+
+        .forgot-password {
+            margin-top: 10px;
+            font-size: 14px;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .forgot-password a {
+            text-decoration: none;
+            color: #002855;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password a:active {
+            color: #FFD700; /* Yellow */
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
             align-items: center;
         }
 
-        .checkbox-wrap input {
-            margin-right: 10px;
-        }
-
-        .text-md-right a {
-            text-decoration: none;
+        .input-icon {
+            position: absolute;
+            left: 15px;
             color: #002855;
-        }
-
-        .text-md-right a:hover {
-            text-decoration: underline;
+            font-size: 18px;
+            pointer-events: none;
+            z-index: 10;
         }
 
         .field-icon {
             position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
+            right: 15px;
             color: #002855;
-            font-size: 20px;
+            font-size: 18px;
+            cursor: pointer;
         }
 
-        .login-wrap:hover {
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 10px 10px rgba(0, 0, 0, 0.2);
-            transform: scale(1.12);
+        .toggle-password {
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         .logo-container {
@@ -133,7 +158,7 @@
         }
 
         .logo {
-            max-width: 90px; 
+            max-width: 90px;
             height: auto;
         }
     </style>
@@ -143,50 +168,60 @@
         <div class="logo-container">
             <img src="img/pgn.png" alt="Logo" class="logo">
         </div>
-        <h2 class="heading-section">{{ __('Login') }}</h2>
         <form method="POST" action="{{ route('login') }}">
             @csrf
-
             <div class="form-group">
-                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="{{ __('Email Address') }}">
-                @error('email')
+                <div class="input-group">
+                    <span class="input-icon">
+                        <i class="fa fa-envelope"></i>
+                    </span>
+                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" 
+                           name="email" value="{{ old('email') }}" required autocomplete="email" autofocus 
+                           placeholder="Email Address">
+                    @error('email')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
-                @enderror
+                    @enderror
+                </div>
             </div>
 
             <div class="form-group">
-                <input id="password-field" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" placeholder="{{ __('Password') }}">
-                <i class="fa fa-eye field-icon toggle-password" id="toggle-password"></i>
-                @error('password')
+                <div class="input-group">
+                    <span class="input-icon">
+                        <i class="fa fa-lock"></i>
+                    </span>
+                    <input id="password-field" type="password" class="form-control @error('password') is-invalid @enderror" 
+                           name="password" required autocomplete="current-password" placeholder="Password">
+                    <i class="fa fa-eye field-icon toggle-password" id="toggle-password"></i>
+                    @error('password')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
-                @enderror
+                    @enderror
+                </div>
             </div>
 
-            <div class="form-group d-md-flex">
-                <div class="checkbox-wrap">
+            <div class="form-group checkbox-wrap">
+                <div>
                     <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                    <label for="remember">{{ __('Remember Me') }}</label>
+                    <label for="remember">Remember Me</label>
                 </div>
-                <div class="text-md-right">
-                    @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}">{{ __('Forgot Your Password?') }}</a>
-                    @endif
-                </div>
+                <a href="{{ route('register') }}" class="register-link">Register</a>
+            </div>
+
+            <div class="form-group forgot-password">
+                @if (Route::has('password.request'))
+                    <a href="{{ route('password.request') }}">Forgot Your Password?</a>
+                @endif
             </div>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary">
-                    {{ __('Login') }}
-                </button>
+                <button type="submit" class="btn btn-primary">Login</button>
             </div>
         </form>
     </div>
 
-    <!-- JavaScript untuk toggle password -->
     <script>
         const togglePassword = document.querySelector("#toggle-password");
         const passwordField = document.querySelector("#password-field");
