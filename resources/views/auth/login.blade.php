@@ -40,15 +40,15 @@
             max-width: 500px;
             text-align: center;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.2);
-            transform: scale(1.1); /* Membuat login form lebih besar */
-            transition: all 0.5s ease-in; /* Animasi halus dengan ease-in */
+            transform: scale(1.1);
+            transition: all 0.5s ease-in;
         }
 
         h2.heading-section {
             font-size: 32px;
             font-weight: bold;
             margin-bottom: 30px;
-            color: #002855; /* Biru dongker */
+            color: #002855;
         }
 
         .form-group {
@@ -57,29 +57,29 @@
         }
 
         .form-control {
-            background: rgba(255, 255, 255, 0.3); /* Transparansi */
-            border: 1px solid rgba(176, 196, 222, 0.5); /* Biru terang transparan */
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(176, 196, 222, 0.5);
             padding: 15px 20px;
             font-size: 18px;
             border-radius: 8px;
-            color: #002855; /* Biru dongker */
+            color: #002855;
             width: 100%;
-            backdrop-filter: blur(8px); /* Efek blur */
-            -webkit-backdrop-filter: blur(8px); /* Efek blur untuk Safari */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
         }
 
         .form-control:focus {
             outline: none;
-            border-color: #002855; /* Fokus biru dongker */
+            border-color: #002855;
             box-shadow: 0 0 10px rgba(0, 40, 85, 0.5);
-            background: rgba(255, 255, 255, 0.3); /* Tetap transparan saat fokus */
-            backdrop-filter: blur(8px); /* Tetap blur saat fokus */
-            -webkit-backdrop-filter: blur(8px); /* Efek blur untuk Safari */
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
         .btn-primary {
-            background: linear-gradient(45deg, #004080, #002855); /* Gradasi biru dongker */
+            background: linear-gradient(45deg, #004080, #002855);
             border: none;
             padding: 15px;
             font-size: 18px;
@@ -118,13 +118,13 @@
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
-            color: #002855; /* Warna ikon */
+            color: #002855;
             font-size: 20px;
         }
 
         .login-wrap:hover {
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 10px 10px rgba(0, 0, 0, 0.2);
-            transform: scale(1.12); /* Efek zoom */
+            transform: scale(1.12);
         }
 
         .logo-container {
@@ -143,25 +143,45 @@
         <div class="logo-container">
             <img src="img/pgn.png" alt="Logo" class="logo">
         </div>
-        <h2 class="heading-section"></h2>
-        <form action="#" class="signin-form">
+        <h2 class="heading-section">{{ __('Login') }}</h2>
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
+
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Email" required>
+                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="{{ __('Email Address') }}">
+                @error('email')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
             </div>
+
             <div class="form-group">
-                <input id="password-field" type="password" class="form-control" placeholder="Password" required>
+                <input id="password-field" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" placeholder="{{ __('Password') }}">
                 <i class="fa fa-eye field-icon toggle-password" id="toggle-password"></i>
+                @error('password')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
             </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Log In</button>
-            </div>
+
             <div class="form-group d-md-flex">
                 <div class="checkbox-wrap">
-                    <input type="checkbox"> Remember Me
+                    <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                    <label for="remember">{{ __('Remember Me') }}</label>
                 </div>
                 <div class="text-md-right">
-                    <a href="#">Forgot Password</a>
+                    @if (Route::has('password.request'))
+                        <a href="{{ route('password.request') }}">{{ __('Forgot Your Password?') }}</a>
+                    @endif
                 </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">
+                    {{ __('Login') }}
+                </button>
             </div>
         </form>
     </div>
@@ -172,11 +192,9 @@
         const passwordField = document.querySelector("#password-field");
 
         togglePassword.addEventListener("click", function () {
-            // Toggle tipe password menjadi text atau password
             const type = passwordField.type === "password" ? "text" : "password";
             passwordField.type = type;
 
-            // Ganti ikon mata
             this.classList.toggle("fa-eye");
             this.classList.toggle("fa-eye-slash");
         });
