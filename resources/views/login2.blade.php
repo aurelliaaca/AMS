@@ -21,8 +21,8 @@
         }
 
         body {
-            font-family: "Inter", serif;
-            background-image: url('{{ asset('img/bg.jpg') }}');
+            font-family: "Inter", serif !important;
+            background-image: url('img/bg.jpg');
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
@@ -102,6 +102,14 @@
             width: 100%;
             box-sizing: border-box; /* Pastikan padding tidak menambah lebar elemen */
         }
+
+        .field-icon {
+            position: absolute;
+            right: 15px;
+            color: #002855;
+            font-size: 18px;
+            cursor: pointer;
+        }
         
         .logo-container img {
             max-width: 80px;
@@ -112,29 +120,10 @@
             max-width: 90px;
             height: auto;
         }
-
-        .back-button {
-            position: absolute;
-            left: 15px;
-            top: 2%;
-            /* transform: translateY(-20%); */
-            color: #004080;
-        }
-
-        .eye-icon {
-            position: absolute;
-            right: 15px;
-            top: 55%;
-            transform: translateY(-50%);
-            color: #004080;
-        }
     </style>
 </head>
 <body>
     <div class="login-wrap">
-        <a href="{{ route('login') }}" class="back-button">
-            <i class="fa fa-arrow-left"></i>
-        </a>
         <div class="logo-container">
             <img src="{{ asset('img/pgn.png') }}" alt="Logo" class="logo">
         </div>
@@ -162,11 +151,8 @@
                     <span class="input-icon">
                         <i class="fa fa-lock"></i>
                     </span>
-                    <input id="password-field" type="password" class="form-control @error('password') is-invalid @enderror" 
+                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" 
                            name="password" required autocomplete="new-password" placeholder="Password">
-                    <span class="eye-icon">
-                        <i class="fa fa-eye field-icon toggle-password" id="toggle-password1"></i>
-                    </span>  
                     @error('password')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
@@ -182,9 +168,6 @@
                     </span>
                     <input id="password-confirm" type="password" class="form-control" 
                            name="password_confirmation" required autocomplete="new-password" placeholder="Confirm Password">
-                    <span class="eye-icon">
-                        <i class="fa fa-eye field-icon toggle-password" id="toggle-password2"></i>
-                    </span> 
                 </div>
             </div>
 
@@ -193,28 +176,5 @@
             </div>
         </form>
     </div>
-    <script>
-    const togglePassword1 = document.querySelector("#toggle-password1");
-    const togglePassword2 = document.querySelector("#toggle-password2");
-
-    const passwordField = document.querySelector("#password-field");
-    const passwordConfirmField = document.querySelector("#password-confirm");
-
-    togglePassword1.addEventListener("click", function () {
-        const type = passwordField.type === "password" ? "text" : "password";
-        passwordField.type = type;
-
-        this.classList.toggle("fa-eye");
-        this.classList.toggle("fa-eye-slash");
-    });
-
-    togglePassword2.addEventListener("click", function () {
-        const type = passwordConfirmField.type === "password" ? "text" : "password";
-        passwordConfirmField.type = type;
-
-        this.classList.toggle("fa-eye");
-        this.classList.toggle("fa-eye-slash");
-    });
-    </script>
 </body>
 </html>
