@@ -13,6 +13,8 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
+// ----------------------------------------------------------- Jangan diganti -----------------------------------------------------------
+
 // Rute untuk login dan logout menggunakan AuthenticatedSessionController
 Route::post('/login', [LoginController::class, 'store'])->name('login');
 Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
@@ -34,17 +36,15 @@ Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('
 
 Auth::routes(['verify' => true]); // Menambahkan verifikasi email
 
-// Profile Routes
-// Route::prefix('profil')->name('profil.')->middleware('auth')->group(function(){
-//     Route::get('/profil', [ProfilController::class, 'getProfil'])->name('profil');
-//     Route::post('/update', [ProfilController::class, 'updateProfil'])->name('update');
-//     Route::post('/change-password', [ProfilController::class, 'changePassword'])->name('change-password');
-// });
 
-Route::get('/profil', [ProfilController::class, 'getProfil'])->name('profil');
+// ------------------------------------------------------ Rute baru tambahin disini ------------------------------------------------------
+
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard'); // Ini untuk menampilkan halaman dashboard langsung
+    })->name('dashboard'); // Menamai route dengan 'dashboard'
+    
+    Route::get('/profil', [ProfilController::class, 'getProfil'])->name('profil');
     Route::post('/update', [ProfilController::class, 'updateProfil'])->name('update');
     Route::post('/change-password', [ProfilController::class, 'changePassword'])->name('change-password');
-// ------------------------------------------------------ Rute baru tambahin disini ------------------------------------------------------
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [UserController::class, 'user'])->name("dashboard");
-        return view('dashboard');
+});
