@@ -73,8 +73,21 @@
             outline: none;
         }
 
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            } 
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
         .btn-primary {
-            background: linear-gradient(45deg, #004080, #002855);
+            background: linear-gradient(45deg, #002855, rgb(48, 106, 164), #ffffff); /* Menambahkan warna putih */
+            background-size: 200% 200%; /* Membuat gradien lebih besar untuk efek gerakan */
             color: #fff;
             border: none;
             padding: 10px 15px;
@@ -82,12 +95,12 @@
             border-radius: 8px;
             width: 100%;
             cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 15px;
+            transition: color 0.3s;
         }
 
         .btn-primary:hover {
-            background: linear-gradient(45deg, #002855, #004080);
+            animation: gradientMove 6s infinite; /* Animasi gradien berjalan terus */
+            color: #fff; /* Tetap putih untuk teks */
         }
 
         .checkbox-wrap {
