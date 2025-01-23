@@ -19,8 +19,8 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Lato', sans-serif;
+        body { 
+            font-family: "Inter", serif;
             background-image: url('{{ asset('img/bg.jpg') }}');
             background-size: cover;
             background-repeat: no-repeat;
@@ -40,6 +40,12 @@
             max-width: 500px;
             text-align: center;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.2);
+            transform: scale(1.1);
+            transition: all 0.5s ease-in;
+        }
+
+        .form-wrap:hover {
+            transform: scale(1.05); /* Mengubah skala saat hover */
         }
 
         .form-group {
