@@ -42,11 +42,11 @@
             text-align: center;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.2);
             transform: scale(1.1);
-            transition: all 0.5s ease-in;
+            transition: transform 0.3s ease;
         }
 
         .login-wrap:hover {
-            transform: scale(1.05); /* Mengubah skala saat hover */
+            transform: scale(1.05);
         }
 
         .form-group {
@@ -54,12 +54,17 @@
         }
 
         .form-control {
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
-            border: 1px solid #ccc;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(176, 196, 222, 0.5);
+            padding: 15px 20px;
+            padding-left: 45px; /* Ruang untuk ikon di kiri */
+            font-size: 18px;
             border-radius: 8px;
-            margin-top: 5px;
+            color: #002855;
+            width: 100%;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
         }
 
         .form-control:focus {
@@ -80,9 +85,9 @@
             transition: background 0.3s;
         }
 
-        /* .btn-primary:hover {
-            background-color: #002855;
-        } */
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #002855, #004080);
+        }
 
         .checkbox-wrap {
             display: flex;
@@ -116,13 +121,16 @@
         .input-icon {
             position: absolute;
             left: 15px;
-            top: 55%;
+            top: 50%;
             transform: translateY(-50%);
-            color: #004080;
+            color: #002855;
+            font-size: 18px;
+            pointer-events: none;
+            z-index: 10;
         }
 
         .form-control {
-            padding-left: 40px; /* Space for left icon */
+            padding-left: 45px;
         }
 
         .logo-container img {
@@ -135,14 +143,6 @@
             color: #002855;
         }
         
-        .eye-icon {
-            position: absolute;
-            right: 15px;
-            top: 55%;
-            transform: translateY(-50%);
-            color: #004080;
-        }
-
     </style>
 </head>
 <body>
@@ -188,10 +188,7 @@
                         name="password" 
                         required 
                         autocomplete="current-password" 
-                        placeholder="Password">
-                    <span class="eye-icon">
-                        <i class="fa fa-eye field-icon toggle-password" id="toggle-password"></i>
-                    </span>                
+                        placeholder="Password">                
                 </div>
                 @error('password')
                 <span class="invalid-feedback" role="alert">
@@ -223,18 +220,5 @@
             </div>
         </form>
     </div>
-
-    <script>
-        const togglePassword = document.querySelector("#toggle-password");
-        const passwordField = document.querySelector("#password-field");
-
-        togglePassword.addEventListener("click", function () {
-            const type = passwordField.type === "password" ? "text" : "password";
-            passwordField.type = type;
-
-            this.classList.toggle("fa-eye");
-            this.classList.toggle("fa-eye-slash");
-        });
-    </script>
 </body>
 </html>
