@@ -19,13 +19,6 @@ Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 // Halaman home dan dashboard yang dilindungi autentikasi
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');});
-});
-Route::get('dashboard', [UserController::class, 'user']);
-
-
 // Rute untuk menampilkan form untuk reset password
 Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 
@@ -39,3 +32,9 @@ Route::get('reset-password/{token}', [ResetPasswordController::class, 'showReset
 Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 Auth::routes(['verify' => true]); // Menambahkan verifikasi email
+
+// ------------------------------------------------------ Rute baru tambahin disini ------------------------------------------------------
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [UserController::class, 'user'])->name("dashboard");
+        return view('dashboard');
+});

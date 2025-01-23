@@ -223,7 +223,7 @@
                 <div class="menu-separator"></div>
             </h4>
             <li>
-                <a href="#">
+                <a href="{{ route('dashboard') }}">
                 <span class="material-symbols-outlined"> dashboard </span>Dasbor</a>
             </li>
             <li>
