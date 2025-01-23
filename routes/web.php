@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfilController;
@@ -18,9 +19,6 @@ Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
 // Halaman home dan dashboard yang dilindungi autentikasi
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware('auth');
 
 // Rute untuk menampilkan form untuk reset password
 Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
@@ -46,3 +44,7 @@ Auth::routes(['verify' => true]); // Menambahkan verifikasi email
 Route::get('/profil', [ProfilController::class, 'getProfil'])->name('profil');
     Route::post('/update', [ProfilController::class, 'updateProfil'])->name('update');
     Route::post('/change-password', [ProfilController::class, 'changePassword'])->name('change-password');
+// ------------------------------------------------------ Rute baru tambahin disini ------------------------------------------------------
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [UserController::class, 'user'])->name("dashboard");
+        return view('dashboard');

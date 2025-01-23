@@ -223,15 +223,15 @@
                 <div class="menu-separator"></div>
             </h4>
             <li>
-                <a href="#">
+                <a href="{{ route('dashboard') }}">
                 <span class="material-symbols-outlined"> dashboard </span>Dasbor</a>
             </li>
             <li>
                 <a href="#"><span class="material-symbols-outlined"> history </span>Histori</a>
             </li>
-            <!-- <li>
-                <a href="#"><span class="material-symbols-outlined"> monitoring </span>Analytic</a>
-            </li> -->
+            <li>
+                <a href="#"><span class="material-symbols-outlined"> dataset </span>Rack</a>
+            </li>
             <h4>
                 <span>Aset</span>
                 <div class="menu-separator"></div>
@@ -280,8 +280,9 @@
             <div class="user-profile">
             <img src="{{ asset('img/avatars/1.png') }}" alt="Profile Image" />
                 <div class="user-detail">
-                <h3>[Nama Akun]</h3>
-                <span>[Status Akun]</span>
+                
+                <h3>{{ $users->name }}</h3>
+                <span>{{ $roleText }}</span>
                 </div>
             </div>
             </div>
