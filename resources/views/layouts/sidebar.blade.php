@@ -19,7 +19,7 @@
             box-sizing: border-box;
             font-family: "Inter", serif;
             font-optical-sizing: auto;
-            font-weight: <weight>;
+            font-weight: bold;
             font-style: normal;
         }
 
@@ -257,11 +257,16 @@
                 <div class="menu-separator"></div>
             </h4>
             <li>
-                <a href="#"><span class="material-symbols-outlined"> account_circle </span>Profil</a>
+            <a href="{{ route('profil') }}">
+                <span class="material-symbols-outlined"> account_circle </span>Profil
+            </a>
             </li>
+            
             <li>
                 <a href="#"><span class="material-symbols-outlined"> settings </span>Pengaturan</a>
             </li>
+
+            
             <li>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
@@ -273,7 +278,7 @@
             </ul>
             <div class="user-account">
             <div class="user-profile">
-                <img src="img/avatars/1.png" alt="Profile Image" />
+            <img src="{{ asset('img/avatars/1.png') }}" alt="Profile Image" />
                 <div class="user-detail">
                 
                 <h3>{{ $users->name }}</h3>
