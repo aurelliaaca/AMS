@@ -33,13 +33,19 @@
         }
 
         .login-wrap {
-            background: rgba(255, 255, 255, 0.5);
-            padding: 50px;
-            border-radius: 15px;
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.2);
+        background: rgba(255, 255, 255, 0.5);
+        padding: 50px;
+        border-radius: 15px;
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.2);
+        transform: scale(1.1);
+        transition: all 0.5s ease-in;
+        }
+
+        .login-wrap:hover {
+            transform: scale(1.05); /* Mengubah skala saat hover */
         }
 
         .form-group {

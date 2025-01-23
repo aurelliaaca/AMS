@@ -44,6 +44,10 @@
         transition: all 0.5s ease-in;
         }
 
+        .login-wrap:hover {
+            transform: scale(1.05); /* Mengubah skala saat hover */
+        }
+
         .form-group {
             margin-bottom: 25px;
             position: relative;
