@@ -46,7 +46,7 @@
         }
 
         .login-wrap:hover {
-            transform: scale(1.05); /* Mengubah skala saat hover */
+            transform: scale(1.05); 
         }
 
         .form-group {
@@ -54,12 +54,17 @@
         }
 
         .form-control {
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
-            border: 1px solid #ccc;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(176, 196, 222, 0.5);
+            padding: 15px 20px;
+            padding-left: 45px; 
+            font-size: 18px;
             border-radius: 8px;
-            margin-top: 5px;
+            color: #002855;
+            width: 100%;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
         }
 
         .form-control:focus {
@@ -81,9 +86,9 @@
             margin-top: 15px;
         }
 
-        /* .btn-primary:hover {
-            background-color: #002855;
-        } */
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #002855, #004080);
+        }
 
         .checkbox-wrap {
             display: flex;
@@ -112,24 +117,23 @@
 
         .input-group {
             position: relative;
+            display: flex;
+            align-items: center;
         }
 
         .input-icon {
             position: absolute;
             left: 15px;
-            top: 55%;
+            top: 50%;
             transform: translateY(-50%);
-            color: #004080;
+            color: #002855;
+            font-size: 18px;
+            pointer-events: none;
+            z-index: 10;
         }
 
-        .input-group input {
-            padding-left: 40px; /* Tambahkan padding untuk menghindari tumpukan dengan ikon */
-            width: 100%;
-            box-sizing: border-box; /* Pastikan padding tidak menambah lebar elemen */
-        }
-
-        .form-control.padding-left {
-            padding-left: 40px; /* Space for left icon */
+        .form-control {
+            padding-left: 45px;
         }
 
         .logo-container img {
@@ -146,15 +150,6 @@
             position: absolute;
             left: 15px;
             top: 2%;
-            /* transform: translateY(-20%); */
-            color: #004080;
-        }
-
-        .eye-icon {
-            position: absolute;
-            right: 15px;
-            top: 55%;
-            transform: translateY(-50%);
             color: #004080;
         }
         
@@ -238,9 +233,6 @@
                         autocomplete="new-password" 
                         placeholder="Password"
                     >
-                    <span class="eye-icon">
-                        <i class="fa fa-eye field-icon toggle-password" id="toggle-password1"></i>
-                    </span>  
                     @error('password')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
@@ -264,9 +256,6 @@
                         autocomplete="new-password" 
                         placeholder="Confirm Password"
                     >
-                    <span class="eye-icon">
-                        <i class="fa fa-eye field-icon toggle-password" id="toggle-password2"></i>
-                    </span>  
                 </div>
             </div>
 
@@ -278,28 +267,5 @@
             </div>
         </form>
     </div>
-    <script>
-    const togglePassword1 = document.querySelector("#toggle-password1");
-    const togglePassword2 = document.querySelector("#toggle-password2");
-
-    const passwordField = document.querySelector("#password-field");
-    const passwordConfirmField = document.querySelector("#password-confirm");
-
-    togglePassword1.addEventListener("click", function () {
-        const type = passwordField.type === "password" ? "text" : "password";
-        passwordField.type = type;
-
-        this.classList.toggle("fa-eye");
-        this.classList.toggle("fa-eye-slash");
-    });
-
-    togglePassword2.addEventListener("click", function () {
-        const type = passwordConfirmField.type === "password" ? "text" : "password";
-        passwordConfirmField.type = type;
-
-        this.classList.toggle("fa-eye");
-        this.classList.toggle("fa-eye-slash");
-    });
-    </script>
 </body>
 </html>

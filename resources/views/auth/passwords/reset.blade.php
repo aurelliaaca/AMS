@@ -81,9 +81,9 @@
             margin-top: 15px;
         }
 
-        /* .btn-primary:hover {
+        .btn-primary:hover {
             background: linear-gradient(45deg, #002855, #004080);
-        } */
+        }
 
         .input-group {
             position: relative;
@@ -92,15 +92,26 @@
         .input-icon {
             position: absolute;
             left: 15px;
-            top: 55%;
+            top: 50%;
             transform: translateY(-50%);
-            color: #004080;
+            color: #002855;
+            font-size: 18px;
+            pointer-events: none;
+            z-index: 10;
         }
 
-        .input-group input {
-            padding-left: 40px; /* Tambahkan padding untuk menghindari tumpukan dengan ikon */
+        .form-control {
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(176, 196, 222, 0.5);
+            padding: 15px 20px;
+            padding-left: 45px; /* Ruang untuk ikon di kiri */
+            font-size: 18px;
+            border-radius: 8px;
+            color: #002855;
             width: 100%;
-            box-sizing: border-box; /* Pastikan padding tidak menambah lebar elemen */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
         }
         
         .logo-container img {
@@ -162,7 +173,7 @@
                     <span class="input-icon">
                         <i class="fa fa-lock"></i>
                     </span>
-                    <input id="password-field" type="password" class="form-control @error('password') is-invalid @enderror" 
+                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" 
                            name="password" required autocomplete="new-password" placeholder="Password">
                     <span class="eye-icon">
                         <i class="fa fa-eye field-icon toggle-password" id="toggle-password1"></i>
