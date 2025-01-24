@@ -179,6 +179,7 @@
             display: flex;
             align-items: center;
             color: #161a2d;
+            margin-left: 10px;
         }
 
         .user-profile img {
@@ -189,13 +190,13 @@
         }
 
         .user-profile h3 {
-            margin-left: -10px;
+            margin-left: 10px;
             font-size: 1rem;
             font-weight: 600;
         }
 
         .user-profile span {
-            margin-left: -10px;
+            margin-left: 10px;
             font-size: 0.775rem;
             font-weight: 600;
         }
@@ -243,7 +244,7 @@
                 <a href="#"><span class="material-symbols-outlined"> domain </span>Fasilitas</a>
             </li>
             <li>
-                <a href="#"><span class="material-symbols-outlined"> hub </span>Jaringan</a>
+                <a href="{{ route('jaringan') }}"><span class="material-symbols-outlined"> hub </span>Jaringan</a>
             </li>
             <li>
                 <a href="#"><span class="material-symbols-outlined"> square_foot </span>Alat Ukur</a>
