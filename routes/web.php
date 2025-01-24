@@ -48,3 +48,4 @@ Route::get('/profil', [ProfilController::class, 'getProfil'])->name('profil');
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [UserController::class, 'user'])->name("dashboard");
         return view('dashboard');
+});
