@@ -1,185 +1,193 @@
 @extends('layouts.sidebar')
 
 @section('content')
-
-<!DOCTYPE html>
-<html>
-    <head>
-
     <style>
-        /* General Profile Container */
-.profile-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-}
+        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+        .profile-container {
+            margin: 5px auto;
+            background-color: #fff;
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            transition: 0.3s linear all;
+            margin: 20px auto;
+            display: flex;
+            gap: 20px;
+        }
 
-/* Page Heading */
-.profile-heading {
-  text-align: center;
-  margin-bottom: 20px;
-}
+        /* Profile Sidebar */
+        .profile-sidebar {
+            width: 35%;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px 0.5px #DADADA;
+            text-align: center;
+        }
 
-/* Profile Sidebar */
-.profile-sidebar {
-  width: 300px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-}
+        .profile-info {
+            text-align: center;
+        }
 
-.profile-info {
-  text-align: center;
-}
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 4px solid #4f52ba;
+            object-fit: cover; /* Membuat gambar fit di dalam lingkaran */
+            object-position: center; /* Mengatur posisi gambar di tengah */
+            overflow: hidden; /* Memastikan bagian gambar yang keluar lingkaran tidak terlihat */
 
-.profile-image {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  margin-bottom: 10px;
-}
+        }
 
-.profile-name {
-  font-weight: bold;
-  font-size: 1.2em;
-  margin-bottom: 5px;
-}
+        .profile-name {
+            font-weight: bold;
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 5px;
+        }
 
-.profile-role, .profile-email {
-  font-size: 1em;
-  color: #777;
-}
+        .profile-role, .profile-email {
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 5px;
+        }
 
-/* Profile Details Section */
-.profile-details {
-  margin-left: 320px;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-}
+        .btn-dashboard {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            background-color: #4f52ba;
+            color: white;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
 
-.profile-form {
-  margin-top: 20px;
-}
+        .btn-dashboard:hover {
+            background-color: #3c3f91;
+        }
 
-.form-row {
-  display: flex;
-  gap: 20px;
-}
+        /* Profile Details Section */
+        .profile-details {
+            flex: 1;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px 0.5px #DADADA;
+        }
 
-.form-group {
-  width: 100%;
-}
+        .profile-details h2 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+            color: #4f52ba;
+        }
 
-.form-group label {
-  font-weight: bold;
-}
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
 
-.form-group input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
+        .form-group {
+            width: 100%;
+        }
 
-.form-submit {
-  margin-top: 20px;
-}
+        .form-group label {
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            display: block;
+        }
 
-.btn {
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  text-align: center;
-  border-radius: 5px;
-  cursor: pointer;
-}
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
 
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-  border: none;
-}
+        .form-submit {
+            margin-top: 20px;
+            text-align: right;
+        }
 
-.btn-primary:hover {
-  background-color: #0056b3;
-}
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-/* Change Password Section */
-.change-password {
-  margin-top: 20px;
-}
+        .btn-primary {
+            background-color: #4f52ba;
+            color: white;
+            border: none;
+        }
 
+        .btn-primary:hover {
+            background-color: #3c3f91;
+        }
+
+        /* Change Password Section */
+        .change-password {
+            margin-top: 30px;
+        }
+
+        .change-password h4 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
     </style>
-    </head>
-    
-    <body>
-        <div class="main">
+
+    <div class="main">
         <div class="profile-container">
-    <!-- Page Heading -->
-    <div class="profile-heading">
-        <h1>Profil</h1>
-    </div>
-
-    <div class="profile-main">
-        <div class="profile-sidebar">
-            <div class="profile-info">
-                <img class="profile-image" src="{{ asset('img/profilbarbie.png') }}" alt="Profile Image">
-                <!-- <span class="profile-name">{{ auth()->user()->full_name }}</span> -->
-                <!-- <span class="profile-role"><i>Role: 
-                    {{ auth()->user()->roles ? auth()->user()->roles->pluck('name')->first() : 'N/A' }}</i>
-                </span>
-                <span class="profile-email">{{ auth()->user()->email }}</span> -->
+            <!-- Profile Sidebar -->
+            <div class="profile-sidebar">
+                <div class="profile-info">
+                    <img class="profile-image" src="{{ asset('img/pgngirls.jpg') }}" alt="Profile Image">
+                    <div class="profile-name">User Name</div>
+                    <div class="profile-role">Role: Admin</div>
+                    <div class="profile-email">user@example.com</div>
+                </div>
+                <a href="/dashboard" class="btn-dashboard">Kembali ke Dasbor</a>
             </div>
-        </div>
 
-            <div class="profile-form">
-                
+            <!-- Profile Details Section -->
+            <div class="profile-details">
+                <h2>Update Profil</h2>
+                <form>
                     @csrf
                     <div class="form-row">
-                        <div class="form-group col-md-4">
+                        <div class="form-group">
                             <label for="first_name">First Name</label>
-                            <input type="text" class="form-control @error('first_name') is-invalid @enderror"
-                                id="first_name" name="first_name" placeholder="First Name"
+                            <input type="text" id="first_name" name="first_name" placeholder="First Name"
                                 value="{{ old('first_name') ?: auth()->user()->first_name }}">
-                            @error('first_name')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
                         </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group">
                             <label for="last_name">Last Name</label>
-                            <input type="text" class="form-control @error('last_name') is-invalid @enderror"
-                                id="last_name" name="last_name" placeholder="Last Name"
+                            <input type="text" id="last_name" name="last_name" placeholder="Last Name"
                                 value="{{ old('last_name') ?: auth()->user()->last_name }}">
-                            @error('last_name')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="mobile_number">Mobile Number</label>
-                            <input type="text" class="form-control @error('mobile_number') is-invalid @enderror"
-                                id="mobile_number" name="mobile_number" placeholder="Mobile Number"
-                                value="{{ old('mobile_number') ?: auth()->user()->mobile_number }}">
-                            @error('mobile_number')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
                         </div>
                     </div>
-                    <div class="form-submit text-center">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="mobile_number">Mobile Number</label>
+                            <input type="text" id="mobile_number" name="mobile_number" placeholder="Mobile Number"
+                                value="{{ old('mobile_number') ?: auth()->user()->mobile_number }}">
+                        </div>
+                    </div>
+                    <div class="form-submit">
                         <button class="btn btn-primary" type="submit">Update Profil</button>
                     </div>
-            
-            </div>
-            <hr>
-            <!-- Change Password Section -->
-            <div class="change-password">
-                <h4>Change Password</h4>
-                <!-- Add Change Password Form here if needed -->
+                </form>
             </div>
         </div>
     </div>
-</div>
-        </div>  
-    </body>
-</html> 
 @endsection
