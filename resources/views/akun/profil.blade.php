@@ -30,16 +30,16 @@
         }
 
         .profile-image {
-            width: 150px;
-            height: 150px;
+            width: 250px;
+            height: 250px;
             border-radius: 50%;
             margin-bottom: 15px;
             border: 4px solid #4f52ba;
-            object-fit: cover; /* Membuat gambar fit di dalam lingkaran */
-            object-position: center; /* Mengatur posisi gambar di tengah */
-            overflow: hidden; /* Memastikan bagian gambar yang keluar lingkaran tidak terlihat */
-
+            object-fit: cover;
+            object-position: center;
+            overflow: hidden;
         }
+
 
         .profile-name {
             font-weight: bold;
@@ -144,6 +144,43 @@
             font-size: 1.2em;
             margin-bottom: 15px;
         }
+
+        /* Styling for upload photo */
+        .upload-photo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .upload-photo-container label {
+            background-color: #4f52ba;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            text-align: center;
+        }
+
+        .upload-photo-container input[type="file"] {
+            display: none;
+        }
+
+        .upload-photo-container .text-light {
+            font-size: 0.85em;
+            color: #777;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .imgediticon {
+            display: inline-block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
     </style>
 
     <div class="main">
@@ -156,6 +193,23 @@
                     <div class="profile-role">Role: Admin</div>
                     <div class="profile-email">user@example.com</div>
                 </div>
+
+                <!-- Upload New Photo -->
+                <div class="upload-photo-container">
+                    <button type="button" class="btn btn-default md-btn-flat" onclick="document.getElementById('upload-photo').click();">
+                        <img src="{{ asset('assets/images/editicon.png') }}" width="20" height="20" style="margin-right: 5px;">
+                        <i class="fas fa-camera"></i> Ubah Foto Profil
+                    </button>
+                    <input type="file" id="upload-photo" class="account-settings-fileinput" accept="image/*" style="display: none;">
+                    <button type="button" class="btn btn-default md-btn-flat">Reset</button>
+                </div>
+
+                <div class="text-light small mt-1" style="color: gray;">
+                    *Allowed JPG, GIF or PNG. Max size of 800K
+                </div>
+
+                <div style="margin-bottom: 100px;"></div>
+
                 <a href="/dashboard" class="btn-dashboard">Kembali ke Dasbor</a>
             </div>
 
@@ -183,8 +237,15 @@
                                 value="{{ old('mobile_number') ?: auth()->user()->mobile_number }}">
                         </div>
                     </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="Company">Company</label>
+                            <input type="text" id="Company" name="Company" placeholder="Company">
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 50px;"></div>
                     <div class="form-submit">
-                        <button class="btn btn-primary" type="submit">Update Profil</button>
+                        <button class="btn btn-primary" type="submit">Simpan Profil</button>
                     </div>
                 </form>
             </div>
