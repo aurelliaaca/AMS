@@ -528,16 +528,16 @@
                     if (tipeKabelFilter && cells[9].innerText.toLowerCase() !== tipeKabelFilter) {
                         display = false;
                     }
-                    if (travellingFilter && cells[9].innerText.toLowerCase() !== travellingFilter) {
+                    if (travellingFilter && cells[11].innerText.toLowerCase() !== travellingFilter) {
                         display = false;
                     }
-                    if (verificationFilter && cells[9].innerText.toLowerCase() !== verificationFilter) {
+                    if (verificationFilter && cells[12].innerText.toLowerCase() !== verificationFilter) {
                         display = false;
                     }
-                    if (restorationFilter && cells[9].innerText.toLowerCase() !== restorationFilter) {
+                    if (restorationFilter && cells[13].innerText.toLowerCase() !== restorationFilter) {
                         display = false;
                     }
-                    if (correctiveFilter && cells[9].innerText.toLowerCase() !== correctiveFilter) {
+                    if (correctiveFilter && cells[14].innerText.toLowerCase() !== correctiveFilter) {
                         display = false;
                     }
                 }
