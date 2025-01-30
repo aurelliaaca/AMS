@@ -99,6 +99,14 @@
             font-size: 16px;
         }
 
+        .table thead th:nth-child(3),
+        .table tbody td:nth-child(3) {
+            min-width: 300px;
+            max-width: 500px;
+            word-wrap: break-word;
+        }
+
+
         .table tbody tr {
             background-color: #fff;
             border-radius: 8px;
@@ -135,6 +143,24 @@
             background-color: #f1f1f9;
             color: #3e64ff;
         }
+
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        .table {
+            min-width: 800px;
+            width: auto;
+        }
+
+        .table th {
+            text-align: left;
+        }
+
+        .table th:nth-child(1), .table td:nth-child(1) {
+            width: 150px;
+        }
     </style>
 
     <div class="main">
@@ -160,6 +186,9 @@
                                     <option value="Jabatim">Jabatim</option>
                                     <option value="Jakarta">Jakarta</option>
                                     <option value="Jambi">Jambi</option>
+                                    <option value="Lampung">Lampung</option>
+                                    <option value="Palembang">Palembang</option>
+                                    <option value="Sumbagut">Sumbagut</option>
                                 </select>
                             </th>
                             <th>
@@ -212,6 +241,40 @@
                                     <option value="G654B">G654B</option>
                                 </select>
                             </th>
+                            <th>Kode Site Insan</th>
+                            <th>
+                                <select class="filter-select" id="travellingFilter" onchange="filterTable()">
+                                    <option value="">Travelling Time</option>
+                                    <option value="1:00:00">1:00:00</option>
+                                    <option value="2:00:00">2:00:00</option>
+                                    <option value="6:00:00">6:00:00</option>
+                                </select>
+                            </th>
+                            <th>
+                                <select class="filter-select" id="verificationFilter" onchange="filterTable()">
+                                    <option value="">Verification Time</option>
+                                    <option value="1:00:00">1:00:00</option>
+                                    <option value="2:00:00">2:00:00</option>
+                                </select>
+                            </th>
+                            <th>
+                                <select class="filter-select" id="restorationFilter" onchange="filterTable()">
+                                    <option value="">Restoration Time</option>
+                                    <option value="1:00:00">1:00:00</option>
+                                    <option value="3:00:00">3:00:00</option>
+                                </select>
+                            </th>
+                            <th>
+                                <select class="filter-select" id="correctiveFilter" onchange="filterTable()">
+                                    <option value="">Total Corrective Time</option>
+                                    <option value="1:00:00">1:00:00</option>
+                                    <option value="3:00:00">3:00:00</option>
+                                    <option value="4:00:00">4:00:00</option>
+                                    <option value="7:00:00">7:00:00</option>
+                                    <option value="9:00:00">9:00:00</option>
+                                    <option value="11:00:00">11:00:00</option>
+                                </select>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -226,6 +289,11 @@
                             <td>96</td>
                             <td>Kabel Tanah</td>
                             <td>G652D</td>
+                            <td>BTMBB1</td>
+                            <td>2:00:00</td>
+                            <td>-</td>
+                            <td>3:00:00</td>
+                            <td>3:00:00</td>
                         </tr>
                         <tr>
                             <td>Batam</td>
@@ -233,11 +301,16 @@
                             <td>Backbone 24 core MH TPCO - POP Kabil</td>
                             <td>Jartatup</td>
                             <td>Single</td>
-                            <td>3800</td>
-                            <td>3800</td>
+                            <td>3.800</td>
+                            <td>3.800</td>
                             <td>24</td>
                             <td>Kabel Tanah</td>
                             <td>G652D</td>
+                            <td>BTMBB2</td>
+                            <td>2:00:00</td>
+                            <td>-</td>
+                            <td>3:00:00</td>
+                            <td>3:00:00</td>
                         </tr>
                         <tr>
                             <td>Batam</td>
@@ -245,11 +318,135 @@
                             <td>Backbone 48 Core FTTX POP Kabil - HH Simp. Taiwan</td>
                             <td>Jartatup</td>
                             <td>Single</td>
-                            <td>1700</td>
-                            <td>1700</td>
+                            <td>1.700</td>
+                            <td>1.700</td>
                             <td>48</td>
                             <td>Kabel Tanah</td>
                             <td>G652D</td>
+                            <td>BTMBB3</td>
+                            <td>2:00:00</td>
+                            <td>-</td>
+                            <td>3:00:00</td>
+                            <td>3:00:00</td>
+                        </tr>
+                        <tr>
+                            <td>Batam</td>
+                            <td>Backbone</td>
+                            <td>Backbone 24 core HH KDA -  HH TPCO - HH Bosowa</td>
+                            <td>Jartatup</td>
+                            <td>Single</td>
+                            <td>9.600</td>
+                            <td>9.600</td>
+                            <td>24</td>
+                            <td>Kabel Tanah</td>
+                            <td>G652D</td>
+                            <td>BTMBB4</td>
+                            <td>2:00:00</td>
+                            <td>-</td>
+                            <td>3:00:00</td>
+                            <td>3:00:00</td>
+                        </tr>
+                        <tr>
+                            <td>Batam</td>
+                            <td>Backbone</td>
+                            <td>Backbone 96 core BTC - Panaran</td>
+                            <td>Jartatup</td>
+                            <td>Protected</td>
+                            <td>23.410</td>
+                            <td>21.600</td>
+                            <td>96</td>
+                            <td>Kabel Tanah</td>
+                            <td>G652D</td>
+                            <td>BTMBB5</td>
+                            <td>2:00:00</td>
+                            <td>-</td>
+                            <td>1:00:00</td>
+                            <td>3:00:00</td>
+                        </tr>
+                        <tr>
+                            <td>Batam</td>
+                            <td>Backbone</td>
+                            <td>Backbone 96 core Feeder FTTH KDA HH Tunas - HH Perum KDA</td>
+                            <td>Jartaplok</td>
+                            <td>Single</td>
+                            <td>1.780</td>
+                            <td>1.500</td>
+                            <td>96</td>
+                            <td>Kabel Tanah</td>
+                            <td>G652D</td>
+                            <td>BTMBB6</td>
+                            <td>2:00:00</td>
+                            <td>-</td>
+                            <td>1:00:00</td>
+                            <td>3:00:00</td>
+                        </tr>
+                        <tr>
+                            <td>Batam</td>
+                            <td>Backbone</td>
+                            <td>Backbone 48 core Feeder FTTH KDA HH Perum KDA - Slack 28</td>
+                            <td>Jartaplok</td>
+                            <td>Single</td>
+                            <td>764</td>
+                            <td>519</td>
+                            <td>48</td>
+                            <td>Kabel Udara</td>
+                            <td>G652D</td>
+                            <td>BTMBB7</td>
+                            <td>2:00:00</td>
+                            <td>-</td>
+                            <td>1:00:00</td>
+                            <td>3:00:00</td>
+                        </tr>
+                        <tr>
+                            <td>Batam</td>
+                            <td>Backbone</td>
+                            <td>Backbone 12 core Distribusi FTTH KDA 01</td>
+                            <td>Jartaplok</td>
+                            <td>Single</td>
+                            <td>415</td>
+                            <td>226</td>
+                            <td>12</td>
+                            <td>Kabel Udara</td>
+                            <td>G652D</td>
+                            <td>BTMBB8</td>
+                            <td>2:00:00</td>
+                            <td>-</td>
+                            <td>1:00:00</td>
+                            <td>3:00:00</td>
+                        </tr>
+                        <tr>
+                            <td>Batam</td>
+                            <td>Backbone</td>
+                            <td>Backbone 12 core Distribusi FTTH KDA 03</td>
+                            <td>Jartaplok</td>
+                            <td>Single</td>
+                            <td>445</td>
+                            <td>290</td>
+                            <td>12</td>
+                            <td>Kabel Udara</td>
+                            <td>G652D</td>
+                            <td>BTMBB9</td>
+                            <td>2:00:00</td>
+                            <td>-</td>
+                            <td>1:00:00</td>
+                            <td>3:00:00</td>
+                        </tr>
+                        <tr>
+                            <td>Batam</td>
+                            <td>Backbone</td>
+                            <td>Backbone 12 Core Feeder FTTH Bida Asri HH Tunas - Perum Bida Asri </td>
+                            <td>Jartaplok</td>
+                            <td>Single</td>
+                            <td>445</td>
+                            <td>290</td>
+                            <td>12</td>
+                            <td>Kabel Udara</td>
+                            <td>G652D</td>
+                            <td>BTMBB10</td>
+                            <td>2:00:00</td>
+                            <td>-</td>
+                            <td>1:00:00</td>
+                            <td>3:00:00</td>
                         </tr>
                     </tbody>
                 </table>
@@ -285,53 +482,68 @@
         }
 
         function filterTable() {
-    const roFilter = document.getElementById('roFilter').value.toLowerCase();
-    const tipeJaringanFilter = document.getElementById('tipeJaringanFilter').value.toLowerCase();
-    const jartatupFilter = document.getElementById('jartatupFilter').value.toLowerCase();
-    const mainlinkFilter = document.getElementById('mainlinkFilter').value.toLowerCase();
-    const coreFilter = document.getElementById('coreFilter').value.toLowerCase();
-    const kabelFilter = document.getElementById('kabelFilter').value.toLowerCase();
-    const tipeKabelFilter = document.getElementById('tipeKabelFilter').value.toLowerCase();
+            const roFilter = document.getElementById('roFilter').value.toLowerCase();
+            const tipeJaringanFilter = document.getElementById('tipeJaringanFilter').value.toLowerCase();
+            const jartatupFilter = document.getElementById('jartatupFilter').value.toLowerCase();
+            const mainlinkFilter = document.getElementById('mainlinkFilter').value.toLowerCase();
+            const coreFilter = document.getElementById('coreFilter').value.toLowerCase();
+            const kabelFilter = document.getElementById('kabelFilter').value.toLowerCase();
+            const tipeKabelFilter = document.getElementById('tipeKabelFilter').value.toLowerCase();
+            const travellingFilter = document.getElementById('travellingFilter').value.toLowerCase();
+            const verificationFilter = document.getElementById('verificationFilter').value.toLowerCase();
+            const restorationFilter = document.getElementById('restorationFilter').value.toLowerCase();
+            const correctiveFilter = document.getElementById('correctiveFilter').value.toLowerCase();
 
-    const table = document.querySelector('.table');
-    const rows = table.getElementsByTagName('tr');
+            const table = document.querySelector('.table');
+            const rows = table.getElementsByTagName('tr');
 
-    for (let i = 1; i < rows.length; i++) {
-        const cells = rows[i].getElementsByTagName('td');
-        let display = true;
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                let display = true;
 
-        // Pastikan row memiliki data (tidak hanya header)
-        if (cells.length > 0) {
-            // Filter berdasarkan RO (kolom ke-0)
-            if (roFilter && cells[0].innerText.toLowerCase() !== roFilter) {
-                display = false;
-            }
-            // Filter berdasarkan Tipe Jaringan (kolom ke-1)
-            if (tipeJaringanFilter && cells[1].innerText.toLowerCase() !== tipeJaringanFilter) {
-                display = false;
-            }
-            // Filter berdasarkan Jartatup (kolom ke-3)
-            if (jartatupFilter && cells[3].innerText.toLowerCase() !== jartatupFilter) {
-                display = false;
-            }
-            // Filter berdasarkan Mainlink (kolom ke-4)
-            if (mainlinkFilter && cells[4].innerText.toLowerCase() !== mainlinkFilter) {
-                display = false;
-            }
-            if (coreFilter && cells[7].innerText.toLowerCase() !== coreFilter) {
-                display = false;
-            }
-            if (kabelFilter && cells[8].innerText.toLowerCase() !== kabelFilter) {
-                display = false;
-            }
-            if (tipeKabelFilter && cells[9].innerText.toLowerCase() !== tipeKabelFilter) {
-                display = false;
+                // Pastikan row memiliki data (tidak hanya header)
+                if (cells.length > 0) {
+                    // Filter berdasarkan RO (kolom ke-0)
+                    if (roFilter && cells[0].innerText.toLowerCase() !== roFilter) {
+                        display = false;
+                    }
+                    // Filter berdasarkan Tipe Jaringan (kolom ke-1)
+                    if (tipeJaringanFilter && cells[1].innerText.toLowerCase() !== tipeJaringanFilter) {
+                        display = false;
+                    }
+                    // Filter berdasarkan Jartatup (kolom ke-3)
+                    if (jartatupFilter && cells[3].innerText.toLowerCase() !== jartatupFilter) {
+                        display = false;
+                    }
+                    // Filter berdasarkan Mainlink (kolom ke-4)
+                    if (mainlinkFilter && cells[4].innerText.toLowerCase() !== mainlinkFilter) {
+                        display = false;
+                    }
+                    if (coreFilter && cells[7].innerText.toLowerCase() !== coreFilter) {
+                        display = false;
+                    }
+                    if (kabelFilter && cells[8].innerText.toLowerCase() !== kabelFilter) {
+                        display = false;
+                    }
+                    if (tipeKabelFilter && cells[9].innerText.toLowerCase() !== tipeKabelFilter) {
+                        display = false;
+                    }
+                    if (travellingFilter && cells[9].innerText.toLowerCase() !== travellingFilter) {
+                        display = false;
+                    }
+                    if (verificationFilter && cells[9].innerText.toLowerCase() !== verificationFilter) {
+                        display = false;
+                    }
+                    if (restorationFilter && cells[9].innerText.toLowerCase() !== restorationFilter) {
+                        display = false;
+                    }
+                    if (correctiveFilter && cells[9].innerText.toLowerCase() !== correctiveFilter) {
+                        display = false;
+                    }
+                }
+
+                rows[i].style.display = display ? '' : 'none';
             }
         }
-
-        rows[i].style.display = display ? '' : 'none';
-    }
-}
-
     </script>
 @endsection
