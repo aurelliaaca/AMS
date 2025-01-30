@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\AsetController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -47,8 +48,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/profil', [ProfilController::class, 'getProfil'])->name('profil');
     Route::post('/update', [ProfilController::class, 'updateProfil'])->name('update');
     Route::post('/change-password', [ProfilController::class, 'changePassword'])->name('change-password');
-// ------------------------------------------------------ Rute baru tambahin disini ------------------------------------------------------
+});
+    // ------------------------------------------------------ Rute baru tambahin disini ------------------------------------------------------
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [UserController::class, 'user'])->name("dashboard");
         return view('dashboard');
 });
+
+// Rute untuk halaman jaringan
+Route::get('/jaringan', [AsetController::class, 'jaringan'])->name('jaringan');
+
+// Rute untuk halaman perangkat
+Route::get('/perangkat', [AsetController::class, 'perangkat'])->name('perangkat');
+
+// Rute untuk halaman fasilitas
+Route::get('/fasilitas', [AsetController::class, 'fasilitas'])->name('fasilitas');
+
+// Rute untuk halaman fasilitas
+Route::get('/alatukur', [AsetController::class, 'alatukur'])->name('alatukur');
