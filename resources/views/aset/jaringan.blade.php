@@ -21,7 +21,7 @@
 
         /* Container Styles */
         .container {
-            box-shadow: 2px 2px 10px #DADADA;
+            box-shadow: 2px 2px 10px #9497f5;
             margin: 5px auto;
             padding: 20px 10px;
             background-color: #fff;
@@ -78,6 +78,7 @@
         font-size: 14px;
         color: #fff;
         cursor: pointer;
+        font-weight: bold;
         }
 
 
@@ -143,7 +144,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
                         <path fill="currentColor" d="M10 18a8 8 0 1 1 0-16a8 8 0 0 1 0 16Zm7.707-2.707a1 1 0 0 0 0 1.414l3 3a1 1 0 0 0 1.414-1.414l-3-3a1 1 0 0 0-1.414 0Z" />
                     </svg>
-                    <input type="text" id="searchInput" placeholder="Candidate Name" onkeyup="searchTable()" />
+                    <input type="text" id="searchInput" placeholder="Search" onkeyup="searchTable()" />
                 </div>
             </div>
             <div class="table-responsive">
@@ -151,78 +152,104 @@
                     <thead>
                         <tr>
                             <th>
-                                <select class="filter-select" id="sexFilter" onchange="filterTable()">
-                                    <option>Sex</option>
-                                    <option>Male</option>
-                                    <option>Female</option>
+                                <select class="filter-select" id="roFilter" onchange="filterTable()">
+                                    <option value="">RO</option>
+                                    <option value="Batam">Batam</option>
+                                    <option value="Bekasi">Bekasi</option>
+                                    <option value="Cilegon">Cilegon</option>
+                                    <option value="Jabatim">Jabatim</option>
+                                    <option value="Jakarta">Jakarta</option>
+                                    <option value="Jambi">Jambi</option>
                                 </select>
                             </th>
                             <th>
-                                <select class="filter-select" id="ageFilter" onchange="filterTable()">
-                                    <option>Age</option>
-                                    <option>20</option>
-                                    <option>35</option>
-                                    <option>28</option>
+                                <select class="filter-select" id="tipeJaringanFilter" onchange="filterTable()">
+                                    <option value="">Tipe Jaringan</option>
+                                    <option value="Backbone">Backbone</option>
+                                    <option value="ROW PGN">ROW PGN</option>
+                                    <option value="Lastmile">Lastmile</option>
+                                </select>
+                            </th>
+                            <th>Segmen</th>
+                            <th>
+                                <select class="filter-select" id="jartatupFilter" onchange="filterTable()">
+                                    <option value="">Jartatup Jartaplok</option>
+                                    <option value="Jartatup">Jartatup</option>
+                                    <option value="Jartaplok">Jartaplok</option>
                                 </select>
                             </th>
                             <th>
-                                <select class="filter-select" id="educationFilter" onchange="filterTable()">
-                                    <option>Education</option>
-                                    <option>Bachelor</option>
-                                    <option>Doctor</option>
-                                    <option>Doctor of Philosophy</option>
+                                <select class="filter-select" id="mainlinkFilter" onchange="filterTable()">
+                                    <option value="">Mainlink Backuplink</option>
+                                    <option value="Single">Single</option>
+                                    <option value="Protected">Protected</option>
+                                </select>
+                            </th>
+                            <th>Panjang</th>
+                            <th>Panjang Drawing</th>
+                            <th>
+                                <select class="filter-select" id="coreFilter" onchange="filterTable()">
+                                    <option value="">Jumlah Core</option>
+                                    <option value="12">12</option>
+                                    <option value="24">24</option>
+                                    <option value="48">48</option>
+                                    <option value="96">96</option>
                                 </select>
                             </th>
                             <th>
-                                <select class="filter-select" id="resumeScoreFilter" onchange="filterTable()">
-                                    <option>Resume Score</option>
-                                    <option>70.5</option>
-                                    <option>20</option>
-                                    <option>43.5</option>
+                                <select class="filter-select" id="kabelFilter" onchange="filterTable()">
+                                    <option value="">Jenis Kabel</option>
+                                    <option value="Kabel Tanah">Kabel Tanah</option>
+                                    <option value="Kabel Uadara">Kabel Uadara</option>
                                 </select>
                             </th>
                             <th>
-                                <select class="filter-select" id="videoScoreFilter" onchange="filterTable()">
-                                    <option>Video Score</option>
-                                    <option>95</option>
-                                    <option>54.5</option>
-                                    <option>73</option>
-                                </select>
-                            </th>
-                            <th>
-                                <select class="filter-select" id="statusFilter" onchange="filterTable()">
-                                    <option>Status</option>
-                                    <option>Finished</option>
-                                    <option>Live</option>
-                                    <option>Pending</option>
+                                <select class="filter-select" id="tipeKabelFilter" onchange="filterTable()">
+                                    <option value="">Tipe Kabel</option>
+                                    <option value="G652D">G652D</option>
+                                    <option value="G655C">G655C</option>
+                                    <option value="G654C">G654C</option>
+                                    <option value="G654B">G654B</option>
                                 </select>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Male</td>
-                            <td>35</td>
-                            <td>Bachelor</td>
-                            <td>70.5</td>
-                            <td>95</td>
-                            <td><span class="status status-finished">Finished</span></td>
+                            <td>Batam</td>
+                            <td>Backbone</td>
+                            <td>Backbone 96 core HH Tunas-POP Tunas</td>
+                            <td>Jartatup</td>
+                            <td>Single</td>
+                            <td>311</td>
+                            <td>311</td>
+                            <td>96</td>
+                            <td>Kabel Tanah</td>
+                            <td>G652D</td>
                         </tr>
                         <tr>
-                            <td>Female</td>
-                            <td>20</td>
-                            <td>Bachelor</td>
-                            <td>20</td>
-                            <td>54.5</td>
-                            <td><span class="status status-finished">Finished</span></td>
+                            <td>Batam</td>
+                            <td>Backbone</td>
+                            <td>Backbone 24 core MH TPCO - POP Kabil</td>
+                            <td>Jartatup</td>
+                            <td>Single</td>
+                            <td>3800</td>
+                            <td>3800</td>
+                            <td>24</td>
+                            <td>Kabel Tanah</td>
+                            <td>G652D</td>
                         </tr>
                         <tr>
-                            <td>Female</td>
-                            <td>28</td>
-                            <td>Doctor of Philosophy</td>
-                            <td>43.5</td>
-                            <td>73</td>
-                            <td><span class="status status-live">Live</span></td>
+                            <td>Batam</td>
+                            <td>Backbone</td>
+                            <td>Backbone 48 Core FTTX POP Kabil - HH Simp. Taiwan</td>
+                            <td>Jartatup</td>
+                            <td>Single</td>
+                            <td>1700</td>
+                            <td>1700</td>
+                            <td>48</td>
+                            <td>Kabel Tanah</td>
+                            <td>G652D</td>
                         </tr>
                     </tbody>
                 </table>
@@ -256,5 +283,55 @@
                 }
             }
         }
+
+        function filterTable() {
+    const roFilter = document.getElementById('roFilter').value.toLowerCase();
+    const tipeJaringanFilter = document.getElementById('tipeJaringanFilter').value.toLowerCase();
+    const jartatupFilter = document.getElementById('jartatupFilter').value.toLowerCase();
+    const mainlinkFilter = document.getElementById('mainlinkFilter').value.toLowerCase();
+    const coreFilter = document.getElementById('coreFilter').value.toLowerCase();
+    const kabelFilter = document.getElementById('kabelFilter').value.toLowerCase();
+    const tipeKabelFilter = document.getElementById('tipeKabelFilter').value.toLowerCase();
+
+    const table = document.querySelector('.table');
+    const rows = table.getElementsByTagName('tr');
+
+    for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('td');
+        let display = true;
+
+        // Pastikan row memiliki data (tidak hanya header)
+        if (cells.length > 0) {
+            // Filter berdasarkan RO (kolom ke-0)
+            if (roFilter && cells[0].innerText.toLowerCase() !== roFilter) {
+                display = false;
+            }
+            // Filter berdasarkan Tipe Jaringan (kolom ke-1)
+            if (tipeJaringanFilter && cells[1].innerText.toLowerCase() !== tipeJaringanFilter) {
+                display = false;
+            }
+            // Filter berdasarkan Jartatup (kolom ke-3)
+            if (jartatupFilter && cells[3].innerText.toLowerCase() !== jartatupFilter) {
+                display = false;
+            }
+            // Filter berdasarkan Mainlink (kolom ke-4)
+            if (mainlinkFilter && cells[4].innerText.toLowerCase() !== mainlinkFilter) {
+                display = false;
+            }
+            if (coreFilter && cells[7].innerText.toLowerCase() !== coreFilter) {
+                display = false;
+            }
+            if (kabelFilter && cells[8].innerText.toLowerCase() !== kabelFilter) {
+                display = false;
+            }
+            if (tipeKabelFilter && cells[9].innerText.toLowerCase() !== tipeKabelFilter) {
+                display = false;
+            }
+        }
+
+        rows[i].style.display = display ? '' : 'none';
+    }
+}
+
     </script>
 @endsection
