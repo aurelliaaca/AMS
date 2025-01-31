@@ -1,6 +1,7 @@
 @extends('layouts.sidebar')
 
 @section('content')
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
         
@@ -36,11 +37,16 @@
         }
 
         /* Header Styles */
-        .header {
+        .header-container {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+        }
+
+        .header-title {
+            text-align: left;
+            margin: 0;
         }
 
         .search-bar {
@@ -71,23 +77,23 @@
         }
 
         .filter-select {
-        border: none;
-        border-radius: 8px;
-        background-color: #4f52ba; 
-        padding: 8px 12px;
-        font-size: 14px;
-        color: #fff;
-        cursor: pointer;
-        font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            background-color: #4f52ba; 
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
         }
-
 
         /* Table Styles */
         .table {
             width: 100%;
             font-size: 18px;
-            border-collapse: separate;
-            border-spacing: 0 20px;
+            border-collapse: collapse;
+            table-layout: auto;
+            padding-left: 30px;
         }
 
         .table thead th {
@@ -99,13 +105,92 @@
             font-size: 16px;
         }
 
-        .table thead th:nth-child(3),
-        .table tbody td:nth-child(3) {
-            min-width: 300px;
-            max-width: 500px;
+        .table thead th:nth-child(12),
+        .table tbody td:nth-child(12) {
+            min-width: 175px;
             word-wrap: break-word;
         }
 
+        .table thead th:nth-child(8) {
+            min-width: 175px;
+            word-wrap: break-word;
+        }
+
+        .table tbody td:nth-child(8) {
+            padding-left: 60px;
+        }
+
+        .table tbody th:nth-child(13){
+            padding-left: 70px;
+        }
+
+        .table thead th:nth-child(3) {
+            min-width: 175px;
+            word-wrap: break-word;
+        }
+
+        .table thead th:nth-child(5) {
+            min-width: 250px;
+            word-wrap: break-word;
+        }
+
+        .table thead th:nth-child(6) {
+            min-width: 175px;
+            word-wrap: break-word;
+        }
+
+        .table thead th:nth-child(7) {
+            min-width: 175px;
+            word-wrap: break-word;
+        }
+
+        .table thead th:nth-child(8) {
+            min-width: 175px;
+            word-wrap: break-word;
+        }
+
+        .table thead th:nth-child(9) {
+            min-width: 175px;
+            word-wrap: break-word;
+        }
+
+        .table thead th:nth-child(10) {
+            min-width: 175px;
+            word-wrap: break-word;
+        }
+
+        .table thead th:nth-child(11) {
+            min-width: 175px;
+            word-wrap: break-word;
+        }
+
+        .table thead th:nth-child(13) {
+            min-width: 175px;
+            word-wrap: break-word;
+        }
+
+        .table thead th:nth-child(14) {
+            min-width: 175px;
+            word-wrap: break-word;
+        }
+
+        .table thead th:nth-child(15) {
+            min-width: 175px;
+            word-wrap: break-word;
+        }
+
+        .table thead th:nth-child(16) {
+            min-width: 200px;
+            word-wrap: break-word;
+        }
+
+        .table thead th:nth-child(4),
+        .table tbody td:nth-child(4) {
+            min-width: 300px;
+            max-width: 500px;
+            text-align: middle;
+            word-wrap: break-word;
+        }
 
         .table tbody tr {
             background-color: #fff;
@@ -125,33 +210,12 @@
             font-size: 16px;
             color: #333;
             vertical-align: middle;
-        }
-
-        /* Status Styles */
-        .status {
-            font-weight: bold;
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-
-        .status-finished {
-            background-color: #e0f7ea;
-            color: #27ae60;
-        }
-
-        .status-live {
-            background-color: #f1f1f9;
-            color: #3e64ff;
+            padding-left: 30px;
         }
 
         .table-responsive {
             overflow-x: auto;
             width: 100%;
-        }
-
-        .table {
-            min-width: 800px;
-            width: auto;
         }
 
         .table th {
@@ -161,11 +225,45 @@
         .table th:nth-child(1), .table td:nth-child(1) {
             width: 150px;
         }
+
+        /* Tambahkan padding ke semua td */
+        .table td {
+            padding-left: 10px; /* Atur padding kiri untuk menggeser konten ke kanan */
+        }
+
+        /* Styling untuk pagination */
+        .pagination {
+            justify-content: center; /* Pusatkan pagination */
+            margin-top: 20px; /* Jarak atas untuk pagination */
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #4f52ba; /* Warna latar belakang untuk halaman aktif */
+            border-color: #4f52ba; /* Warna border untuk halaman aktif */
+            color: white; /* Warna teks untuk halaman aktif */
+        }
+
+        .pagination .page-link {
+            color: #4f52ba; /* Warna teks untuk link */
+            border: 1px solid #4f52ba; /* Border untuk link */
+        }
+
+        .pagination .page-link:hover {
+            background-color: #b0b2eb; /* Warna latar belakang saat hover */
+            color: white; /* Warna teks saat hover */
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #4f52ba; /* Warna teks untuk link yang dinonaktifkan */
+            background-color: transparent; /* Hapus latar belakang saat dinonaktifkan */
+            border-color: #4f52ba; /* Warna border untuk link yang dinonaktifkan */
+        }
     </style>
 
     <div class="main">
         <div class="container">
-            <div class="header">
+            <div class="header-container">
+                <h2 class="header-title"><strong>Data Jaringan</strong></h2>
                 <div class="search-bar">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
                         <path fill="currentColor" d="M10 18a8 8 0 1 1 0-16a8 8 0 0 1 0 16Zm7.707-2.707a1 1 0 0 0 0 1.414l3 3a1 1 0 0 0 1.414-1.414l-3-3a1 1 0 0 0-1.414 0Z" />
@@ -173,11 +271,13 @@
                     <input type="text" id="searchInput" placeholder="Search" onkeyup="searchTable()" />
                 </div>
             </div>
+            <div>
             <div class="table-responsive">
-                <table class="table">
+                <table class="table" id="jaringanTable" style="min-width: 1000px; table-layout: auto;">
                     <thead>
                         <tr>
-                            <th>
+                            <th style="width: 5%;">No</th>
+                            <th style="width: 10%;">
                                 <select class="filter-select" id="roFilter" onchange="filterTable()">
                                     <option value="">RO</option>
                                     <option value="Batam">Batam</option>
@@ -191,7 +291,7 @@
                                     <option value="Sumbagut">Sumbagut</option>
                                 </select>
                             </th>
-                            <th>
+                            <th style="width: 10%;">
                                 <select class="filter-select" id="tipeJaringanFilter" onchange="filterTable()">
                                     <option value="">Tipe Jaringan</option>
                                     <option value="Backbone">Backbone</option>
@@ -199,25 +299,25 @@
                                     <option value="Lastmile">Lastmile</option>
                                 </select>
                             </th>
-                            <th>Segmen</th>
-                            <th>
+                            <th style="width: 10%;">Segmen</th>
+                            <th style="width: 10%;">
                                 <select class="filter-select" id="jartatupFilter" onchange="filterTable()">
                                     <option value="">Jartatup Jartaplok</option>
                                     <option value="Jartatup">Jartatup</option>
                                     <option value="Jartaplok">Jartaplok</option>
                                 </select>
                             </th>
-                            <th>
+                            <th style="width: 10%;">
                                 <select class="filter-select" id="mainlinkFilter" onchange="filterTable()">
                                     <option value="">Mainlink Backuplink</option>
-                                    <option value="Single">Single</option>
-                                    <option value="Protected">Protected</option>
+                                    <option value="Jartatup">Single</option>
+                                    <option value="Jartaplok">Protected</option>
                                 </select>
                             </th>
-                            <th>Panjang</th>
-                            <th>Panjang Drawing</th>
-                            <th>
-                                <select class="filter-select" id="coreFilter" onchange="filterTable()">
+                            <th style="width: 10%;">Panjang</th>
+                            <th style="width: 10%;">Panjang Drawing</th>
+                            <th style="width: 10%;">
+                                <select class="filter-select" id="jumlahCoreFilter" onchange="filterTable()">
                                     <option value="">Jumlah Core</option>
                                     <option value="12">12</option>
                                     <option value="24">24</option>
@@ -225,14 +325,14 @@
                                     <option value="96">96</option>
                                 </select>
                             </th>
-                            <th>
-                                <select class="filter-select" id="kabelFilter" onchange="filterTable()">
+                            <th style="width: 10%;">
+                                <select class="filter-select" id="jenisKabelFilter" onchange="filterTable()">
                                     <option value="">Jenis Kabel</option>
                                     <option value="Kabel Tanah">Kabel Tanah</option>
                                     <option value="Kabel Uadara">Kabel Uadara</option>
                                 </select>
                             </th>
-                            <th>
+                            <th style="width: 10%;">
                                 <select class="filter-select" id="tipeKabelFilter" onchange="filterTable()">
                                     <option value="">Tipe Kabel</option>
                                     <option value="G652D">G652D</option>
@@ -241,243 +341,111 @@
                                     <option value="G654B">G654B</option>
                                 </select>
                             </th>
-                            <th>Kode Site Insan</th>
-                            <th>
+                            <th style="width: 10%;">Kode Site Insan</th>
+                            <th style="width: 10%;">
                                 <select class="filter-select" id="travellingFilter" onchange="filterTable()">
                                     <option value="">Travelling Time</option>
                                     <option value="1:00:00">1:00:00</option>
                                     <option value="2:00:00">2:00:00</option>
-                                    <option value="6:00:00">6:00:00</option>
+                                    <option value="3:00:00">3:00:00</option>
                                 </select>
                             </th>
-                            <th>
+                            <th style="width: 10%;">
                                 <select class="filter-select" id="verificationFilter" onchange="filterTable()">
                                     <option value="">Verification Time</option>
                                     <option value="1:00:00">1:00:00</option>
                                     <option value="2:00:00">2:00:00</option>
                                 </select>
                             </th>
-                            <th>
+                            <th style="width: 10%;">
                                 <select class="filter-select" id="restorationFilter" onchange="filterTable()">
                                     <option value="">Restoration Time</option>
                                     <option value="1:00:00">1:00:00</option>
                                     <option value="3:00:00">3:00:00</option>
                                 </select>
                             </th>
-                            <th>
+                            <th style="width: 10%;">
                                 <select class="filter-select" id="correctiveFilter" onchange="filterTable()">
                                     <option value="">Total Corrective Time</option>
+                                    <option value="0:00:00">0:00:00</option>
                                     <option value="1:00:00">1:00:00</option>
+                                    <option value="2:00:00">2:00:00</option>
                                     <option value="3:00:00">3:00:00</option>
                                     <option value="4:00:00">4:00:00</option>
-                                    <option value="7:00:00">7:00:00</option>
-                                    <option value="9:00:00">9:00:00</option>
-                                    <option value="11:00:00">11:00:00</option>
                                 </select>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach($jaringanData as $data)
                         <tr>
-                            <td>Batam</td>
-                            <td>Backbone</td>
-                            <td>Backbone 96 core HH Tunas-POP Tunas</td>
-                            <td>Jartatup</td>
-                            <td>Single</td>
-                            <td>311</td>
-                            <td>311</td>
-                            <td>96</td>
-                            <td>Kabel Tanah</td>
-                            <td>G652D</td>
-                            <td>BTMBB1</td>
-                            <td>2:00:00</td>
-                            <td>-</td>
-                            <td>3:00:00</td>
-                            <td>3:00:00</td>
+                            <td>{{ $data->id_jaringan }}</td>
+                            <td>{{ $data->RO }}</td>
+                            <td>{{ $data->tipe_jaringan }}</td>
+                            <td>{{ $data->segmen }}</td>
+                            <td>{{ $data->jartatup_jartaplok }}</td>
+                            <td>{{ $data->mainlink_backuplink}}</td>
+                            <td>{{ $data->panjang }}</td>
+                            <td>{{ $data->panjang_drawing }}</td>
+                            <td>{{ $data->jumlah_core }}</td>
+                            <td>{{ $data->jenis_kabel }}</td>
+                            <td>{{ $data->tipe_kabel }}</td>
+                            <td>{{ $data->kode_site_insan }}</td>
+                            <td>{{ $data->travelling_time }}</td>
+                            <td>{{ $data->verification_time }}</td>
+                            <td>{{ $data->restoration_time }}</td>
+                            <td>{{ $data->total_corrective_time }}</td>
                         </tr>
-                        <tr>
-                            <td>Batam</td>
-                            <td>Backbone</td>
-                            <td>Backbone 24 core MH TPCO - POP Kabil</td>
-                            <td>Jartatup</td>
-                            <td>Single</td>
-                            <td>3.800</td>
-                            <td>3.800</td>
-                            <td>24</td>
-                            <td>Kabel Tanah</td>
-                            <td>G652D</td>
-                            <td>BTMBB2</td>
-                            <td>2:00:00</td>
-                            <td>-</td>
-                            <td>3:00:00</td>
-                            <td>3:00:00</td>
-                        </tr>
-                        <tr>
-                            <td>Batam</td>
-                            <td>Backbone</td>
-                            <td>Backbone 48 Core FTTX POP Kabil - HH Simp. Taiwan</td>
-                            <td>Jartatup</td>
-                            <td>Single</td>
-                            <td>1.700</td>
-                            <td>1.700</td>
-                            <td>48</td>
-                            <td>Kabel Tanah</td>
-                            <td>G652D</td>
-                            <td>BTMBB3</td>
-                            <td>2:00:00</td>
-                            <td>-</td>
-                            <td>3:00:00</td>
-                            <td>3:00:00</td>
-                        </tr>
-                        <tr>
-                            <td>Batam</td>
-                            <td>Backbone</td>
-                            <td>Backbone 24 core HH KDA -  HH TPCO - HH Bosowa</td>
-                            <td>Jartatup</td>
-                            <td>Single</td>
-                            <td>9.600</td>
-                            <td>9.600</td>
-                            <td>24</td>
-                            <td>Kabel Tanah</td>
-                            <td>G652D</td>
-                            <td>BTMBB4</td>
-                            <td>2:00:00</td>
-                            <td>-</td>
-                            <td>3:00:00</td>
-                            <td>3:00:00</td>
-                        </tr>
-                        <tr>
-                            <td>Batam</td>
-                            <td>Backbone</td>
-                            <td>Backbone 96 core BTC - Panaran</td>
-                            <td>Jartatup</td>
-                            <td>Protected</td>
-                            <td>23.410</td>
-                            <td>21.600</td>
-                            <td>96</td>
-                            <td>Kabel Tanah</td>
-                            <td>G652D</td>
-                            <td>BTMBB5</td>
-                            <td>2:00:00</td>
-                            <td>-</td>
-                            <td>1:00:00</td>
-                            <td>3:00:00</td>
-                        </tr>
-                        <tr>
-                            <td>Batam</td>
-                            <td>Backbone</td>
-                            <td>Backbone 96 core Feeder FTTH KDA HH Tunas - HH Perum KDA</td>
-                            <td>Jartaplok</td>
-                            <td>Single</td>
-                            <td>1.780</td>
-                            <td>1.500</td>
-                            <td>96</td>
-                            <td>Kabel Tanah</td>
-                            <td>G652D</td>
-                            <td>BTMBB6</td>
-                            <td>2:00:00</td>
-                            <td>-</td>
-                            <td>1:00:00</td>
-                            <td>3:00:00</td>
-                        </tr>
-                        <tr>
-                            <td>Batam</td>
-                            <td>Backbone</td>
-                            <td>Backbone 48 core Feeder FTTH KDA HH Perum KDA - Slack 28</td>
-                            <td>Jartaplok</td>
-                            <td>Single</td>
-                            <td>764</td>
-                            <td>519</td>
-                            <td>48</td>
-                            <td>Kabel Udara</td>
-                            <td>G652D</td>
-                            <td>BTMBB7</td>
-                            <td>2:00:00</td>
-                            <td>-</td>
-                            <td>1:00:00</td>
-                            <td>3:00:00</td>
-                        </tr>
-                        <tr>
-                            <td>Batam</td>
-                            <td>Backbone</td>
-                            <td>Backbone 12 core Distribusi FTTH KDA 01</td>
-                            <td>Jartaplok</td>
-                            <td>Single</td>
-                            <td>415</td>
-                            <td>226</td>
-                            <td>12</td>
-                            <td>Kabel Udara</td>
-                            <td>G652D</td>
-                            <td>BTMBB8</td>
-                            <td>2:00:00</td>
-                            <td>-</td>
-                            <td>1:00:00</td>
-                            <td>3:00:00</td>
-                        </tr>
-                        <tr>
-                            <td>Batam</td>
-                            <td>Backbone</td>
-                            <td>Backbone 12 core Distribusi FTTH KDA 03</td>
-                            <td>Jartaplok</td>
-                            <td>Single</td>
-                            <td>445</td>
-                            <td>290</td>
-                            <td>12</td>
-                            <td>Kabel Udara</td>
-                            <td>G652D</td>
-                            <td>BTMBB9</td>
-                            <td>2:00:00</td>
-                            <td>-</td>
-                            <td>1:00:00</td>
-                            <td>3:00:00</td>
-                        </tr>
-                        <tr>
-                            <td>Batam</td>
-                            <td>Backbone</td>
-                            <td>Backbone 12 Core Feeder FTTH Bida Asri HH Tunas - Perum Bida Asri </td>
-                            <td>Jartaplok</td>
-                            <td>Single</td>
-                            <td>445</td>
-                            <td>290</td>
-                            <td>12</td>
-                            <td>Kabel Udara</td>
-                            <td>G652D</td>
-                            <td>BTMBB10</td>
-                            <td>2:00:00</td>
-                            <td>-</td>
-                            <td>1:00:00</td>
-                            <td>3:00:00</td>
-                        </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item {{ $jaringanData->onFirstPage() ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ $jaringanData->previousPageUrl() }}" tabindex="-1">Previous</a>
+                    </li>
+
+                    <!-- Menampilkan hanya 3 halaman: halaman sebelumnya, halaman saat ini, dan halaman berikutnya -->
+                    @if ($jaringanData->currentPage() > 1)
+                        <li class="page-item">
+                            <a class="page-link" href="{{ $jaringanData->url($jaringanData->currentPage() - 1) }}">{{ $jaringanData->currentPage() - 1 }}</a>
+                        </li>
+                    @endif
+
+                    <li class="page-item active">
+                        <a class="page-link" href="#">{{ $jaringanData->currentPage() }}</a>
+                    </li>
+
+                    @if ($jaringanData->currentPage() < $jaringanData->lastPage())
+                        <li class="page-item">
+                            <a class="page-link" href="{{ $jaringanData->url($jaringanData->currentPage() + 1) }}">{{ $jaringanData->currentPage() + 1 }}</a>
+                        </li>
+                    @endif
+
+                    <li class="page-item {{ $jaringanData->hasMorePages() ? '' : 'disabled' }}">
+                        <a class="page-link" href="{{ $jaringanData->nextPageUrl() }}">Next</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 
     <script>
-        function searchTable() {
-            const input = document.getElementById('searchInput');
-            const filter = input.value.toLowerCase();
-            const table = document.querySelector('.table');
+        let allData = []; // Array untuk menyimpan semua data
+
+        // Fungsi untuk mengisi allData dengan data dari tabel
+        function initializeData() {
+            const table = document.getElementById('jaringanTable');
             const rows = table.getElementsByTagName('tr');
 
             for (let i = 1; i < rows.length; i++) {
-                let cells = rows[i].getElementsByTagName('td');
-                let found = false;
-
+                const cells = rows[i].getElementsByTagName('td');
+                const rowData = [];
                 for (let j = 0; j < cells.length; j++) {
-                    if (cells[j]) {
-                        if (cells[j].innerText.toLowerCase().includes(filter)) {
-                            found = true;
-                        }
-                    }
+                    rowData.push(cells[j].innerText.toLowerCase());
                 }
-
-                if (found) {
-                    rows[i].style.display = '';
-                } else {
-                    rows[i].style.display = 'none';
-                }
+                allData.push(rowData);
             }
         }
 
@@ -486,64 +454,112 @@
             const tipeJaringanFilter = document.getElementById('tipeJaringanFilter').value.toLowerCase();
             const jartatupFilter = document.getElementById('jartatupFilter').value.toLowerCase();
             const mainlinkFilter = document.getElementById('mainlinkFilter').value.toLowerCase();
-            const coreFilter = document.getElementById('coreFilter').value.toLowerCase();
+            const coreFilter = document.getElementById('jumlahCoreFilter').value.toLowerCase();
             const kabelFilter = document.getElementById('kabelFilter').value.toLowerCase();
             const tipeKabelFilter = document.getElementById('tipeKabelFilter').value.toLowerCase();
             const travellingFilter = document.getElementById('travellingFilter').value.toLowerCase();
             const verificationFilter = document.getElementById('verificationFilter').value.toLowerCase();
             const restorationFilter = document.getElementById('restorationFilter').value.toLowerCase();
             const correctiveFilter = document.getElementById('correctiveFilter').value.toLowerCase();
-
-            const table = document.querySelector('.table');
+            const table = document.getElementById('jaringanTable');
             const rows = table.getElementsByTagName('tr');
 
             for (let i = 1; i < rows.length; i++) {
-                const cells = rows[i].getElementsByTagName('td');
+                rows[i].style.display = 'none'; // Sembunyikan semua baris
+            }
+
+            // Filter data berdasarkan input
+            for (let i = 0; i < allData.length; i++) {
                 let display = true;
 
-                // Pastikan row memiliki data (tidak hanya header)
-                if (cells.length > 0) {
-                    // Filter berdasarkan RO (kolom ke-0)
-                    if (roFilter && cells[0].innerText.toLowerCase() !== roFilter) {
-                        display = false;
+                // Cek setiap filter
+                if (roFilter && allData[i][1] !== roFilter) {
+                    display = false;
+                }
+                if (tipeJaringanFilter && allData[i][2] !== tipeJaringanFilter) {
+                    display = false;
+                }
+                if (segmenFilter && allData[i][3].indexOf(segmenFilter) === -1) {
+                    display = false;
+                }
+                if (jartatupFilter && allData[i][4].indexOf(jartatupFilter) === -1) {
+                    display = false;
+                }
+                if (mainlinkFilter && allData[i][5].indexOf(mainlinkFilter) === -1) {
+                    display = false;
+                }
+                if (jumlahCoreFilter && allData[i][6] !== jumlahCoreFilter) {
+                    display = false;
+                }
+                if (jenisKabelFilter && allData[i][7] !== jenisKabelFilter) {
+                    display = false;
+                }
+                if (tipeKabelFilter && allData[i][8] !== tipeKabelFilter) {
+                    display = false;
+                }
+                if (travellingFilter && allData[i][9] !== travellingFilter) {
+                    display = false;
+                }
+                if (verificationFilter && allData[i][10] !== verificationFilter) {
+                    display = false;
+                }
+                if (restorationFilter && allData[i][11] !== restorationFilter) {
+                    display = false;
+                }
+                if (correctiveFilter && allData[i][12] !== correctiveFilter) {
+                    display = false;
+                }
+
+                // Tampilkan baris yang sesuai
+                if (display) {
+                    // Temukan baris yang sesuai di tabel
+                    for (let k = 1; k < rows.length; k++) {
+                        const cells = rows[k].getElementsByTagName('td');
+                        if (allData[i].every((val, index) => val === cells[index].innerText.toLowerCase())) {
+                            rows[k].style.display = ''; // Tampilkan baris yang sesuai
+                        }
                     }
-                    // Filter berdasarkan Tipe Jaringan (kolom ke-1)
-                    if (tipeJaringanFilter && cells[1].innerText.toLowerCase() !== tipeJaringanFilter) {
-                        display = false;
-                    }
-                    // Filter berdasarkan Jartatup (kolom ke-3)
-                    if (jartatupFilter && cells[3].innerText.toLowerCase() !== jartatupFilter) {
-                        display = false;
-                    }
-                    // Filter berdasarkan Mainlink (kolom ke-4)
-                    if (mainlinkFilter && cells[4].innerText.toLowerCase() !== mainlinkFilter) {
-                        display = false;
-                    }
-                    if (coreFilter && cells[7].innerText.toLowerCase() !== coreFilter) {
-                        display = false;
-                    }
-                    if (kabelFilter && cells[8].innerText.toLowerCase() !== kabelFilter) {
-                        display = false;
-                    }
-                    if (tipeKabelFilter && cells[9].innerText.toLowerCase() !== tipeKabelFilter) {
-                        display = false;
-                    }
-                    if (travellingFilter && cells[11].innerText.toLowerCase() !== travellingFilter) {
-                        display = false;
-                    }
-                    if (verificationFilter && cells[12].innerText.toLowerCase() !== verificationFilter) {
-                        display = false;
-                    }
-                    if (restorationFilter && cells[13].innerText.toLowerCase() !== restorationFilter) {
-                        display = false;
-                    }
-                    if (correctiveFilter && cells[14].innerText.toLowerCase() !== correctiveFilter) {
-                        display = false;
+                }
+            }
+        }
+
+        function searchTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('jaringanTable');
+            const rows = table.getElementsByTagName('tr');
+
+            // Hapus semua baris yang ada
+            for (let i = 1; i < rows.length; i++) {
+                rows[i].style.display = 'none'; // Sembunyikan semua baris
+            }
+
+            // Filter data berdasarkan input pencarian
+            for (let i = 0; i < allData.length; i++) {
+                let display = false;
+
+                // Cek setiap kolom untuk mencocokkan input pencarian
+                for (let j = 0; j < allData[i].length; j++) {
+                    if (allData[i][j].indexOf(filter) > -1) {
+                        display = true; // Jika ada yang cocok, tampilkan baris
+                        break;
                     }
                 }
 
-                rows[i].style.display = display ? '' : 'none';
+                // Tampilkan baris yang sesuai
+                if (display) {
+                    // Temukan baris yang sesuai di tabel
+                    for (let k = 1; k < rows.length; k++) {
+                        const cells = rows[k].getElementsByTagName('td');
+                        if (allData[i].every((val, index) => val === cells[index].innerText.toLowerCase())) {
+                            rows[k].style.display = ''; // Tampilkan baris yang sesuai
+                        }
+                    }
+                }
             }
         }
+
+        // Panggil fungsi initializeData saat halaman dimuat
+        window.onload = initializeData;
     </script>
 @endsection
