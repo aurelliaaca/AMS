@@ -190,18 +190,18 @@
                 <div class="profile-info">
                     <img class="profile-image" src="{{ asset('img/pgngirls.jpg') }}" alt="Profile Image">
                     <div class="profile-name">User Name</div>
-                    <div class="profile-role">Role: Admin</div>
+                    <div class="profile-role">Role: Superadmin</div>
                     <div class="profile-email">user@example.com</div>
                 </div>
 
                 <!-- Upload New Photo -->
                 <div class="upload-photo-container">
-                    <button type="button" class="btn btn-default md-btn-flat" onclick="document.getElementById('upload-photo').click();">
-                        <img src="{{ asset('assets/images/editicon.png') }}" width="20" height="20" style="margin-right: 5px;">
+                    <button type="button" class="btn btn-default md-btn-flat" style="padding: 4px 8px; font-size: 12px; height: 28px; line-height: 1;" onclick="document.getElementById('upload-photo').click();">
+                        <img src="{{ asset('assets/images/editicon.png') }}" width="16" height="16" style="margin-right: 3px;">
                         <i class="fas fa-camera"></i> Ubah Foto Profil
                     </button>
                     <input type="file" id="upload-photo" class="account-settings-fileinput" accept="image/*" style="display: none;">
-                    <button type="button" class="btn btn-default md-btn-flat">Reset</button>
+                    <button type="button" class="btn btn-default md-btn-flat" style="padding: 4px 8px; font-size: 12px; height: 28px; line-height: 1;">Reset</button>
                 </div>
 
                 <div class="text-light small mt-1" style="color: gray;">
