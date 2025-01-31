@@ -1,5 +1,4 @@
 <?php
-// app/Providers/AppServiceProvider.php
 
 namespace App\Providers;
 
@@ -7,6 +6,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Region;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,6 +40,18 @@ class AppServiceProvider extends ServiceProvider
 
                 // Mengirimkan data ke sidebar view
                 $view->with('users', $users)->with('roleText', $roleText);
+            }
+        );
+
+        // Menggunakan View Composer untuk menyuntikkan data ke semua view
+        View::composer(
+            '*', // Tanda '*' berarti data ini akan dikirim ke semua view
+            function ($view) {
+                // Mengambil semua data region
+                $regions = Region::all();
+
+                // Mengirimkan data regions ke view
+                $view->with('regions', $regions);
             }
         );
     }
