@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Perangkat extends Model
+class Site extends Model
 {
     use HasFactory;
-    protected $table = 'listperangkat';
+    protected $table = 'site';
 
     protected $fillable = [
-        'WDM', 'kode_region', 'kode_site', 'no_rack', 'kode_pkt', 'pkt_ke', 'kode_brand', 'type', 'uawal', 'uakhir',
+        'no_site', 'kode_region', 'jenis_site','nama_site', 'kode_site',
     ];
 
     public function region()
@@ -19,8 +19,9 @@ class Perangkat extends Model
         return $this->belongsTo(Region::class, 'kode_region', 'kode_region');
     }
 
-    public function site()
+    public function perangkat()
     {
-        return $this->belongsTo(Region::class, 'kode_site', 'kode_site');
+        return $this->hasMany(Perangkat::class, 'kode_site', 'kode_site');
     }
+
 }

@@ -19,11 +19,6 @@
             font-style: normal;
         }
 
-        body {
-            min-height: 100vh;
-            /* background: #F0F4FF; */
-        }
-
         .card-counter {
             box-shadow: 2px 2px 10px #DADADA;
             margin: 5px;

@@ -1,14 +1,18 @@
-<?php
+web <?php
+
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\PerangkatController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Models\Site;
 use App\Http\Controllers\AsetController;
+use App\Http\Controllers\RegionalController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -37,32 +41,40 @@ Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('
 
 Auth::routes(['verify' => true]); // Menambahkan verifikasi email
 
-
 // ------------------------------------------------------ Rute baru tambahin disini ------------------------------------------------------
-
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard'); // Ini untuk menampilkan halaman dashboard langsung
-    })->name('dashboard'); // Menamai route dengan 'dashboard'
-    
+    Route::get('/dashboard', [UserController::class, 'user'])->name('dashboard'); // Menggunakan controller untuk dashboard
     Route::get('/profil', [ProfilController::class, 'getProfil'])->name('profil');
     Route::post('/update', [ProfilController::class, 'updateProfil'])->name('update');
     Route::post('/change-password', [ProfilController::class, 'changePassword'])->name('change-password');
-});
-    // ------------------------------------------------------ Rute baru tambahin disini ------------------------------------------------------
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [UserController::class, 'user'])->name("dashboard");
-        return view('dashboard');
 });
 
 // Rute untuk halaman jaringan
 Route::get('/jaringan', [AsetController::class, 'jaringan'])->name('jaringan');
 
 // Rute untuk halaman perangkat
-Route::get('/perangkat', [AsetController::class, 'perangkat'])->name('perangkat');
+Route::get('/perangkat', [AsetController::class, 'listPerangkat'])->name('perangkat');
 
 // Rute untuk halaman fasilitas
 Route::get('/fasilitas', [AsetController::class, 'fasilitas'])->name('fasilitas');
 
-// Rute untuk halaman fasilitas
+// Rute untuk halaman alat ukur
 Route::get('/alatukur', [AsetController::class, 'alatukur'])->name('alatukur');
+
+// Rute untuk HomeController (rack)
+Route::get('/rack', [HomeController::class, 'dropdown']);
+
+// Rute untuk PerangkatController (rack perangkat)
+// Route::get('/rack', [PerangkatController::class, 'listPerangkat'])->name('rack.home');
+
+// Rute untuk mengambil sites
+Route::get('/get-sites', [AsetController::class, 'getSites'])->name('getSites');
+
+// Rute untuk mengambil perangkat berdasarkan region dan site
+Route::get('/get-perangkat', [AsetController::class, 'getPerangkat']);
+
+// Rute untuk menambah perangkat
+// Route::get('/tambah-perangkat', [PerangkatController::class, 'create'])->name('perangkat.create');
+
+// Route untuk menyimpan perangkat baru
+// Route::post('/perangkat', [PerangkatController::class, 'store'])->name('perangkat.store');
