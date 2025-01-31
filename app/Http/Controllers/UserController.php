@@ -31,7 +31,6 @@ class UserController extends Controller
                 $roleText = 'Unknown role';
                 break;
         }
-        
-        return view('dashboard', compact('users', 'roleText'));
+        return view('menu.dashboard', compact('users', 'roleText'));
     }
 }
