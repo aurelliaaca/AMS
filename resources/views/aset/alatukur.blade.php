@@ -112,6 +112,20 @@
             background-color: red;
             color: white;
         }
+
+        select {
+            background-color: #4f52ba;
+            color: white;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        select option {
+            background-color: #4f52ba;
+            color: white;
+        }
     </style>
 
     <div class="main">
@@ -119,42 +133,59 @@
             <div class="header">
                 <h2><strong>Data Alat Ukur</strong></h2>
                 <div class="search-bar">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
-                        <path fill="currentColor" d="M10 18a8 8 0 1 1 0-16a8 8 0 0 1 0 16Zm7.707-2.707a1 1 0 0 0 0 1.414l3 3a1 1 0 0 0 1.414-1.414l-3-3a1 1 0 0 0-1.414 0Z" />
-                    </svg>
                     <input type="text" id="searchInput" placeholder="Search" onkeyup="searchTable()" />
                 </div>
             </div>
             <div class="table-responsive">
-                <table class="table" id="alatUkurTable">
+                <table class="table" id="alatukurTable">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>RO</th>
+                            <th>
+                                <select id="roFilter" onchange="filterTable()">
+                                    <option value="">RO</option>
+                                    <option value="Batam">Batam</option>
+                                    <option value="Bekasi">Bekasi</option>
+                                    <option value="Cilegon">Cilegon</option>
+                                    <option value="Jabatim">Jabatim</option>
+                                    <option value="Jakarta">Jakarta</option>
+                                    <option value="Jambi">Jambi</option>
+                                    <option value="Lampung">Lampung</option>
+                                    <option value="Palembang">Palembang</option>
+                                    <option value="Sumbagut">Sumbagut</option>
+                                </select>
+                            </th>
                             <th>Kode</th>
                             <th>Nama Alat</th>
                             <th>Merk</th>
                             <th>Type</th>
                             <th>Serial Number</th>
                             <th>Tahun Perolehan</th>
-                            <th>Kondisi Alat</th>
+                            <th>
+                                <select id="kondisiFilter" onchange="filterTable()">
+                                    <option value="">Kondisi Alat</option>
+                                    <option value="Normal">Normal</option>
+                                    <option value="Rusak Total">Rusak Total</option>
+                                    <option value="Rusak Sedang">Rusak Sedang</option>
+                                </select>
+                            </th>
                             <th>Harga Pembelian</th>
-                            <th>No Kontrak SPK</th>
+                            <th>No Kontrak</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($alat_ukur as $alat)
                         <tr>
-                            <td>{{ $alat->urutan}}</td>
-                            <td>{{ $alat->RO }}</td>
+                            <td>{{ $alat->urutan }}</td>
+                            <td class="ro">{{ $alat->RO }}</td>
                             <td>{{ $alat->kode }}</td>
                             <td>{{ $alat->nama_alat }}</td>
                             <td>{{ $alat->merk }}</td>
                             <td>{{ $alat->type }}</td>
                             <td>{{ $alat->serial_number }}</td>
                             <td>{{ $alat->tahun_perolehan }}</td>
-                            <td>{{ $alat->kondisi_alat }}</td>
+                            <td class="kondisi">{{ $alat->kondisi_alat }}</td>
                             <td>{{ $alat->harga_pembelian }}</td>
                             <td>{{ $alat->no_kontrak_spk }}</td>
                             <td>
@@ -170,23 +201,48 @@
     </div>
 
     <script>
-        function searchTable() {
-            const input = document.getElementById('searchInput');
-            if (!input) return;
-            const filter = input.value.toLowerCase();
-            const rows = document.querySelectorAll('.table tbody tr');
+        function filterTable() {
+            const roFilter = document.getElementById("roFilter").value.toLowerCase();
+            const kondisiFilter = document.getElementById("kondisiFilter").value.toLowerCase();
+            const rows = document.querySelectorAll("#alatukurTable tbody tr");
 
             rows.forEach(row => {
-                let text = row.innerText.toLowerCase();
-                row.style.display = text.includes(filter) ? '' : 'none';
+                const roCell = row.querySelector(".ro").textContent.toLowerCase();
+                const kondisiCell = row.querySelector(".kondisi").textContent.toLowerCase();
+
+                const matchesRO = roFilter === "" || roCell.includes(roFilter);
+                const matchesKondisi = kondisiFilter === "" || kondisiCell.includes(kondisiFilter);
+
+                if (matchesRO && matchesKondisi) {
+                    row.style.display = ""; // Menampilkan baris
+                } else {
+                    row.style.display = "none"; // Menyembunyikan baris
+                }
             });
         }
 
-        function deleteRow(btn) {
-            const row = btn.closest('tr');
-            if (confirm("Apakah Anda yakin ingin menghapus data ini?")) {
-                row.remove();
-            }
+        function searchTable() {
+            const input = document.getElementById("searchInput");
+            const filter = input.value.toLowerCase();
+            const rows = document.querySelectorAll("#alatukurTable tbody tr");
+
+            rows.forEach(row => {
+                const cells = row.getElementsByTagName("td");
+                let matchesSearch = false;
+                
+                for (let i = 0; i < cells.length; i++) {
+                    if (cells[i].textContent.toLowerCase().includes(filter)) {
+                        matchesSearch = true;
+                        break;
+                    }
+                }
+
+                if (matchesSearch) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
         }
     </script>
 @endsection
