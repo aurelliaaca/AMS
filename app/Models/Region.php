@@ -21,7 +21,7 @@ class Region extends Model
 
     public function perangkat()
     {
-        return $this->hasMany(Perangkat::class, 'kode_site', 'kode_site');
+        return $this->hasMany(ListPerangkat::class, 'kode_site', 'kode_site');
     }
 
 }

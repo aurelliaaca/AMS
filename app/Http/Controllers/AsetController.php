@@ -3,90 +3,315 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Alatukur;
-use App\Models\perangkat;
+use App\Models\ListPerangkat;
+use App\Models\Perangkat;
+use App\Models\BrandPerangkat;
 use App\Models\ListJaringan;
+use Illuminate\Support\Facades\DB;
 
 class AsetController extends Controller
 {
     public function jaringan()
     {
         // Ambil data dengan pagination, 10 data per halaman
-        $jaringanData = ListJaringan::paginate(10);
+        $jaringanData = ListJaringan::all();
         return view('aset.jaringan', compact('jaringanData'));
     }
 
     public function perangkat()
     {
-        return view('aset.perangkat');
+        $perangkatList = Perangkat::orderBy('nama_pkt', 'asc')->get();
+        $brands = BrandPerangkat::orderBy('nama_brand', 'asc')->get();
+        $regions = \App\Models\Region::orderBy('nama_region', 'asc')->get();
+        return view('aset.perangkat', compact('perangkatList', 'brands', 'regions'));
     }
 
     // Get the list of perangkat with optional filters for region and site
     public function listPerangkat(Request $request)
     {
-        $perangkat = Perangkat::query();
-
+        $perangkat = ListPerangkat::query();
+    
         // Filter perangkat based on region and site if provided
         if ($request->region) {
             $perangkat->where('kode_region', $request->region);
         }
-
+    
         if ($request->site) {
             $perangkat->where('kode_site', $request->site);
         }
-
+    
         $listPerangkat = $perangkat->get();
-
+    
         return view('aset.perangkat', compact('listPerangkat'));
     }
-
+    
     // Fetch perangkat data with join on site and region tables
     public function getPerangkat(Request $request)
-    {
-        $perangkat = \DB::table('listperangkat')
-            ->join('site', 'listperangkat.kode_site', '=', 'site.kode_site')
-            ->join('region', 'listperangkat.kode_region', '=', 'region.kode_region')
-            ->select('listperangkat.*', 'site.nama_site', 'region.nama_region');
+{
+    $perangkat = \DB::table('listperangkat')
+        ->join('site', 'listperangkat.kode_site', '=', 'site.kode_site')
+        ->join('region', 'listperangkat.kode_region', '=', 'region.kode_region')
+        ->join('perangkat', 'listperangkat.kode_pkt', '=', 'perangkat.kode_pkt')
+        ->join('brandperangkat', 'listperangkat.kode_brand', '=', 'brandperangkat.kode_brand')
+        ->select('listperangkat.*', 'site.nama_site', 'region.nama_region', 'perangkat.nama_pkt', 'brandperangkat.nama_brand');
 
-        // Filter perangkat based on region if provided
-        if ($request->has('region') && !empty($request->region)) {
-            $perangkat->whereIn('listperangkat.kode_region', $request->region);
-        }
-
-        // Filter perangkat based on site if provided
-        if ($request->has('site') && !empty($request->site)) {
-            $perangkat->whereIn('listperangkat.kode_site', $request->site);
-        }
-
-        $listPerangkat = $perangkat->get();
-
-        return response()->json([
-            'perangkat' => $listPerangkat
-        ]);
+    // Filter perangkat berdasarkan region jika diberikan
+    if ($request->has('region') && !empty($request->region)) {
+        $perangkat->whereIn('listperangkat.kode_region', $request->region);
     }
+
+    // Filter perangkat berdasarkan site jika diberikan
+    if ($request->has('site') && !empty($request->site)) {
+        $perangkat->whereIn('listperangkat.kode_site', $request->site);
+    }
+
+    // Filter perangkat berdasarkan perangkat yang dipilih
+    if ($request->has('perangkat') && !empty($request->perangkat)) {
+        $perangkat->whereIn('listperangkat.kode_pkt', $request->perangkat);
+    }
+
+    // Filter perangkat berdasarkan brand yang dipilih
+    if ($request->has('brand') && !empty($request->brand)) {
+        $perangkat->whereIn('listperangkat.kode_brand', $request->brand);
+    }
+
+    $listPerangkat = $perangkat->get();
+
+    return response()->json([
+        'perangkat' => $listPerangkat
+    ]);
+}
+
 
     // Fetch sites based on the selected regions
     public function getSites(Request $request)
+{
+    // Cek apakah ada parameter 'regions' dalam request dan pastikan tidak kosong
+    if ($request->has('regions') && !empty($request->regions)) {
+        // Ambil data dari tabel 'site' berdasarkan kode_region yang ada di request
+        $sites = \DB::table('site')
+            ->whereIn('kode_region', $request->regions)  // Ambil data berdasarkan region yang dipilih
+            ->orderBy('nama_site', 'asc')  // Urutkan secara ascending berdasarkan nama_site
+            ->pluck('nama_site', 'kode_site');  // Ambil nama_site dan kode_site sebagai key-value pairs
+    
+        // Kembalikan data dalam bentuk JSON
+        return response()->json($sites);
+    }
+    
+    // Jika tidak ada regions yang diberikan, kembalikan array kosong
+    return response()->json([]);
+}
+
+
+public function store(Request $request)
+{
+    try {
+        // Validasi input
+        $validated = $request->validate([
+            'kode_region' => 'required|exists:region,kode_region',
+            'kode_site' => 'required|exists:site,kode_site',
+            'kode_pkt' => 'required|exists:perangkat,kode_pkt',
+            'kode_brand' => 'required|exists:brandperangkat,kode_brand',
+            'no_rack' => 'required|string',
+            'pkt_ke' => 'required|string',
+            'type' => 'required|string',
+            'uawal' => 'required|string',
+            'uakhir' => 'required|string',
+        ]);
+
+        // Debug: lihat data yang diterima
+        \Log::info('Received data:', $request->all());
+
+        // Mendapatkan nilai WDM tertinggi dan tambahkan 1
+        $maxWdm = ListPerangkat::max('WDM') ?? 0;
+        $newWdm = $maxWdm + 1;
+
+        // Menyimpan perangkat dengan WDM baru
+        $perangkat = ListPerangkat::create([
+            'WDM' => $newWdm,
+            'kode_region' => $request->kode_region,
+            'kode_site' => $request->kode_site,
+            'kode_pkt' => $request->kode_pkt,
+            'kode_brand' => $request->kode_brand,
+            'no_rack' => $request->no_rack,
+            'pkt_ke' => $request->pkt_ke,
+            'type' => $request->type,
+            'uawal' => $request->uawal,
+            'uakhir' => $request->uakhir,
+        ]);
+
+        // Debug: lihat data yang disimpan
+        \Log::info('Stored data:', $perangkat->toArray());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Perangkat berhasil ditambahkan!',
+            'data' => $perangkat,
+        ]);
+
+    } catch (\Exception $e) {
+        // Debug: log error
+        \Log::error('Error storing perangkat: ' . $e->getMessage());
+        \Log::error($e->getTraceAsString());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal menambahkan perangkat: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+
+public function getPop(Request $request)
     {
         if ($request->has('regions') && !empty($request->regions)) {
-            $sites = \DB::table('site')
-                ->whereIn('kode_region', $request->regions)
-                ->pluck('nama_site', 'kode_site'); // Return nama_site and kode_site as key-value pairs
-
-            return response()->json($sites);
+            $nama_pop = \DB::table('fasilitas') // Pastikan ini adalah tabel yang benar
+                ->where('RO', $request->regions) // Sesuaikan dengan nama kolom di database
+                ->distinct()
+                ->pluck('Nama_POP'); // Ambil hanya Nama_POP
+            
+            return response()->json($nama_pop);
         }
-
+    
         return response()->json([]);
     }
 
 
     public function fasilitas()
     {
-        return view('aset.fasilitas');
+        $fasilitas = Fasilitas::all();
+        $nama_pop = Fasilitas::distinct()->pluck('Nama_POP');
+        $ro_list = Fasilitas::distinct()->pluck('RO');
+        return view('aset.fasilitas', compact('fasilitas', 'nama_pop', 'ro_list'));
     }
+
 
     public function alatukur()
     {
         $alat_ukur = Alatukur::all();
         return view('aset.alatukur', compact('alat_ukur'));
+    }
+
+    public function getPerangkatById($wdm)
+    {
+        $perangkat = ListPerangkat::where('wdm', $wdm)->first();
+        
+        if ($perangkat) {
+            return response()->json([
+                'success' => true,
+                'perangkat' => $perangkat
+            ]);
+        }
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Perangkat tidak ditemukan'
+        ], 404);
+    }
+
+    public function destroy($wdm)
+    {
+        try {
+            \Log::info('Attempting to delete perangkat with WDM: ' . $wdm);
+            
+            $perangkat = ListPerangkat::where('WDM', $wdm)->first();
+            
+            if (!$perangkat) {
+                \Log::warning('Perangkat not found with WDM: ' . $wdm);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Perangkat tidak ditemukan'
+                ], 404);
+            }
+
+            \Log::info('Found perangkat:', $perangkat->toArray());
+            
+            DB::beginTransaction();
+            try {
+                $perangkat->delete();
+                DB::commit();
+                
+                \Log::info('Successfully deleted perangkat with WDM: ' . $wdm);
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Perangkat berhasil dihapus'
+                ]);
+            } catch (\Exception $e) {
+                DB::rollback();
+                throw $e;
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Error deleting perangkat: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus perangkat: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, $wdm)
+    {
+        try {
+            // Validasi input
+            $validated = $request->validate([
+                'kode_region' => 'required|exists:region,kode_region',
+                'kode_site' => 'required|exists:site,kode_site',
+                'kode_pkt' => 'required|exists:perangkat,kode_pkt',
+                'kode_brand' => 'required|exists:brandperangkat,kode_brand',
+                'no_rack' => 'required|string',
+                'pkt_ke' => 'required|string',
+                'type' => 'required|string',
+                'uawal' => 'required|string',
+                'uakhir' => 'required|string',
+            ]);
+
+            // Debug: lihat data yang diterima
+            \Log::info('Update received data:', $request->all());
+
+            $perangkat = ListPerangkat::where('WDM', $wdm)->first();
+            
+            if (!$perangkat) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Perangkat tidak ditemukan'
+                ], 404);
+            }
+
+            // Update data
+            $perangkat->update([
+                'kode_region' => $request->kode_region,
+                'kode_site' => $request->kode_site,
+                'kode_pkt' => $request->kode_pkt,
+                'kode_brand' => $request->kode_brand,
+                'no_rack' => $request->no_rack,
+                'pkt_ke' => $request->pkt_ke,
+                'type' => $request->type,
+                'uawal' => $request->uawal,
+                'uakhir' => $request->uakhir,
+            ]);
+
+            // Debug: lihat data yang diupdate
+            \Log::info('Updated data:', $perangkat->toArray());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Perangkat berhasil diupdate!',
+                'data' => $perangkat
+            ]);
+
+        } catch (\Exception $e) {
+            // Debug: log error
+            \Log::error('Error updating perangkat: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengupdate perangkat: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

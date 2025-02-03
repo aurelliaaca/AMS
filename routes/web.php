@@ -1,4 +1,4 @@
-web <?php
+<?php
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
@@ -53,7 +53,10 @@ Route::middleware('auth')->group(function () {
 Route::get('/jaringan', [AsetController::class, 'jaringan'])->name('jaringan');
 
 // Rute untuk halaman perangkat
-Route::get('/perangkat', [AsetController::class, 'listPerangkat'])->name('perangkat');
+Route::get('/perangkat', [AsetController::class, 'perangkat'])->name('perangkat');
+Route::post('/store-perangkat', [AsetController::class, 'store'])->name('perangkat.store');
+Route::put('/update-perangkat/{wdm}', [AsetController::class, 'update'])->name('perangkat.update');
+Route::delete('/delete-perangkat/{wdm}', [AsetController::class, 'destroy'])->name('perangkat.destroy');
 
 // Rute untuk halaman fasilitas
 Route::get('/fasilitas', [AsetController::class, 'fasilitas'])->name('fasilitas');
@@ -78,3 +81,6 @@ Route::get('/get-perangkat', [AsetController::class, 'getPerangkat']);
 
 // Route untuk menyimpan perangkat baru
 // Route::post('/perangkat', [PerangkatController::class, 'store'])->name('perangkat.store');
+
+// Rute untuk edit dan delete perangkat
+Route::get('/get-perangkat/{wdm}', [AsetController::class, 'getPerangkatById']);

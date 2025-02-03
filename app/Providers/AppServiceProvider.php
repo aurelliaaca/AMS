@@ -48,7 +48,8 @@ class AppServiceProvider extends ServiceProvider
             '*', // Tanda '*' berarti data ini akan dikirim ke semua view
             function ($view) {
                 // Mengambil semua data region
-                $regions = Region::all();
+                $regions = Region::orderBy('nama_region', 'asc')->get();
+
 
                 // Mengirimkan data regions ke view
                 $view->with('regions', $regions);
