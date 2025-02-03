@@ -2,15 +2,16 @@
 
 @section('content')
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+       @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
         
         /* Reset & Global Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "Inter", serif;
+            font-family: 'Inter', sans-serif;
             font-optical-sizing: auto;
             font-weight: 400;
             font-style: normal;
@@ -231,32 +232,37 @@
             padding-left: 10px; /* Atur padding kiri untuk menggeser konten ke kanan */
         }
 
-        /* Styling untuk pagination */
-        .pagination {
-            justify-content: center; /* Pusatkan pagination */
-            margin-top: 20px; /* Jarak atas untuk pagination */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 8px;
         }
 
-        .pagination .page-item.active .page-link {
-            background-color: #4f52ba; /* Warna latar belakang untuk halaman aktif */
-            border-color: #4f52ba; /* Warna border untuk halaman aktif */
-            color: white; /* Warna teks untuk halaman aktif */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
         }
 
-        .pagination .page-link {
-            color: #4f52ba; /* Warna teks untuk link */
-            border: 1px solid #4f52ba; /* Border untuk link */
+        th {
+            background-color: #4f52ba;
+            color: #fff;
+            padding: 12px;
+            text-align: center;
         }
 
-        .pagination .page-link:hover {
-            background-color: #b0b2eb; /* Warna latar belakang saat hover */
-            color: white; /* Warna teks saat hover */
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
         }
 
-        .pagination .page-item.disabled .page-link {
-            color: #4f52ba; /* Warna teks untuk link yang dinonaktifkan */
-            background-color: transparent; /* Hapus latar belakang saat dinonaktifkan */
-            border-color: #4f52ba; /* Warna border untuk link yang dinonaktifkan */
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: rgba(79, 82, 186, 0.2);
         }
     </style>
 
@@ -272,8 +278,8 @@
                 </div>
             </div>
             <div>
-            <div class="table-responsive">
-                <table class="table" id="jaringanTable" style="min-width: 1000px; table-layout: auto;">
+            <div class="table-container">
+                <table id="jaringanTable" class="table">
                     <thead>
                         <tr>
                             <th style="width: 5%;">No</th>
@@ -310,8 +316,8 @@
                             <th style="width: 10%;">
                                 <select class="filter-select" id="mainlinkFilter" onchange="filterTable()">
                                     <option value="">Mainlink Backuplink</option>
-                                    <option value="Jartatup">Single</option>
-                                    <option value="Jartaplok">Protected</option>
+                                    <option value="Single">Single</option>
+                                    <option value="Protected">Protected</option>
                                 </select>
                             </th>
                             <th style="width: 10%;">Panjang</th>
@@ -329,7 +335,7 @@
                                 <select class="filter-select" id="jenisKabelFilter" onchange="filterTable()">
                                     <option value="">Jenis Kabel</option>
                                     <option value="Kabel Tanah">Kabel Tanah</option>
-                                    <option value="Kabel Uadara">Kabel Uadara</option>
+                                    <option value="Kabel Udara">Kabel Udara</option>
                                 </select>
                             </th>
                             <th style="width: 10%;">
@@ -376,7 +382,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="dataRows">
                         @foreach($jaringanData as $data)
                         <tr>
                             <td>{{ $data->id_jaringan }}</td>
@@ -400,166 +406,88 @@
                     </tbody>
                 </table>
             </div>
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item {{ $jaringanData->onFirstPage() ? 'disabled' : '' }}">
-                        <a class="page-link" href="{{ $jaringanData->previousPageUrl() }}" tabindex="-1">Previous</a>
-                    </li>
-
-                    <!-- Menampilkan hanya 3 halaman: halaman sebelumnya, halaman saat ini, dan halaman berikutnya -->
-                    @if ($jaringanData->currentPage() > 1)
-                        <li class="page-item">
-                            <a class="page-link" href="{{ $jaringanData->url($jaringanData->currentPage() - 1) }}">{{ $jaringanData->currentPage() - 1 }}</a>
-                        </li>
-                    @endif
-
-                    <li class="page-item active">
-                        <a class="page-link" href="#">{{ $jaringanData->currentPage() }}</a>
-                    </li>
-
-                    @if ($jaringanData->currentPage() < $jaringanData->lastPage())
-                        <li class="page-item">
-                            <a class="page-link" href="{{ $jaringanData->url($jaringanData->currentPage() + 1) }}">{{ $jaringanData->currentPage() + 1 }}</a>
-                        </li>
-                    @endif
-
-                    <li class="page-item {{ $jaringanData->hasMorePages() ? '' : 'disabled' }}">
-                        <a class="page-link" href="{{ $jaringanData->nextPageUrl() }}">Next</a>
-                    </li>
-                </ul>
-            </nav>
         </div>
     </div>
 
     <script>
-        let allData = []; // Array untuk menyimpan semua data
+      document.addEventListener("DOMContentLoaded", function () {
+    initializeData();
 
-        // Fungsi untuk mengisi allData dengan data dari tabel
-        function initializeData() {
-            const table = document.getElementById('jaringanTable');
-            const rows = table.getElementsByTagName('tr');
+    document.getElementById("searchInput").addEventListener("keyup", searchTable);
+    document.querySelectorAll(".filter-select").forEach(select => {
+        select.addEventListener("change", filterTable);
+    });
+});
 
-            for (let i = 1; i < rows.length; i++) {
-                const cells = rows[i].getElementsByTagName('td');
-                const rowData = [];
-                for (let j = 0; j < cells.length; j++) {
-                    rowData.push(cells[j].innerText.toLowerCase());
-                }
-                allData.push(rowData);
-            }
-        }
+let allData = [];
 
-        function filterTable() {
-            const roFilter = document.getElementById('roFilter').value.toLowerCase();
-            const tipeJaringanFilter = document.getElementById('tipeJaringanFilter').value.toLowerCase();
-            const jartatupFilter = document.getElementById('jartatupFilter').value.toLowerCase();
-            const mainlinkFilter = document.getElementById('mainlinkFilter').value.toLowerCase();
-            const coreFilter = document.getElementById('jumlahCoreFilter').value.toLowerCase();
-            const kabelFilter = document.getElementById('kabelFilter').value.toLowerCase();
-            const tipeKabelFilter = document.getElementById('tipeKabelFilter').value.toLowerCase();
-            const travellingFilter = document.getElementById('travellingFilter').value.toLowerCase();
-            const verificationFilter = document.getElementById('verificationFilter').value.toLowerCase();
-            const restorationFilter = document.getElementById('restorationFilter').value.toLowerCase();
-            const correctiveFilter = document.getElementById('correctiveFilter').value.toLowerCase();
-            const table = document.getElementById('jaringanTable');
-            const rows = table.getElementsByTagName('tr');
+function initializeData() {
+    const tableRows = document.querySelectorAll("#jaringanTable tbody tr");
+    tableRows.forEach(row => {
+        const rowData = {
+            id: row.cells[0].textContent.trim(),
+            ro: row.cells[1].textContent.trim(),
+            tipe_jaringan: row.cells[2].textContent.trim(),
+            segmen: row.cells[3].textContent.trim(),
+            jartatup: row.cells[4].textContent.trim(),
+            mainlink: row.cells[5].textContent.trim(),
+            panjang: row.cells[6].textContent.trim(),
+            panjang_drawing: row.cells[7].textContent.trim(),
+            jumlah_core: row.cells[8].textContent.trim(),
+            jenis_kabel: row.cells[9].textContent.trim(),
+            tipe_kabel: row.cells[10].textContent.trim(),
+            kode_site: row.cells[11].textContent.trim(),
+            travelling: row.cells[12].textContent.trim(),
+            verification: row.cells[13].textContent.trim(),
+            restoration: row.cells[14].textContent.trim(),
+            corrective: row.cells[15].textContent.trim(),
+        };
+        allData.push(rowData);
+    });
+}
 
-            for (let i = 1; i < rows.length; i++) {
-                rows[i].style.display = 'none'; // Sembunyikan semua baris
-            }
+function searchTable() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let rows = document.querySelectorAll("#jaringanTable tbody tr");
 
-            // Filter data berdasarkan input
-            for (let i = 0; i < allData.length; i++) {
-                let display = true;
+    rows.forEach(row => {
+        let text = row.textContent.toLowerCase();
+        row.style.display = text.includes(input) ? "" : "none";
+    });
+}
 
-                // Cek setiap filter
-                if (roFilter && allData[i][1] !== roFilter) {
-                    display = false;
-                }
-                if (tipeJaringanFilter && allData[i][2] !== tipeJaringanFilter) {
-                    display = false;
-                }
-                if (segmenFilter && allData[i][3].indexOf(segmenFilter) === -1) {
-                    display = false;
-                }
-                if (jartatupFilter && allData[i][4].indexOf(jartatupFilter) === -1) {
-                    display = false;
-                }
-                if (mainlinkFilter && allData[i][5].indexOf(mainlinkFilter) === -1) {
-                    display = false;
-                }
-                if (jumlahCoreFilter && allData[i][6] !== jumlahCoreFilter) {
-                    display = false;
-                }
-                if (jenisKabelFilter && allData[i][7] !== jenisKabelFilter) {
-                    display = false;
-                }
-                if (tipeKabelFilter && allData[i][8] !== tipeKabelFilter) {
-                    display = false;
-                }
-                if (travellingFilter && allData[i][9] !== travellingFilter) {
-                    display = false;
-                }
-                if (verificationFilter && allData[i][10] !== verificationFilter) {
-                    display = false;
-                }
-                if (restorationFilter && allData[i][11] !== restorationFilter) {
-                    display = false;
-                }
-                if (correctiveFilter && allData[i][12] !== correctiveFilter) {
-                    display = false;
-                }
+function filterTable() {
+    let roFilter = document.getElementById("roFilter").value.toLowerCase();
+    let tipeJaringanFilter = document.getElementById("tipeJaringanFilter").value.toLowerCase();
+    let jartatupFilter = document.getElementById("jartatupFilter").value.toLowerCase();
+    let mainlinkFilter = document.getElementById("mainlinkFilter").value.toLowerCase();
+    let jumlahCoreFilter = document.getElementById("jumlahCoreFilter").value.toLowerCase();
+    let jenisKabelFilter = document.getElementById("jenisKabelFilter").value.toLowerCase();
+    let tipeKabelFilter = document.getElementById("tipeKabelFilter").value.toLowerCase();
+    let travellingFilter = document.getElementById("travellingFilter").value.toLowerCase();
+    let verificationFilter = document.getElementById("verificationFilter").value.toLowerCase();
+    let restorationFilter = document.getElementById("restorationFilter").value.toLowerCase();
+    let correctiveFilter = document.getElementById("correctiveFilter").value.toLowerCase();
 
-                // Tampilkan baris yang sesuai
-                if (display) {
-                    // Temukan baris yang sesuai di tabel
-                    for (let k = 1; k < rows.length; k++) {
-                        const cells = rows[k].getElementsByTagName('td');
-                        if (allData[i].every((val, index) => val === cells[index].innerText.toLowerCase())) {
-                            rows[k].style.display = ''; // Tampilkan baris yang sesuai
-                        }
-                    }
-                }
-            }
-        }
+    document.querySelectorAll("#jaringanTable tbody tr").forEach(row => {
+        let values = row.children;
+        let match =
+            (roFilter === "" || values[1].textContent.toLowerCase().includes(roFilter)) &&
+            (tipeJaringanFilter === "" || values[2].textContent.toLowerCase().includes(tipeJaringanFilter)) &&
+            (jartatupFilter === "" || values[4].textContent.toLowerCase().includes(jartatupFilter)) &&
+            (mainlinkFilter === "" || values[5].textContent.toLowerCase().includes(mainlinkFilter)) &&
+            (jumlahCoreFilter === "" || values[8].textContent.toLowerCase().includes(jumlahCoreFilter)) &&
+            (jenisKabelFilter === "" || values[9].textContent.toLowerCase().includes(jenisKabelFilter)) &&
+            (tipeKabelFilter === "" || values[10].textContent.toLowerCase().includes(tipeKabelFilter)) &&
+            (travellingFilter === "" || values[12].textContent.toLowerCase().includes(travellingFilter)) &&
+            (verificationFilter === "" || values[13].textContent.toLowerCase().includes(verificationFilter)) &&
+            (restorationFilter === "" || values[14].textContent.toLowerCase().includes(restorationFilter)) &&
+            (correctiveFilter === "" || values[15].textContent.toLowerCase().includes(correctiveFilter));
 
-        function searchTable() {
-            const input = document.getElementById('searchInput');
-            const filter = input.value.toLowerCase();
-            const table = document.getElementById('jaringanTable');
-            const rows = table.getElementsByTagName('tr');
+        row.style.display = match ? "" : "none";
+    });
+}
 
-            // Hapus semua baris yang ada
-            for (let i = 1; i < rows.length; i++) {
-                rows[i].style.display = 'none'; // Sembunyikan semua baris
-            }
+</script>
 
-            // Filter data berdasarkan input pencarian
-            for (let i = 0; i < allData.length; i++) {
-                let display = false;
-
-                // Cek setiap kolom untuk mencocokkan input pencarian
-                for (let j = 0; j < allData[i].length; j++) {
-                    if (allData[i][j].indexOf(filter) > -1) {
-                        display = true; // Jika ada yang cocok, tampilkan baris
-                        break;
-                    }
-                }
-
-                // Tampilkan baris yang sesuai
-                if (display) {
-                    // Temukan baris yang sesuai di tabel
-                    for (let k = 1; k < rows.length; k++) {
-                        const cells = rows[k].getElementsByTagName('td');
-                        if (allData[i].every((val, index) => val === cells[index].innerText.toLowerCase())) {
-                            rows[k].style.display = ''; // Tampilkan baris yang sesuai
-                        }
-                    }
-                }
-            }
-        }
-
-        // Panggil fungsi initializeData saat halaman dimuat
-        window.onload = initializeData;
-    </script>
 @endsection
