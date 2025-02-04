@@ -31,4 +31,9 @@ class ListJaringan extends Model
         'restoration_time',
         'total_corrective_time',
     ];
+
+    public function tipe()
+    {
+        return $this->belongsTo(Tipe::class, 'tipe_jaringan', 'kode_tipe');
+    }
 }

@@ -1,493 +1,599 @@
 @extends('layouts.sidebar')
 
 @section('content')
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-       @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
-        /* Reset & Global Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            font-optical-sizing: auto;
-            font-weight: 400;
-            font-style: normal;
+            font-family: "Inter", sans-serif;
+            font-size: 12px;
         }
-
-        body {
-            min-height: 100vh;
-        }
-
-        /* Container Styles */
+        
         .container {
-            box-shadow: 2px 2px 10px #9497f5;
-            margin: 5px auto;
-            padding: 20px 10px;
+            width: 100%;
             background-color: #fff;
-            max-width: 100%;
-            height: auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .dropdown-container {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .dropdown-container > * {
+            flex: 1;
+        }
+        
+        select, .search-bar input {
+            width: 100%;
+            font-size: 12px;
+            padding: 12px 12px;
+            border: 1px solid #4f52ba;
             border-radius: 5px;
-            transition: 0.3s linear all;
-        }
-
-        .container:hover {
-            box-shadow: 4px 4px 20px #DADADA;
-        }
-
-        /* Header Styles */
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .header-title {
-            text-align: left;
-            margin: 0;
-        }
-
-        .search-bar {
-            display: flex;
-            align-items: center;
-            background: #4f52ba;
-            border-radius: 8px;
-            padding: 8px 12px;
-            width: 300px;
-        }
-
-        .search-bar input {
-            border: none;
-            background: none;
-            outline: none;
-            font-size: 14px;
-            width: 100%;
-            color: #fff;
-        }
-
-        .search-bar input::placeholder {
-            color: #fff;
-        }
-
-        .search-bar svg {
-            margin-right: 8px;
-            color: #fff;
-        }
-
-        .filter-select {
-            border: none;
-            border-radius: 8px;
-            background-color: #4f52ba; 
-            padding: 8px 12px;
-            font-size: 14px;
-            color: #fff;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        /* Table Styles */
-        .table {
-            width: 100%;
-            font-size: 18px;
-            border-collapse: collapse;
-            table-layout: auto;
-            padding-left: 30px;
-        }
-
-        .table thead th {
-            font-weight: bold;
-            text-align: left;
-            padding: 15px;
-            color: #fff;
-            background-color: #4f52ba;
-            font-size: 16px;
-        }
-
-        .table thead th:nth-child(12),
-        .table tbody td:nth-child(12) {
-            min-width: 175px;
-            word-wrap: break-word;
-        }
-
-        .table thead th:nth-child(8) {
-            min-width: 175px;
-            word-wrap: break-word;
-        }
-
-        .table tbody td:nth-child(8) {
-            padding-left: 60px;
-        }
-
-        .table tbody th:nth-child(13){
-            padding-left: 70px;
-        }
-
-        .table thead th:nth-child(3) {
-            min-width: 175px;
-            word-wrap: break-word;
-        }
-
-        .table thead th:nth-child(5) {
-            min-width: 250px;
-            word-wrap: break-word;
-        }
-
-        .table thead th:nth-child(6) {
-            min-width: 175px;
-            word-wrap: break-word;
-        }
-
-        .table thead th:nth-child(7) {
-            min-width: 175px;
-            word-wrap: break-word;
-        }
-
-        .table thead th:nth-child(8) {
-            min-width: 175px;
-            word-wrap: break-word;
-        }
-
-        .table thead th:nth-child(9) {
-            min-width: 175px;
-            word-wrap: break-word;
-        }
-
-        .table thead th:nth-child(10) {
-            min-width: 175px;
-            word-wrap: break-word;
-        }
-
-        .table thead th:nth-child(11) {
-            min-width: 175px;
-            word-wrap: break-word;
-        }
-
-        .table thead th:nth-child(13) {
-            min-width: 175px;
-            word-wrap: break-word;
-        }
-
-        .table thead th:nth-child(14) {
-            min-width: 175px;
-            word-wrap: break-word;
-        }
-
-        .table thead th:nth-child(15) {
-            min-width: 175px;
-            word-wrap: break-word;
-        }
-
-        .table thead th:nth-child(16) {
-            min-width: 200px;
-            word-wrap: break-word;
-        }
-
-        .table thead th:nth-child(4),
-        .table tbody td:nth-child(4) {
-            min-width: 300px;
-            max-width: 500px;
-            text-align: middle;
-            word-wrap: break-word;
-        }
-
-        .table tbody tr {
             background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-            padding: 15px;
+            transition: border-color 0.3s;
         }
-
-        .table tbody tr:hover {
-            transform: translateY(-3px);
-            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+        
+        .search-bar input {
+            outline: none;
         }
-
-        .table tbody td {
-            padding: 15px;
-            font-size: 16px;
-            color: #333;
-            vertical-align: middle;
-            padding-left: 30px;
+        
+        select:focus, .search-bar input:focus {
+            border-color: #4f52ba;
+            box-shadow: 0 0 5px rgba(79, 82, 186, 0.5);
         }
-
-        .table-responsive {
-            overflow-x: auto;
-            width: 100%;
-        }
-
-        .table th {
-            text-align: left;
-        }
-
-        .table th:nth-child(1), .table td:nth-child(1) {
-            width: 150px;
-        }
-
-        /* Tambahkan padding ke semua td */
-        .table td {
-            padding-left: 10px; /* Atur padding kiri untuk menggeser konten ke kanan */
-        }
-
+        
         .table-container {
             width: 100%;
             overflow-x: auto;
             border-radius: 8px;
         }
-
+        
         table {
             width: 100%;
             border-collapse: collapse;
             background-color: #fff;
+            table-layout: auto;
         }
-
+        
+        th, td {
+            padding: 12px;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            border-bottom: 1px solid #ddd;
+        }
+        
         th {
             background-color: #4f52ba;
             color: #fff;
-            padding: 12px;
-            text-align: center;
         }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
+        
+        .no-data {
             text-align: center;
+            color: rgba(79, 82, 186, 0.2);
         }
-
+        
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-
+        
         tr:hover {
             background-color: rgba(79, 82, 186, 0.2);
         }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            width: 500px;
+            position: relative;
+        }
+
+        .modal-content h2 {
+            color: #595959;
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .form-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: #595959;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            font-size: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-weight: normal;
+            background-color: #fff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #4f52ba;
+            box-shadow: 0 0 5px rgba(79, 82, 186, 0.3);
+            outline: none;
+        }
+
+        .add-button {
+            background-color: #4f52ba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 18.75%;
+            margin-top: 10px;
+        }
+
+        .edit-btn {
+            background-color: #4f52ba;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 20px;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close-btn:hover {
+            color: #333;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: right;
+            gap: 10px;
+            margin-top: 20px;
+        }
     </style>
 
-    <div class="main">
-        <div class="container">
-            <div class="header-container">
-                <h2 class="header-title"><strong>Data Jaringan</strong></h2>
-                <div class="search-bar">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
-                        <path fill="currentColor" d="M10 18a8 8 0 1 1 0-16a8 8 0 0 1 0 16Zm7.707-2.707a1 1 0 0 0 0 1.414l3 3a1 1 0 0 0 1.414-1.414l-3-3a1 1 0 0 0-1.414 0Z" />
-                    </svg>
-                    <input type="text" id="searchInput" placeholder="Search" onkeyup="searchTable()" />
-                </div>
-            </div>
-            <div>
-            <div class="table-container">
-                <table id="jaringanTable" class="table">
-                    <thead>
-                        <tr>
-                            <th style="width: 5%;">No</th>
-                            <th style="width: 10%;">
-                                <select class="filter-select" id="roFilter" onchange="filterTable()">
-                                    <option value="">RO</option>
-                                    <option value="Batam">Batam</option>
-                                    <option value="Bekasi">Bekasi</option>
-                                    <option value="Cilegon">Cilegon</option>
-                                    <option value="Jabatim">Jabatim</option>
-                                    <option value="Jakarta">Jakarta</option>
-                                    <option value="Jambi">Jambi</option>
-                                    <option value="Lampung">Lampung</option>
-                                    <option value="Palembang">Palembang</option>
-                                    <option value="Sumbagut">Sumbagut</option>
-                                </select>
-                            </th>
-                            <th style="width: 10%;">
-                                <select class="filter-select" id="tipeJaringanFilter" onchange="filterTable()">
-                                    <option value="">Tipe Jaringan</option>
-                                    <option value="Backbone">Backbone</option>
-                                    <option value="ROW PGN">ROW PGN</option>
-                                    <option value="Lastmile">Lastmile</option>
-                                </select>
-                            </th>
-                            <th style="width: 10%;">Segmen</th>
-                            <th style="width: 10%;">
-                                <select class="filter-select" id="jartatupFilter" onchange="filterTable()">
-                                    <option value="">Jartatup Jartaplok</option>
-                                    <option value="Jartatup">Jartatup</option>
-                                    <option value="Jartaplok">Jartaplok</option>
-                                </select>
-                            </th>
-                            <th style="width: 10%;">
-                                <select class="filter-select" id="mainlinkFilter" onchange="filterTable()">
-                                    <option value="">Mainlink Backuplink</option>
-                                    <option value="Single">Single</option>
-                                    <option value="Protected">Protected</option>
-                                </select>
-                            </th>
-                            <th style="width: 10%;">Panjang</th>
-                            <th style="width: 10%;">Panjang Drawing</th>
-                            <th style="width: 10%;">
-                                <select class="filter-select" id="jumlahCoreFilter" onchange="filterTable()">
-                                    <option value="">Jumlah Core</option>
-                                    <option value="12">12</option>
-                                    <option value="24">24</option>
-                                    <option value="48">48</option>
-                                    <option value="96">96</option>
-                                </select>
-                            </th>
-                            <th style="width: 10%;">
-                                <select class="filter-select" id="jenisKabelFilter" onchange="filterTable()">
-                                    <option value="">Jenis Kabel</option>
-                                    <option value="Kabel Tanah">Kabel Tanah</option>
-                                    <option value="Kabel Udara">Kabel Udara</option>
-                                </select>
-                            </th>
-                            <th style="width: 10%;">
-                                <select class="filter-select" id="tipeKabelFilter" onchange="filterTable()">
-                                    <option value="">Tipe Kabel</option>
-                                    <option value="G652D">G652D</option>
-                                    <option value="G655C">G655C</option>
-                                    <option value="G654C">G654C</option>
-                                    <option value="G654B">G654B</option>
-                                </select>
-                            </th>
-                            <th style="width: 10%;">Kode Site Insan</th>
-                            <th style="width: 10%;">
-                                <select class="filter-select" id="travellingFilter" onchange="filterTable()">
-                                    <option value="">Travelling Time</option>
-                                    <option value="1:00:00">1:00:00</option>
-                                    <option value="2:00:00">2:00:00</option>
-                                    <option value="3:00:00">3:00:00</option>
-                                </select>
-                            </th>
-                            <th style="width: 10%;">
-                                <select class="filter-select" id="verificationFilter" onchange="filterTable()">
-                                    <option value="">Verification Time</option>
-                                    <option value="1:00:00">1:00:00</option>
-                                    <option value="2:00:00">2:00:00</option>
-                                </select>
-                            </th>
-                            <th style="width: 10%;">
-                                <select class="filter-select" id="restorationFilter" onchange="filterTable()">
-                                    <option value="">Restoration Time</option>
-                                    <option value="1:00:00">1:00:00</option>
-                                    <option value="3:00:00">3:00:00</option>
-                                </select>
-                            </th>
-                            <th style="width: 10%;">
-                                <select class="filter-select" id="correctiveFilter" onchange="filterTable()">
-                                    <option value="">Total Corrective Time</option>
-                                    <option value="0:00:00">0:00:00</option>
-                                    <option value="1:00:00">1:00:00</option>
-                                    <option value="2:00:00">2:00:00</option>
-                                    <option value="3:00:00">3:00:00</option>
-                                    <option value="4:00:00">4:00:00</option>
-                                </select>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody id="dataRows">
-                        @foreach($jaringanData as $data)
-                        <tr>
-                            <td>{{ $data->id_jaringan }}</td>
-                            <td>{{ $data->RO }}</td>
-                            <td>{{ $data->tipe_jaringan }}</td>
-                            <td>{{ $data->segmen }}</td>
-                            <td>{{ $data->jartatup_jartaplok }}</td>
-                            <td>{{ $data->mainlink_backuplink}}</td>
-                            <td>{{ $data->panjang }}</td>
-                            <td>{{ $data->panjang_drawing }}</td>
-                            <td>{{ $data->jumlah_core }}</td>
-                            <td>{{ $data->jenis_kabel }}</td>
-                            <td>{{ $data->tipe_kabel }}</td>
-                            <td>{{ $data->kode_site_insan }}</td>
-                            <td>{{ $data->travelling_time }}</td>
-                            <td>{{ $data->verification_time }}</td>
-                            <td>{{ $data->restoration_time }}</td>
-                            <td>{{ $data->total_corrective_time }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+<div class="main">
+    <div class="container">
+        <div class="text-right">
+            <button class="add-button" onclick="openAddJaringanModal()">Tambah Jaringan</button>
+        </div>
+        
+        <div class="dropdown-container">
+            <!-- Dropdown RO -->
+            <select id="roFilter" onchange="filterTable()">
+                <option value="">Pilih RO</option>
+                @foreach ($regions as $region)
+                    <option value="{{ $region->nama_region }}">{{ $region->nama_region }}</option>
+                @endforeach
+            </select>
+            <!-- Dropdown Tipe Jaringan -->
+            <select id="tipeJaringanFilter" onchange="filterTable()">
+                <option value="">Pilih Tipe Jaringan</option>
+                @foreach ($tipeJaringanList as $tipe)
+                    <option value="{{ $tipe->nama_tipe }}">{{ $tipe->nama_tipe }}</option>
+                @endforeach
+            </select>
+
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" id="searchInput" class="custom-select" placeholder="Cari" onkeyup="searchTable()" />
             </div>
         </div>
+
+        <!-- Table Data -->
+        <div class="table-container">
+            <table id="jaringanTable">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">No</th>
+                        <th style="width: 100px;">RO</th>
+                        <th style="width: 150px;">Kode Site Insan</th>
+                        <th style="width: 100px;">Tipe Jaringan</th>
+                        <th style="width: 150px;">Segmen</th>
+                        <th style="width: 100px;">Jartatup/Jartaplok</th>
+                        <th style="width: 150px;">Mainlink/Backuplink</th>
+                        <th style="width: 100px;">Panjang</th>
+                        <th style="width: 150px;">Panjang Drawing</th>
+                        <th style="width: 100px;">Jumlah Core</th>
+                        <th style="width: 150px;">Jenis Kabel</th>
+                        <th style="width: 150px;">Tipe Kabel</th>
+                        <th style="width: 150px;">Travelling Time</th>
+                        <th style="width: 150px;">Restoration Time</th>
+                        <th style="width: 150px;">Total Corrective Time</th>
+                        <th style="width: 150px;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($jaringan as $data)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td class="ro">{{ $data->RO }}</td>
+                        <td>{{ $data->kode_site_insan }}</td>
+                        <td>{{ $data->tipe_jaringan }}</td>
+                        <td>{{ $data->segmen }}</td>
+                        <td>{{ $data->jartatup_jartaplok }}</td>
+                        <td>{{ $data->mainlink_backuplink }}</td>
+                        <td>{{ $data->panjang }}</td>
+                        <td>{{ $data->panjang_drawing }}</td>
+                        <td>{{ $data->jumlah_core }}</td>
+                        <td>{{ $data->jenis_kabel }}</td>
+                        <td>{{ $data->tipe_kabel }}</td>
+                        <td>{{ $data->travelling_time }}</td>
+                        <td>{{ $data->restoration_time }}</td>
+                        <td>{{ $data->total_corrective_time }}</td>
+                        <td>
+                            <button class="edit-btn" onclick="editJaringan({{ $data->id_jaringan }})">Edit</button>
+                            <button class="delete-btn" onclick="deleteJaringan({{ $data->id_jaringan }})">Hapus</button>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
+</div>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-    initializeData();
+<div id="addJaringanModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <button class="modal-close-btn" onclick="closeAddJaringanModal()">×</button>
+        <h2>Tambah Jaringan Baru</h2>
+        <form id="addJaringanForm" method="POST">
+            @csrf
+            <div class="form-container">
+                <div class="left-column">
+                    <div class="form-group">
+                        <label for="roAdd">RO</label>
+                        <select id="roAdd" name="ro" required>
+                            <option value="">Pilih RO</option>
+                            @foreach($regions as $region)
+                                <option value="{{ $region->nama_region }}">{{ $region->nama_region }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-    document.getElementById("searchInput").addEventListener("keyup", searchTable);
-    document.querySelectorAll(".filter-select").forEach(select => {
-        select.addEventListener("change", filterTable);
-    });
-});
+                    <div class="form-group">
+                        <label for="kode_site_insan">Kode Site Insan</label>
+                        <input type="text" id="kode_site_insan" name="kode_site_insan" required>
+                    </div>
 
-let allData = [];
+                    <div class="form-group">
+                        <label for="tipeJaringanAdd">Tipe Jaringan</label>
+                        <select id="tipeJaringanAdd" name="kode_tipe" required>
+                            <option value="">Pilih Tipe Jaringan</option>
+                            @foreach($tipeJaringanList as $tipe)
+                                <option value="{{ $tipe->kode_tipe }}">{{ $tipe->nama_tipe }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-function initializeData() {
-    const tableRows = document.querySelectorAll("#jaringanTable tbody tr");
-    tableRows.forEach(row => {
-        const rowData = {
-            id: row.cells[0].textContent.trim(),
-            ro: row.cells[1].textContent.trim(),
-            tipe_jaringan: row.cells[2].textContent.trim(),
-            segmen: row.cells[3].textContent.trim(),
-            jartatup: row.cells[4].textContent.trim(),
-            mainlink: row.cells[5].textContent.trim(),
-            panjang: row.cells[6].textContent.trim(),
-            panjang_drawing: row.cells[7].textContent.trim(),
-            jumlah_core: row.cells[8].textContent.trim(),
-            jenis_kabel: row.cells[9].textContent.trim(),
-            tipe_kabel: row.cells[10].textContent.trim(),
-            kode_site: row.cells[11].textContent.trim(),
-            travelling: row.cells[12].textContent.trim(),
-            verification: row.cells[13].textContent.trim(),
-            restoration: row.cells[14].textContent.trim(),
-            corrective: row.cells[15].textContent.trim(),
-        };
-        allData.push(rowData);
-    });
-}
+                    <div class="form-group">
+                        <label for="segmen">Segmen</label>
+                        <input type="text" id="segmen" name="segmen" required>
+                    </div>
 
-function searchTable() {
-    let input = document.getElementById("searchInput").value.toLowerCase();
-    let rows = document.querySelectorAll("#jaringanTable tbody tr");
+                    <div class="form-group">
+                        <label for="jartatup_jartaplok">Jartatup/Jartaplok</label>
+                        <input type="text" id="jartatup_jartaplok" name="jartatup_jartaplok" required>
+                    </div>
+                
+                </div>
 
-    rows.forEach(row => {
-        let text = row.textContent.toLowerCase();
-        row.style.display = text.includes(input) ? "" : "none";
-    });
-}
+                <div class="right-column">
+                    <div class="form-group">
+                        <label for="mainlink_backuplink">Mainlink/Backuplink</label>
+                        <input type="text" id="mainlink_backuplink" name="mainlink_backuplink" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="panjang">Panjang</label>
+                        <input type="text" id="panjang" name="panjang" required>
+                    </div>
 
-function filterTable() {
-    let roFilter = document.getElementById("roFilter").value.toLowerCase();
-    let tipeJaringanFilter = document.getElementById("tipeJaringanFilter").value.toLowerCase();
-    let jartatupFilter = document.getElementById("jartatupFilter").value.toLowerCase();
-    let mainlinkFilter = document.getElementById("mainlinkFilter").value.toLowerCase();
-    let jumlahCoreFilter = document.getElementById("jumlahCoreFilter").value.toLowerCase();
-    let jenisKabelFilter = document.getElementById("jenisKabelFilter").value.toLowerCase();
-    let tipeKabelFilter = document.getElementById("tipeKabelFilter").value.toLowerCase();
-    let travellingFilter = document.getElementById("travellingFilter").value.toLowerCase();
-    let verificationFilter = document.getElementById("verificationFilter").value.toLowerCase();
-    let restorationFilter = document.getElementById("restorationFilter").value.toLowerCase();
-    let correctiveFilter = document.getElementById("correctiveFilter").value.toLowerCase();
+                    <div class="form-group">
+                        <label for="panjang_drawing">Panjang Drawing</label>
+                        <input type="text" id="panjang_drawing" name="panjang_drawing" required>
+                    </div>
 
-    document.querySelectorAll("#jaringanTable tbody tr").forEach(row => {
-        let values = row.children;
-        let match =
-            (roFilter === "" || values[1].textContent.toLowerCase().includes(roFilter)) &&
-            (tipeJaringanFilter === "" || values[2].textContent.toLowerCase().includes(tipeJaringanFilter)) &&
-            (jartatupFilter === "" || values[4].textContent.toLowerCase().includes(jartatupFilter)) &&
-            (mainlinkFilter === "" || values[5].textContent.toLowerCase().includes(mainlinkFilter)) &&
-            (jumlahCoreFilter === "" || values[8].textContent.toLowerCase().includes(jumlahCoreFilter)) &&
-            (jenisKabelFilter === "" || values[9].textContent.toLowerCase().includes(jenisKabelFilter)) &&
-            (tipeKabelFilter === "" || values[10].textContent.toLowerCase().includes(tipeKabelFilter)) &&
-            (travellingFilter === "" || values[12].textContent.toLowerCase().includes(travellingFilter)) &&
-            (verificationFilter === "" || values[13].textContent.toLowerCase().includes(verificationFilter)) &&
-            (restorationFilter === "" || values[14].textContent.toLowerCase().includes(restorationFilter)) &&
-            (correctiveFilter === "" || values[15].textContent.toLowerCase().includes(correctiveFilter));
+                    <div class="form-group">
+                        <label for="jumlah_core">Jumlah Core</label>
+                        <input type="text" id="jumlah_core" name="jumlah_core" required>
+                    </div>
 
-        row.style.display = match ? "" : "none";
-    });
-}
+                    <div class="form-group">
+                        <label for="jenis_kabel">Jenis Kabel</label>
+                        <input type="text" id="jenis_kabel" name="jenis_kabel" required>
+                    </div>
 
+                    <div class="form-group">
+                        <label for="tipe_kabel">Tipe Kabel</label>
+                        <input type="text" id="tipe_kabel" name="tipe_kabel" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="travelling_time">Travelling Time</label>
+                        <input type="text" id="travelling_time" name="travelling_time" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="restoration_time">Restoration Time</label>
+                        <input type="text" id="restoration_time" name="restoration_time" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="total_corrective_time">Total Corrective Time</label>
+                        <input type="text" id="total_corrective_time" name="total_corrective_time" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <button type="submit" class="add-button">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function filterTable() {
+        const roFilter = document.getElementById("roFilter").value.toLowerCase();
+        const rows = document.querySelectorAll("#jaringanTable tbody tr");
+
+        rows.forEach(row => {
+            const roCell = row.querySelector(".ro").textContent.toLowerCase();
+            const matchesRO = roFilter === "" || roCell.includes(roFilter);
+
+            if (matchesRO) {
+                row.style.display = ""; // Menampilkan baris
+            } else {
+                row.style.display = "none"; // Menyembunyikan baris
+            }
+        });
+    }
+
+    function searchTable() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toLowerCase();
+        const rows = document.querySelectorAll("#jaringanTable tbody tr");
+
+        rows.forEach(row => {
+            const cells = row.getElementsByTagName("td");
+            let matchesSearch = false;
+            
+            for (let i = 0; i < cells.length; i++) {
+                if (cells[i].textContent.toLowerCase().includes(filter)) {
+                    matchesSearch = true;
+                    break;
+                }
+            }
+
+            if (matchesSearch) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+    function openAddJaringanModal() {
+        document.getElementById("addJaringanModal").style.display = "flex";
+    }
+
+    function closeAddJaringanModal() {
+        document.getElementById("addJaringanModal").style.display = "none";
+    }
+
+    // Optional: close modal when clicking outside of the modal content
+    window.onclick = function(event) {
+        const modal = document.getElementById("addJaringanModal");
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    };
+
+    function showSwal(type, message) {
+        if (type === 'success') {
+            swal({
+                title: "Berhasil!",
+                text: message,
+                type: "success",
+                button: {
+                    text: "OK",
+                    value: true,
+                    visible: true,
+                    className: "btn btn-primary"
+                }
+            });
+        } else if (type === 'error') {
+            swal({
+                title: "Error!",
+                text: message,
+                type: "error",
+                button: {
+                    text: "OK",
+                    value: true,
+                    visible: true,
+                    className: "btn btn-danger"
+                }
+            });
+        }
+    }
+
+    // Fungsi untuk edit jaringan
+    function editJaringan(id) {
+        $.get(`/get-jaringan/${id}`, function(response) {
+            if (response.success) {
+                const jaringan = response.jaringan;
+                
+                // Reset form terlebih dahulu
+                $('#addJaringanForm')[0].reset();
+                
+                // Isi form dengan data yang ada
+                $('#roAdd').val(jaringan.ro).trigger('change');
+                $('#kode_site_insan').val(jaringan.kode_site_insan);
+                $('#tipeJaringanAdd').val(jaringan.tipe_jaringan);
+                $('#segmen').val(jaringan.segmen);
+                $('#jartatup_jartaplok').val(jaringan.jartatup_jartaplok);
+                $('#mainlink_backuplink').val(jaringan.mainlink_backuplink);
+                $('#panjang').val(jaringan.panjang);
+                $('#panjang_drawing').val(jaringan.panjang_drawing);
+                $('#jumlah_core').val(jaringan.jumlah_core);
+                $('#jenis_kabel').val(jaringan.jenis_kabel);
+                $('#tipe_kabel').val(jaringan.tipe_kabel);
+                $('#travelling_time').val(jaringan.travelling_time);
+                $('#restoration_time').val(jaringan.restoration_time);
+                $('#total_corrective_time').val(jaringan.total_corrective_time);
+                
+                // Hapus input hidden ID yang mungkin ada sebelumnya
+                $('#jaringan-id-input').remove();
+                
+                // Tambahkan ID ke form untuk keperluan update
+                $('#addJaringanForm').append(`<input type="hidden" id="jaringan-id-input" name="id" value="${jaringan.id_jaringan}">`);
+                
+                // Ubah judul modal dan text tombol
+                $('h2').text('Edit Jaringan');
+                $('.add-button[type="submit"]').text('Update');
+                
+                // Tampilkan modal
+                openAddJaringanModal();
+            }
+        });
+    }
+
+    // Modifikasi fungsi deleteJaringan
+    function deleteJaringan(id) {
+        swal({
+            title: "Apakah Anda yakin?",
+            text: "Data yang dihapus tidak dapat dikembalikan!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Ya, hapus!",
+            cancelButtonText: "Batal",
+            closeOnConfirm: false
+        }, function(isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: `/delete-jaringan/${id}`,
+                    type: 'DELETE',
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            swal({
+                                title: "Terhapus!",
+                                text: "Jaringan berhasil dihapus.",
+                                type: "success",
+                                button: {
+                                    text: "OK",
+                                    value: true,
+                                    visible: true,
+                                    className: "btn btn-primary"
+                                }
+                            });
+                            loadJaringanData();
+                        } else {
+                            swal({
+                                title: "Error!",
+                                text: response.message || "Gagal menghapus jaringan",
+                                type: "error",
+                                button: {
+                                    text: "OK",
+                                    value: true,
+                                    visible: true,
+                                    className: "btn btn-danger"
+                                }
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Delete error details:', {
+                            status: status,
+                            error: error,
+                            response: xhr.responseText
+                        });
+                        swal({
+                            title: "Error!",
+                            text: "Terjadi kesalahan saat menghapus jaringan",
+                            type: "error",
+                            button: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "btn btn-danger"
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
 </script>
-
 @endsection
