@@ -13,6 +13,11 @@ class AlatUkur extends Model
         'urutan', 'RO', 'kode', 'nama_alat', 'merk', 'type', 'serial_number', 'tahun_perolehan',
         'kondisi_alat', 'harga_pembelian', 'no_kontrak_spk'
     ];
+
+    public function region()
+    {
+        return $this->belongsTo(Region::class, 'RO', 'nama_region');
+    }
 }
 
 
