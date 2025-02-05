@@ -212,7 +212,7 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
             width: 18.75%;
-            margin-top: 10px;
+            /* margin-top: 10px; */
         }
 
         .modal-close-btn {
@@ -238,12 +238,59 @@
             gap: 10px;
             margin-top: 20px;
         }
+
+        .pagination-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 5px;
+        }
+
+        .page-btn {
+            min-width: 35px;
+            height: 35px;
+            padding: 0 12px;
+            background-color: white;
+            color: #666;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+        }
+
+        .page-btn:hover {
+            background-color: #f5f5f5;
+            border-color: #999;
+        }
+
+        .page-btn.active {
+            background-color: #4f52ba;
+            color: white;
+            border-color: #4f52ba;
+        }
+
+        .page-btn.prev,
+        .page-btn.next {
+            padding: 0 15px;
+        }
     </style>
 
 <div class="main">
     <div class="container">
-        <div class="text-right">
-            <button class="add-button" onclick="openAddPerangkatModal()">Tambah Perangkat</button>
+        <div class="header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Perangkat</h3>
+                <button class="add-button" onclick="openAddPerangkatModal()">Tambah Perangkat</button>
+            </div>
         </div>
         
         <div class="dropdown-container">
@@ -388,7 +435,6 @@
 </div>
 
 
-
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
@@ -399,7 +445,8 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            // Initialize Select2 for dropdowns
+
+            // ------------------------ INISIALISASI DROPDOWN ------------------------
             $('#region').select2({
                 placeholder: "Pilih Region",
                 allowClear: true
@@ -420,10 +467,10 @@
                 allowClear: true
             });
 
-            // Load perangkat data on page load
-            loadPerangkatData();
+            // ------------------------- LOAD DATA DULU -------------------------
+            LoadData();
 
-            // Region change event
+            // ----------------------------- FILTER -----------------------------
             $('#region').change(function() {
                 const selectedRegions = $(this).val();
                 $('#site').prop('disabled', true).empty().append('<option value="">Pilih Site</option>');
@@ -437,35 +484,32 @@
                     });
                 }
 
-                loadPerangkatData(selectedRegions);
+                LoadData(selectedRegions);
             });
 
-            // Site change event
             $('#site').change(function() {
                 const selectedRegions = $('#region').val();
                 const selectedSites = $(this).val();
-                loadPerangkatData(selectedRegions, selectedSites);
+                LoadData(selectedRegions, selectedSites);
             });
 
-            // Perangkat change event
             $('#perangkat').change(function() {
                 const selectedRegions = $('#region').val();
                 const selectedSites = $('#site').val();
                 const selectedPerangkat = $(this).val();
                 const selectedBrands = $('#brand').val();
-                loadPerangkatData(selectedRegions, selectedSites, selectedPerangkat, selectedBrands);
+                LoadData(selectedRegions, selectedSites, selectedPerangkat, selectedBrands);
             });
 
-            // Brand change event
             $('#brand').change(function() {
                 const selectedRegions = $('#region').val();
                 const selectedSites = $('#site').val();
                 const selectedPerangkat = $('#perangkat').val();
                 const selectedBrands = $(this).val();
-                loadPerangkatData(selectedRegions, selectedSites, selectedPerangkat, selectedBrands);
+                LoadData(selectedRegions, selectedSites, selectedPerangkat, selectedBrands);
             });
 
-            // Handle form submission
+            // ------------------------- STORE/UPDATE DATA -------------------------
             $('#addPerangkatForm').submit(function(e) {
                 e.preventDefault();
                 
@@ -484,10 +528,10 @@
                         if (response.success) {
                             closeAddPerangkatModal();
                             showSwal('success', wdm ? 'Perangkat berhasil diupdate!' : 'Perangkat berhasil ditambahkan!');
-                            loadPerangkatData();
+                            LoadData();
                             $('#addPerangkatForm')[0].reset();
                             $('#wdm-input').remove();
-                            $('h2').text('Tambah Perangkat Baru');
+                            // $('h2').text('Tambah Perangkat Baru');
                             $('.add-button[type="submit"]').text('Simpan');
                         } else {
                             showSwal('error', response.message || 'Terjadi kesalahan');
@@ -500,7 +544,7 @@
                 });
             });
 
-            // Handle region change in modal
+            // ----------------------- SITES TABEL -----------------------
             $('#regionAdd').change(function() {
                 const regionId = $(this).val();
                 $('#siteAdd').empty().append('<option value="">Pilih Site</option>');
@@ -513,8 +557,6 @@
                     });
                 }
             });
-
-            // Tambahkan setelah jQuery loaded
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -522,8 +564,8 @@
             });
         });
 
-        // Function to load perangkat data
-        function loadPerangkatData(regions = [], sites = [], perangkat = [], brands = []) {
+        // ----------------------- FUNC LOAD DATA -----------------------
+        function LoadData(regions = [], sites = [], perangkat = [], brands = []) {
             $.get('/get-perangkat', { region: regions, site: sites, perangkat: perangkat, brand: brands }, function(response) {
                 const tbody = $('#tablePerangkat tbody');
                 tbody.empty();
@@ -548,11 +590,11 @@
                             <td>${perangkat.uakhir || '-'}</td>
                             <td>
                                 <button onclick="editPerangkat(${perangkat.WDM})" 
-                                    style="background-color: #4CAF50; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
+                                    style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
                                     Edit
                                 </button>
                                 <button onclick="deletePerangkat(${perangkat.WDM})"
-                                    style="background-color: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                    style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
                                     Delete
                                 </button>
                             </td>
@@ -565,7 +607,7 @@
             });
         }
 
-        // Search table function
+        // ----------------------- SEARCH -----------------------
         function searchTable() {
             const input = document.getElementById('searchInput');
             const filter = input.value.toLowerCase();
@@ -586,163 +628,177 @@
             }
         }
 
+        // ----------------------- OPEN/CLOSE MODAL -----------------------
         function openAddPerangkatModal() {
-    document.getElementById("addPerangkatModal").style.display = "flex";
-}
+            document.getElementById("addPerangkatModal").style.display = "flex";
+        }
+        function closeAddPerangkatModal() {
+            document.getElementById("addPerangkatModal").style.display = "none";
+        }
+        window.onclick = function(event) {
+            const modal = document.getElementById("addPerangkatModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
 
-function closeAddPerangkatModal() {
-    document.getElementById("addPerangkatModal").style.display = "none";
-}
+        // ----------------------- SITES MODAL -----------------------
+        $('#regionAdd').change(function() {
+            const selectedRegion = $(this).val();
+            $('#siteAdd').prop('disabled', true).empty().append('<option value="">Pilih Site</option>');
 
-// Optional: close modal when clicking outside of the modal content
-window.onclick = function(event) {
-    const modal = document.getElementById("addPerangkatModal");
-    if (event.target === modal) {
-        modal.style.display = "none";
-    }
-};
-
-    // Load sites based on selected region in the modal
-    $('#regionAdd').change(function() {
-        const selectedRegion = $(this).val();
-        $('#siteAdd').prop('disabled', true).empty().append('<option value="">Pilih Site</option>');
-
-        if (selectedRegion) {
-            $.get('/get-sites', { regions: [selectedRegion] }, function(data) {
-                $('#siteAdd').prop('disabled', false);
-                $.each(data, function(key, value) {
-                    $('#siteAdd').append(new Option(value, key));
+            if (selectedRegion) {
+                $.get('/get-sites', { regions: [selectedRegion] }, function(data) {
+                    $('#siteAdd').prop('disabled', false);
+                    $.each(data, function(key, value) {
+                        $('#siteAdd').append(new Option(value, key));
+                    });
                 });
+            }
+        });
+        
+        // ----------------------- ALERT -----------------------
+        function showSwal(type, message) {
+            if (type === 'success') {
+                swal({
+                    title: "Berhasil!",
+                    text: message,
+                    type: "success",
+                    button: {
+                        text: "OK",
+                        value: true,
+                        visible: true,
+                        className: "btn btn-primary"
+                    }
+                });
+            } else if (type === 'error') {
+                swal({
+                    title: "Error!",
+                    text: message,
+                    type: "error",
+                    button: {
+                        text: "OK",
+                        value: true,
+                        visible: true,
+                        className: "btn btn-danger"
+                    }
+                });
+            } else if (type === 'confirm-delete') {
+                swal({
+                    title: "Apakah Anda yakin?",
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#4f52ba",
+                    confirmButtonText: "Ya, hapus!",
+                    cancelButtonText: "Batal",
+                    closeOnConfirm: false
+                }, function(isConfirm) {
+                    if (isConfirm) {
+                        // Lanjutkan dengan penghapusan
+                        return true;
+                    }
+                });
+            }
+        }
+
+        // ----------------------- FUNCTION EDIT -----------------------
+        function editPerangkat(wdm) {
+            $.get(`/get-perangkat/${wdm}`, function(response) {
+                if (response.success) {
+                    const perangkat = response.perangkat;
+                    
+                    // Reset form terlebih dahulu
+                    $('#addPerangkatForm')[0].reset();
+                    
+                    // Isi form dengan data yang ada
+                    $('#regionAdd').val(perangkat.kode_region).trigger('change');
+                    
+                    // Tunggu sebentar untuk memastikan site sudah ter-load
+                    setTimeout(() => {
+                        $('#siteAdd').val(perangkat.kode_site);
+                        $('#perangkatAdd').val(perangkat.kode_pkt);
+                        $('#brandAdd').val(perangkat.kode_brand);
+                        $('#no_rack').val(perangkat.no_rack);
+                        $('#pkt_ke').val(perangkat.pkt_ke);
+                        $('#type').val(perangkat.type);
+                        $('#uawal').val(perangkat.uawal);
+                        $('#uakhir').val(perangkat.uakhir);
+                    }, 1000);
+                    
+                    // Hapus input hidden WDM yang mungkin ada sebelumnya
+                    $('#wdm-input').remove();
+                    
+                    // Tambahkan WDM ke form untuk keperluan update
+                    $('#addPerangkatForm').append(`<input type="hidden" id="wdm-input" name="wdm" value="${perangkat.WDM}">`);
+                    
+                    // Ubah judul modal dan text tombol
+                    $('h2').text('Edit Perangkat');
+                    $('.add-button[type="submit"]').text('Update');
+                    
+                    // Tampilkan modal
+                    openAddPerangkatModal();
+                }
             });
         }
-    });
 
-    function addPerangkatSuccess() {
-        showTemporaryMessage();
-    }
-
-    function showSwal(type, message) {
-        if (type === 'success') {
-            swal({
-                title: "Berhasil!",
-                text: message,
-                type: "success",
-                button: {
-                    text: "OK",
-                    value: true,
-                    visible: true,
-                    className: "btn btn-primary"
-                }
-            });
-        } else if (type === 'error') {
-            swal({
-                title: "Error!",
-                text: message,
-                type: "error",
-                button: {
-                    text: "OK",
-                    value: true,
-                    visible: true,
-                    className: "btn btn-danger"
-                }
-            });
-        } else if (type === 'confirm-delete') {
+        // ----------------------- FUNCTION DELETE -----------------------
+        function deletePerangkat(wdm) {
             swal({
                 title: "Apakah Anda yakin?",
                 text: "Data yang dihapus tidak dapat dikembalikan!",
                 type: "warning",
                 showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
+                confirmButtonColor: "#dc3545",
                 confirmButtonText: "Ya, hapus!",
                 cancelButtonText: "Batal",
                 closeOnConfirm: false
             }, function(isConfirm) {
                 if (isConfirm) {
-                    // Lanjutkan dengan penghapusan
-                    return true;
-                }
-            });
-        }
-    }
-
-    // Fungsi untuk edit perangkat
-    function editPerangkat(wdm) {
-        $.get(`/get-perangkat/${wdm}`, function(response) {
-            if (response.success) {
-                const perangkat = response.perangkat;
-                
-                // Reset form terlebih dahulu
-                $('#addPerangkatForm')[0].reset();
-                
-                // Isi form dengan data yang ada
-                $('#regionAdd').val(perangkat.kode_region).trigger('change');
-                
-                // Tunggu sebentar untuk memastikan site sudah ter-load
-                setTimeout(() => {
-                    $('#siteAdd').val(perangkat.kode_site);
-                    $('#perangkatAdd').val(perangkat.kode_pkt);
-                    $('#brandAdd').val(perangkat.kode_brand);
-                    $('#no_rack').val(perangkat.no_rack);
-                    $('#pkt_ke').val(perangkat.pkt_ke);
-                    $('#type').val(perangkat.type);
-                    $('#uawal').val(perangkat.uawal);
-                    $('#uakhir').val(perangkat.uakhir);
-                }, 1000);
-                
-                // Hapus input hidden WDM yang mungkin ada sebelumnya
-                $('#wdm-input').remove();
-                
-                // Tambahkan WDM ke form untuk keperluan update
-                $('#addPerangkatForm').append(`<input type="hidden" id="wdm-input" name="wdm" value="${perangkat.WDM}">`);
-                
-                // Ubah judul modal dan text tombol
-                $('h2').text('Edit Perangkat');
-                $('.add-button[type="submit"]').text('Update');
-                
-                // Tampilkan modal
-                openAddPerangkatModal();
-            }
-        });
-    }
-
-    // Modifikasi fungsi deletePerangkat
-    function deletePerangkat(wdm) {
-        swal({
-            title: "Apakah Anda yakin?",
-            text: "Data yang dihapus tidak dapat dikembalikan!",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Ya, hapus!",
-            cancelButtonText: "Batal",
-            closeOnConfirm: false
-        }, function(isConfirm) {
-            if (isConfirm) {
-                $.ajax({
-                    url: `/delete-perangkat/${wdm}`,
-                    type: 'DELETE',
-                    dataType: 'json',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            swal({
-                                title: "Terhapus!",
-                                text: "Perangkat berhasil dihapus.",
-                                type: "success",
-                                button: {
-                                    text: "OK",
-                                    value: true,
-                                    visible: true,
-                                    className: "btn btn-primary"
-                                }
+                    $.ajax({
+                        url: `/delete-perangkat/${wdm}`,
+                        type: 'DELETE',
+                        dataType: 'json',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                swal({
+                                    title: "Terhapus!",
+                                    text: "Perangkat berhasil dihapus.",
+                                    type: "success",
+                                    button: {
+                                        text: "OK",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-primary"
+                                    }
+                                });
+                                LoadData();
+                            } else {
+                                swal({
+                                    title: "Error!",
+                                    text: response.message || "Gagal menghapus perangkat",
+                                    type: "error",
+                                    button: {
+                                        text: "OK",
+                                        value: true,
+                                        visible: true,
+                                        className: "btn btn-danger"
+                                    }
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Delete error details:', {
+                                status: status,
+                                error: error,
+                                response: xhr.responseText
                             });
-                            loadPerangkatData();
-                        } else {
                             swal({
                                 title: "Error!",
-                                text: response.message || "Gagal menghapus perangkat",
+                                text: "Terjadi kesalahan saat menghapus perangkat",
                                 type: "error",
                                 button: {
                                     text: "OK",
@@ -752,28 +808,11 @@ window.onclick = function(event) {
                                 }
                             });
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Delete error details:', {
-                            status: status,
-                            error: error,
-                            response: xhr.responseText
-                        });
-                        swal({
-                            title: "Error!",
-                            text: "Terjadi kesalahan saat menghapus perangkat",
-                            type: "error",
-                            button: {
-                                text: "OK",
-                                value: true,
-                                visible: true,
-                                className: "btn btn-danger"
-                            }
-                        });
-                    }
-                });
-            }
-        });
-    }
+                    });
+                }
+            });
+        }
     </script>
 @endsection
+
+

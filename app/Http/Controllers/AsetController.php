@@ -30,7 +30,7 @@ class AsetController extends Controller
     {
         $perangkatList = Perangkat::orderBy('nama_pkt', 'asc')->get();
         $brands = BrandPerangkat::orderBy('nama_brand', 'asc')->get();
-        $regions = \App\Models\Region::orderBy('nama_region', 'asc')->get();
+        $regions = Region::orderBy('nama_region', 'asc')->get();
         return view('aset.perangkat', compact('perangkatList', 'brands', 'regions'));
     }
 

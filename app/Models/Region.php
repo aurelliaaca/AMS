@@ -9,9 +9,17 @@ class Region extends Model
 {
     use HasFactory;
     protected $table = 'region';
+    public $timestamps = false;
+    protected $primaryKey = 'id_region'; // Pastikan ini ada!
+
 
     protected $fillable = [
-        'id_region', 'nama_region', 'kode_region','email', 'alamat', 'ordinat',
+        'id_region',
+        'nama_region',
+        'kode_region',
+        'email',
+        'alamat',
+        'koordinat'
     ];
 
     public function sites()
