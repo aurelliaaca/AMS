@@ -38,8 +38,8 @@ class PengaturanController extends Controller
                 'nama_region' => $request->nama_region,
                 'kode_region' => $request->kode_region,
                 'email' => $request->email,
-                'alamat' => $request->tgl_lahir,
-                'koordinat' => $request->tgl_lahir
+                'alamat' => $request->alamat,
+                'koordinat' => $request->koordinat,
             ]);
 
             \Log::info('Stored data:', $region->toArray());
@@ -62,48 +62,55 @@ class PengaturanController extends Controller
     }
     }
 
-    public function getRegionById($id_region)
-    {
-        try {
-            $region = Region::where('id_region', $id_region)->firstOrFail();
-            return response()->json([
-                'success' => true,
-                'region' => $region
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Region tidak ditemukan'
-            ], 404);
-        }
+    public function getAllRegions()
+{
+    try {
+        $regions = Region::all();
+        return response()->json([
+            'success' => true,
+            'region' => $regions
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal memuat data region'
+        ], 500);
     }
+}
+
 
     public function updateRegion(Request $request, $id_region)
-    {
-        try {
-            $validated = $request->validate([
-                'nama_region' => 'required|string|max:255',
-                'kode_region' => 'required|string|unique:region,kode_region,' . $id_region . ',id_region',
-                'email' => 'required|email|max:255',
-                'alamat' => 'nullable|string',
-                'koordinat' => 'nullable|string'
-            ]);
+{
+    try {
+        $validated = $request->validate([
+            'nama_region' => 'required|string|max:255',
+            'kode_region' => 'required|string|unique:region,kode_region,' . $id_region . ',id_region',
+            'email' => 'required|email|max:255',
+            'alamat' => 'nullable|string',
+            'koordinat' => 'nullable|string',
+        ]);
 
-            $region = Region::where('id_region', $id_region)->firstOrFail();
-            $region->update($validated);
+        $region = Region::findOrFail($id_region);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Region berhasil diupdate',
-                'data' => $region
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengupdate region: ' . $e->getMessage()
-            ], 500);
-        }
+        $region->update($validated);
+
+        \Log::info('Updated data:', $region->toArray());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Region berhasil diupdate',
+            'data' => $region,
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Update error:', ['message' => $e->getMessage()]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal mengupdate region: ' . $e->getMessage(),
+        ], 500);
     }
+}
+
 
     public function deleteRegion($id_region)
 {
@@ -163,6 +170,22 @@ class PengaturanController extends Controller
                 'success' => false,
                 'message' => 'Gagal memuat data region: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function getRegion($id_region)
+    {
+        try {
+            $region = Region::findOrFail($id_region);
+            return response()->json([
+                'success' => true,
+                'region'  => $region
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Region tidak ditemukan: ' . $e->getMessage()
+            ], 404);
         }
     }
 

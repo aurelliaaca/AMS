@@ -287,254 +287,171 @@
     </div>
 
     <script>
-       function openAddRegionModal() {
-            document.getElementById("addRegionModal").style.display = "flex";
-        }
-
-        function closeAddRegionModal() {
-            document.getElementById("addRegionModal").style.display = "none";
-        }
-
-        // Optional: close modal when clicking outside of the modal content
-        window.onclick = function(event) {
-            const modal = document.getElementById("addRegionModal");
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-        };
-
-    function addRegionSuccess() {
-        showTemporaryMessage();
-    }
-
-    function showSwal(type, message) {
-        if (type === 'success') {
-            swal({
-                title: "Berhasil!",
-                text: message,
-                type: "success",
-                button: {
-                    text: "OK",
-                    value: true,
-                    visible: true,
-                    className: "btn btn-primary"
+        $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-        } else if (type === 'error') {
-            swal({
-                title: "Error!",
-                text: message,
-                type: "error",
-                button: {
-                    text: "OK",
-                    value: true,
-                    visible: true,
-                    className: "btn btn-danger"
-                }
-            });
-        } else if (type === 'confirm-delete') {
-            swal({
-                title: "Apakah Anda yakin?",
-                text: "Data yang dihapus tidak dapat dikembalikan!",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#4f52ba",
-                confirmButtonText: "Ya, hapus!",
-                cancelButtonText: "Batal",
-                closeOnConfirm: false
-            }, function(isConfirm) {
-                if (isConfirm) {
-                    // Lanjutkan dengan penghapusan
-                    return true;
-                }
-            });
-        }
-    }
 
-    // Tambahkan fungsi untuk menutup modal
-    function closeAddRegionModal() {
-        $('#addRegionModal').hide();
-        $('#addRegionForm')[0].reset();
-    }
+            LoadData();
 
-    // Perbaikan handler form submission
-    $('#addRegionForm').submit(function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        const isEdit = $('#addRegionForm').data('edit');
-        const id_region = $('#addRegionForm').data('id_region');
-        
-        let url = '/store-region';
-        let method = 'POST';
-        
-        if (isEdit) {
-            url = `/update-region/${id_region}`;
-            formData.append('_method', 'PUT'); // Tambahkan method spoofing untuk PUT
-        }
-        
-        $.ajax({
-            url: url,
-            type: 'POST', // Selalu gunakan POST, dengan _method untuk PUT
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                if (response.success) {
-                    closeAddRegionModal(); // Tutup modal sebelum menampilkan pesan sukses
-                    swal({
-                        title: "Berhasil!",
-                        text: response.message,
-                        type: "success",
-                        button: {
-                            text: "OK",
-                            value: true,
-                            visible: true,
-                            className: "btn btn-primary"
+            // ------------------------- STORE/UPDATE DATA -------------------------
+            $('#addRegionForm').submit(function(e) {
+                e.preventDefault();
+                
+                const id_region = $('#id_region-input').val();
+                const url = id_region ? `/update-region/${id_region}` : '/store-region';
+                const method = id_region ? 'PUT' : 'POST';
+                
+                $.ajax({
+                    url: url,
+                    type: method,
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            closeAddRegionModal();
+                            showSwal('success', id_region ? 'Region berhasil diupdate!' : 'Region berhasil ditambahkan!');
+                            LoadData();
+                            $('#addRegionForm')[0].reset();
+                            $('#id_region-input').remove();
+                            $('.add-button[type="submit"]').text('Simpan');
+                        } else {
+                            showSwal('error', response.message || 'Terjadi kesalahan');
                         }
-                    }).then(() => {
-                        location.reload();
-                    });
-                }
-            },
-            error: function(xhr) {
-                let errorMessage = "Terjadi kesalahan saat menyimpan data";
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    errorMessage = xhr.responseJSON.message;
-                }
+                    },
+                    error: function(xhr) {
+                        console.error('Error:', xhr.responseText);
+                        showSwal('error', 'Terjadi kesalahan. Silakan coba lagi.');
+                    }
+                });
+            });
+
+            // ----------------------- GLOBAL MODAL FUNCTIONS -----------------------
+            window.openAddRegionModal = function() {
+                $('#addRegionModal').css('display', 'flex');
+            }
+
+            window.closeAddRegionModal = function() {
+                $('#addRegionModal').css('display', 'none');
+            }
+
+            // ----------------------- ALERT -----------------------
+            function showSwal(type, message) {
                 swal({
-                    title: "Error!",
-                    text: errorMessage,
-                    type: "error",
+                    title: type === 'success' ? "Berhasil!" : "Error!",
+                    text: message,
+                    type: type,
                     button: {
                         text: "OK",
                         value: true,
                         visible: true,
-                        className: "btn btn-danger"
+                        className: type === 'success' ? "btn btn-primary" : "btn btn-danger"
                     }
                 });
             }
-        });
-    });
 
-    // Tambahkan event listener untuk menutup modal saat mengklik di luar modal
-    $(window).click(function(event) {
-        const modal = $('#addRegionModal');
-        if (event.target === modal[0]) {
-            closeAddRegionModal();
-        }
-    });
+            // ----------------------- FUNCTION LOAD DATA -----------------------
+            function LoadData() {
+                $.get('/get-region', function(response) {
+                    const tbody = $('#tableRegion tbody');
+                    tbody.empty();
 
-    // Fungsi untuk membuka modal region
-    function openAddRegionModal() {
-        $('#addRegionModal').show();
-        // Reset form ketika membuka modal
-        $('#addRegionForm')[0].reset();
-        // Reset judul dan tombol ke mode tambah
-        $('h2').text('Tambah Region Baru');
-        $('.add-button[type="submit"]').text('Simpan');
-    }
-
-    // Perbaikan fungsi editRegion
-    function editRegion(id_region) {
-        $.get(`/get-region/${id_region}`, function(response) {
-            if (response.success) {
-                const region = response.region;
-                
-                // Isi form dengan data yang ada
-                $('#nama_region').val(region.nama_region);
-                $('#kode_region').val(region.kode_region);
-                $('#email').val(region.email);
-                $('#alamat').val(region.alamat);
-                $('#koordinat').val(region.koordinat);
-                
-                // Set form ke mode edit
-                $('#addRegionForm').data('edit', true);
-                $('#addRegionForm').data('id_region', id_region);
-                
-                // Ubah judul modal dan text tombol
-                $('h2').text('Edit Region');
-                $('.add-button[type="submit"]').text('Update');
-                
-                // Tampilkan modal
-                openAddRegionModal();
-            }
-        });
-    }
-
-    // Modifikasi fungsi delete Region
-    function deleteRegion(id_region) {
-        swal({
-            title: "Apakah Anda yakin?",
-            text: "Data yang dihapus tidak dapat dikembalikan!",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#dc3545",
-            confirmButtonText: "Ya, hapus!",
-            cancelButtonText: "Batal",
-            closeOnConfirm: false
-        }, function(isConfirm) {
-            if (isConfirm) {
-                $.ajax({
-                    url: `/delete-region/${id_region}`,
-                    type: 'DELETE',
-                    dataType: 'json',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            swal({
-                                title: "Terhapus!",
-                                text: "Data berhasil dihapus.",
-                                type: "success",
-                                button: {
-                                    text: "OK",
-                                    value: true,
-                                    visible: true,
-                                    className: "btn btn-primary"
-                                }
-                            });
-                            loadRegionData();
-                        } else {
-                            swal({
-                                title: "Error!",
-                                text: response.message || "Gagal menghapus data",
-                                type: "error",
-                                button: {
-                                    text: "OK",
-                                    value: true,
-                                    visible: true,
-                                    className: "btn btn-danger"
-                                }
-                            });
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Delete error details:', {
-                            status: status,
-                            error: error,
-                            response: xhr.responseText
+                    if (response.region && response.region.length > 0) {
+                        $.each(response.region, function(index, region) {
+                            tbody.append(`
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${region.nama_region}</td>
+                                    <td>${region.kode_region || '-'}</td>
+                                    <td>${region.email || '-'}</td>
+                                    <td>
+                                        <button onclick="editRegion(${region.id_region})" 
+                                        style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;"
+                                        class="edit-btn">Edit</button>
+                                        <button onclick="deleteRegion(${region.id_region})" 
+                                        style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;"                                        class="delete-btn">Delete</button>
+                                    </td>
+                                </tr>
+                            `);
                         });
-                        swal({
-                            title: "Error!",
-                            text: "Terjadi kesalahan saat menghapus data",
-                            type: "error",
-                            button: {
-                                text: "OK",
-                                value: true,
-                                visible: true,
-                                className: "btn btn-danger"
+                    } else {
+                        tbody.append('<tr><td colspan="11" style="text-align: center;">Tidak ada data region</td></tr>');
+                    }
+                }).fail(function(xhr) {
+                    console.error('LoadData Error:', xhr.responseText);
+                    const tbody = $('#tableRegion tbody');
+                    tbody.empty().append('<tr><td colspan="11" style="text-align: center;">Terjadi kesalahan dalam memuat data</td></tr>');
+                });
+            }
+
+            // ----------------------- FUNCTION EDIT -----------------------
+            window.editRegion = function(id_region) {
+                $.get(`/get-region/${id_region}`, function(response) {
+                    if (response.success) {
+                        const region = response.region;
+                        
+                        $('#addRegionForm')[0].reset();
+                        $('#nama_region').val(region.nama_region);
+                        $('#kode_region').val(region.kode_region);
+                        $('#email').val(region.email);
+                        $('#alamat').val(region.alamat);
+                        $('#koordinat').val(region.koordinat);
+                        
+                        $('#id_region-input').remove();
+                        $('#addRegionForm').append(`<input type="hidden" id="id_region-input" name="id_region" value="${region.id_region}">`);
+                        
+                        $('h2').text('Edit Region');
+                        $('.add-button[type="submit"]').text('Update');
+                        
+                        openAddRegionModal();
+                    }
+                }).fail(function() {
+                    showSwal('error', 'Gagal mengambil data region');
+                });
+            }
+
+            // ----------------------- FUNCTION DELETE -----------------------
+            window.deleteRegion = function(id_region) {
+                swal({
+                    title: "Apakah Anda yakin?",
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#dc3545",
+                    confirmButtonText: "Ya, hapus!",
+                    cancelButtonText: "Batal",
+                    closeOnConfirm: false
+                }, function(isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: `/delete-region/${id_region}`,
+                            type: 'DELETE',
+                            success: function(response) {
+                                if (response.success) {
+                                    swal("Terhapus!", "Region berhasil dihapus.", "success");
+                                    LoadData();
+                                } else {
+                                    showSwal('error', response.message || "Gagal menghapus region");
+                                }
+                            },
+                            error: function(xhr) {
+                                console.error('Delete error:', xhr.responseText);
+                                showSwal('error', 'Terjadi kesalahan saat menghapus region');
                             }
                         });
                     }
                 });
             }
+
+            // -------------------- TUTUP MODAL KETIKA KLIK DI LUAR --------------------
+            window.onclick = function(event) {
+                const modal = document.getElementById("addRegionModal");
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
+            };
         });
-    }
     </script>
 @endsection
 
