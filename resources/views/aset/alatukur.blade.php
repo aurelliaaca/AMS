@@ -1,6 +1,11 @@
 @extends('layouts.sidebar')
 
 @section('content')
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -274,8 +279,8 @@
                         <td>{{ $alat->harga_pembelian }}</td>
                         <td>{{ $alat->no_kontrak_spk }}</td>
                         <td>
-                            <button class="edit-btn" onclick="editAlatUkur({{ $alat->id }})">Edit</button>
-                            <button class="delete-btn" onclick="deleteAlatUkur({{ $alat->id }})">Hapus</button>
+                            <button class="edit-btn" onclick="editAlatUkur({{ $alat->urutan }})">Edit</button>
+                            <button class="delete-btn" onclick="destroyAlatUkur({{ $alat->urutan }})">Hapus</button>
                         </td>
                     </tr>
                     @endforeach
@@ -289,7 +294,7 @@
     <div class="modal-content">
         <button class="modal-close-btn" onclick="closeAddAlatUkurModal()">×</button>
         <h2>Tambah Alat Ukur Baru</h2>
-        <form id="addAlatUkurForm" method="POST">
+        <form id="addAlatUkurForm" method="POST" action="{{ route('alatukur.store') }}">
             @csrf
             <div class="form-container">
                 <div class="left-column">
@@ -410,6 +415,10 @@
     }
 
     function closeAddAlatUkurModal() {
+        $('#addAlatUkurForm')[0].reset();
+        $('#alat-id-input').remove();
+        $('#addAlatUkurModal .modal-content h2').text('Tambah Alat Ukur Baru');
+        $('#addAlatUkurModal .add-button[type="submit"]').text('Simpan');
         document.getElementById("addAlatUkurModal").style.display = "none";
     }
 
@@ -449,17 +458,50 @@
         }
     }
 
-    // Fungsi untuk edit alat ukur
-    function editAlatUkur(id) {
-        $.get(`/get-alatukur/${id}`, function(response) {
+    $('#addAlatUkurForm').submit(function(e) {
+        e.preventDefault();
+        
+        const isEdit = $('#alat-id-input').length > 0;
+        const url = isEdit ? `/alatukur/${$('#alat-id-input').val()}` : '/alatukur';
+        const method = isEdit ? 'PUT' : 'POST';
+        
+        $.ajax({
+            url: url,
+            method: method,
+            data: $(this).serialize(),
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if(response.success) {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: response.message,
+                        icon: 'success'
+                    }).then(() => {
+                        location.reload();
+                    });
+                    closeAddAlatUkurModal();
+                }
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Terjadi kesalahan saat menyimpan data',
+                    icon: 'error'
+                });
+            }
+        });
+    });
+
+    function editAlatUkur(urutan) {
+        $.get(`/alatukur/${urutan}`, function(response) {
             if (response.success) {
                 const alat = response.alat_ukur;
                 
-                // Reset form terlebih dahulu
                 $('#addAlatUkurForm')[0].reset();
                 
-                // Isi form dengan data yang ada
-                $('#roAdd').val(alat.ro).trigger('change');
+                $('#roAdd').val(alat.ro);
                 $('#kode').val(alat.kode);
                 $('#nama_alat').val(alat.nama_alat);
                 $('#merk').val(alat.merk);
@@ -470,86 +512,60 @@
                 $('#harga_pembelian').val(alat.harga_pembelian);
                 $('#no_kontrak_spk').val(alat.no_kontrak_spk);
                 
-                // Hapus input hidden ID yang mungkin ada sebelumnya
                 $('#alat-id-input').remove();
+                $('#addAlatUkurForm').append(`<input type="hidden" id="alat-id-input" name="id" value="${alat.urutan}">`);
                 
-                // Tambahkan ID ke form untuk keperluan update
-                $('#addAlatUkurForm').append(`<input type="hidden" id="alat-id-input" name="id" value="${alat.id}">`);
+                $('#addAlatUkurModal .modal-content h2').text('Edit Alat Ukur');
+                $('#addAlatUkurModal .add-button[type="submit"]').text('Update');
                 
-                // Ubah judul modal dan text tombol
-                $('h2').text('Edit Alat Ukur');
-                $('.add-button[type="submit"]').text('Update');
-                
-                // Tampilkan modal
                 openAddAlatUkurModal();
             }
         });
     }
 
-    // Modifikasi fungsi deleteAlatUkur
-    function deleteAlatUkur(id) {
-        swal({
-            title: "Apakah Anda yakin?",
+    function destroyAlatUkur(urutan) {
+    
+
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
             text: "Data yang dihapus tidak dapat dikembalikan!",
-            type: "warning",
+            icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Ya, hapus!",
-            cancelButtonText: "Batal",
-            closeOnConfirm: false
-        }, function(isConfirm) {
-            if (isConfirm) {
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 $.ajax({
-                    url: `/delete-alatukur/${id}`,
+                    url: `/alatukur/delete/${urutan}`,
                     type: 'DELETE',
-                    dataType: 'json',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
                         if (response.success) {
-                            swal({
-                                title: "Terhapus!",
-                                text: "Alat ukur berhasil dihapus.",
-                                type: "success",
-                                button: {
-                                    text: "OK",
-                                    value: true,
-                                    visible: true,
-                                    className: "btn btn-primary"
-                                }
+                            Swal.fire({
+                                title: 'Terhapus!',
+                                text: response.message,
+                                icon: 'success'
+                            }).then(() => {
+                                window.location.reload();
                             });
-                            loadAlatUkurData();
                         } else {
-                            swal({
-                                title: "Error!",
-                                text: response.message || "Gagal menghapus alat ukur",
-                                type: "error",
-                                button: {
-                                    text: "OK",
-                                    value: true,
-                                    visible: true,
-                                    className: "btn btn-danger"
-                                }
+                            Swal.fire({
+                                title: 'Error!',
+                                text: response.message,
+                                icon: 'error'
                             });
                         }
                     },
-                    error: function(xhr, status, error) {
-                        console.error('Delete error details:', {
-                            status: status,
-                            error: error,
-                            response: xhr.responseText
-                        });
-                        swal({
-                            title: "Error!",
-                            text: "Terjadi kesalahan saat menghapus alat ukur",
-                            type: "error",
-                            button: {
-                                text: "OK",
-                                value: true,
-                                visible: true,
-                                className: "btn btn-danger"
-                            }
+                    error: function(xhr) {
+                        console.error('Delete error:', xhr.responseText);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Terjadi kesalahan saat menghapus data',
+                            icon: 'error'
                         });
                     }
                 });
