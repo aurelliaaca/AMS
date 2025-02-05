@@ -44,19 +44,28 @@ Auth::routes(['verify' => true]); // Menambahkan verifikasi email
 
 // ------------------------------------------------------ Rute baru tambahin disini ------------------------------------------------------
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [UserController::class, 'user'])->name('dashboard'); // Menggunakan controller untuk dashboard
+    // Route untuk Dashboard (Menggunakan UserController)
+    Route::get('/dashboard', [HomeController::class, 'data'])->name('dashboard');
+
+
+    // Route Profil
     Route::get('/profil', [ProfilController::class, 'getProfil'])->name('profil');
-    Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan');
     Route::post('/update', [ProfilController::class, 'updateProfil'])->name('update');
     Route::post('/change-password', [ProfilController::class, 'changePassword'])->name('change-password');
- // Routes untuk pengaturan region
- Route::post('/store-region', [PengaturanController::class, 'storeRegion'])->name('region.store');
- Route::get('/get-region', [PengaturanController::class, 'getAllRegions'])->name('region.all');
- Route::put('/update-region/{id_region}', [PengaturanController::class, 'updateRegion'])->name('region.update');
- Route::delete('/delete-region/{id_region}', [PengaturanController::class, 'deleteRegion'])->name('region.delete');
- Route::get('/get-region/{id_region}', [PengaturanController::class, 'getRegion'])->name('region.get');
 
+    // Route Pengaturan
+    Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan');
+
+    // Routes untuk pengaturan region
+    Route::post('/store-region', [PengaturanController::class, 'storeRegion'])->name('region.store');
+    Route::get('/get-region', [PengaturanController::class, 'getAllRegions'])->name('region.all');
+    Route::put('/update-region/{id_region}', [PengaturanController::class, 'updateRegion'])->name('region.update');
+    Route::delete('/delete-region/{id_region}', [PengaturanController::class, 'deleteRegion'])->name('region.delete');
+    Route::get('/get-region/{id_region}', [PengaturanController::class, 'getRegion'])->name('region.get');
+
+    // Route untuk HomeController data() (Tambahan Baru)
 });
+
 
 // Rute untuk halaman jaringan
 Route::get('/jaringan', [AsetController::class, 'jaringan'])->name('jaringan');
