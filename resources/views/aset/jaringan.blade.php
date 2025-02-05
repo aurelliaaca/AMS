@@ -1,6 +1,13 @@
 @extends('layouts.sidebar')
 
 @section('content')
+    <!-- Pastikan jQuery dan SweetAlert2 dimuat -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Meta tag CSRF -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -234,10 +241,10 @@
                 @endforeach
             </select>
             <!-- Dropdown Tipe Jaringan -->
-            <select id="tipeJaringanFilter" onchange="filterTable()">
+            <select id="tipeJaringanFilter" onchange="filterByTipeJaringan()">
                 <option value="">Pilih Tipe Jaringan</option>
                 @foreach ($tipeJaringanList as $tipe)
-                    <option value="{{ $tipe->nama_tipe }}">{{ $tipe->nama_tipe }}</option>
+                    <option value="{{ $tipe->kode_tipe }}">{{ $tipe->nama_tipe }}</option>
                 @endforeach
             </select>
 
@@ -289,8 +296,8 @@
                         <td>{{ $data->restoration_time }}</td>
                         <td>{{ $data->total_corrective_time }}</td>
                         <td>
-                            <button class="edit-btn" onclick="editJaringan({{ $data->id_jaringan }})">Edit</button>
-                            <button class="delete-btn" onclick="deleteJaringan({{ $data->id_jaringan }})">Hapus</button>
+                            <button class="edit-btn" onclick="editJaringan('{{ $data->id_jaringan }}')">Edit</button>
+                            <button class="delete-btn" onclick="deleteJaringan('{{ $data->id_jaringan }}')">Hapus</button>
                         </td>
                     </tr>
                     @endforeach
@@ -339,8 +346,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="jartatup_jartaplok">Jartatup/Jartaplok</label>
-                        <input type="text" id="jartatup_jartaplok" name="jartatup_jartaplok" required>
+                        <label for="tipeJaringanAdd">Tipe Jaringan</label>
+                        <select id="jartatup_jartaplok" name="jartatup_jartaplok" required>
+                            <option value="">Pilih Jartatup/Jartaplok</option>
+                            <option value="Jartatup">Jartatup</option>
+                            <option value="Jartaplok">Jartaplok</option>
+                        </select>
                     </div>
                 
                 </div>
@@ -416,6 +427,26 @@
         });
     }
 
+    function filterByTipeJaringan() {
+    const tipeFilter = document.getElementById("tipeJaringanFilter").value.toLowerCase();
+    const rows = document.querySelectorAll("#jaringanTable tbody tr");
+
+    console.log("Tipe Filter yang dipilih:", tipeFilter); // Debugging log
+
+    rows.forEach(row => {
+        const tipeJaringanCell = row.cells[4].textContent.toLowerCase(); // Pastikan indeks sesuai dengan kolom "Tipe Jaringan"
+        console.log("Tipe Jaringan pada row:", tipeJaringanCell); // Debugging log
+
+        if (tipeFilter === "" || tipeJaringanCell.includes(tipeFilter)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
+
+
+
     function searchTable() {
         const input = document.getElementById("searchInput");
         const filter = input.value.toLowerCase();
@@ -485,115 +516,119 @@
     }
 
     // Fungsi untuk edit jaringan
-    function editJaringan(id) {
-        $.get(`/get-jaringan/${id}`, function(response) {
-            if (response.success) {
-                const jaringan = response.jaringan;
-                
-                // Reset form terlebih dahulu
-                $('#addJaringanForm')[0].reset();
-                
-                // Isi form dengan data yang ada
-                $('#roAdd').val(jaringan.ro).trigger('change');
-                $('#kode_site_insan').val(jaringan.kode_site_insan);
-                $('#tipeJaringanAdd').val(jaringan.tipe_jaringan);
-                $('#segmen').val(jaringan.segmen);
-                $('#jartatup_jartaplok').val(jaringan.jartatup_jartaplok);
-                $('#mainlink_backuplink').val(jaringan.mainlink_backuplink);
-                $('#panjang').val(jaringan.panjang);
-                $('#panjang_drawing').val(jaringan.panjang_drawing);
-                $('#jumlah_core').val(jaringan.jumlah_core);
-                $('#jenis_kabel').val(jaringan.jenis_kabel);
-                $('#tipe_kabel').val(jaringan.tipe_kabel);
-                $('#travelling_time').val(jaringan.travelling_time);
-                $('#restoration_time').val(jaringan.restoration_time);
-                $('#total_corrective_time').val(jaringan.total_corrective_time);
-                
-                // Hapus input hidden ID yang mungkin ada sebelumnya
-                $('#jaringan-id-input').remove();
-                
-                // Tambahkan ID ke form untuk keperluan update
-                $('#addJaringanForm').append(`<input type="hidden" id="jaringan-id-input" name="id" value="${jaringan.id_jaringan}">`);
-                
-                // Ubah judul modal dan text tombol
-                $('h2').text('Edit Jaringan');
-                $('.add-button[type="submit"]').text('Update');
-                
-                // Tampilkan modal
-                openAddJaringanModal();
-            }
-        });
-    }
+    function editJaringan(id_jaringan) {
+    $.get(`/jaringan/${id_jaringan}/edit`, function(response) {
+        if (response.success) {
+            const jaringan = response.jaringan;
 
-    // Modifikasi fungsi deleteJaringan
-    function deleteJaringan(id) {
+            // Reset form terlebih dahulu
+            $('#addJaringanForm')[0].reset();
+
+            // Isi form dengan data yang ada
+            $('#roAdd').val(jaringan.ro).trigger('change');
+            $('#kode_site_insan').val(jaringan.kode_site_insan);
+            $('#tipeJaringanAdd').val(jaringan.tipe_jaringan);
+            $('#segmen').val(jaringan.segmen);
+            $('#jartatup_jartaplok').val(jaringan.jartatup_jartaplok);
+            $('#mainlink_backuplink').val(jaringan.mainlink_backuplink);
+            $('#panjang').val(jaringan.panjang);
+            $('#panjang_drawing').val(jaringan.panjang_drawing);
+            $('#jumlah_core').val(jaringan.jumlah_core);
+            $('#jenis_kabel').val(jaringan.jenis_kabel);
+            $('#tipe_kabel').val(jaringan.tipe_kabel);
+            $('#travelling_time').val(jaringan.travelling_time);
+            $('#restoration_time').val(jaringan.restoration_time);
+            $('#total_corrective_time').val(jaringan.total_corrective_time);
+
+            // Hapus input hidden ID jika ada sebelumnya
+            $('#jaringan-id-input').remove();
+
+            // Tambahkan ID ke form untuk keperluan update
+            $('#addJaringanForm').append(`<input type="hidden" id="jaringan-id-input" name="id_jaringan" value="${jaringan.id_jaringan}">`);
+
+            // Ubah judul modal dan tombol
+            $('h2').text('Edit Jaringan');
+            $('.add-button[type="submit"]').text('Update');
+
+            // Tampilkan modal setelah data diisi
+            $('#addJaringanModal').modal('show');
+        } else {
+            swal({
+                title: "Error!",
+                text: response.message || "Gagal mengambil data jaringan.",
+                type: "error",
+                button: {
+                    text: "OK",
+                    value: true,
+                    visible: true,
+                    className: "btn btn-danger"
+                }
+            });
+        }
+    }).fail(function(xhr) {
+        console.error('Edit error details:', xhr.responseText);
         swal({
-            title: "Apakah Anda yakin?",
-            text: "Data yang dihapus tidak dapat dikembalikan!",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Ya, hapus!",
-            cancelButtonText: "Batal",
-            closeOnConfirm: false
-        }, function(isConfirm) {
-            if (isConfirm) {
-                $.ajax({
-                    url: `/delete-jaringan/${id}`,
-                    type: 'DELETE',
-                    dataType: 'json',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            swal({
-                                title: "Terhapus!",
-                                text: "Jaringan berhasil dihapus.",
-                                type: "success",
-                                button: {
-                                    text: "OK",
-                                    value: true,
-                                    visible: true,
-                                    className: "btn btn-primary"
-                                }
-                            });
-                            loadJaringanData();
-                        } else {
-                            swal({
-                                title: "Error!",
-                                text: response.message || "Gagal menghapus jaringan",
-                                type: "error",
-                                button: {
-                                    text: "OK",
-                                    value: true,
-                                    visible: true,
-                                    className: "btn btn-danger"
-                                }
-                            });
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Delete error details:', {
-                            status: status,
-                            error: error,
-                            response: xhr.responseText
-                        });
-                        swal({
-                            title: "Error!",
-                            text: "Terjadi kesalahan saat menghapus jaringan",
-                            type: "error",
-                            button: {
-                                text: "OK",
-                                value: true,
-                                visible: true,
-                                className: "btn btn-danger"
-                            }
-                        });
-                    }
-                });
+            title: "Error!",
+            text: "Terjadi kesalahan saat mengambil data jaringan.",
+            type: "error",
+            button: {
+                text: "OK",
+                value: true,
+                visible: true,
+                className: "btn btn-danger"
             }
         });
-    }
+    });
+}
+
+
+function deleteJaringan(id_jaringan) {
+    Swal.fire({
+        title: 'Apakah Anda yakin?',
+        text: "Data yang dihapus tidak dapat dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/delete-jaringan/${id_jaringan}`, // Menggunakan id_jaringan
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire(
+                            'Terhapus!',
+                            'Data berhasil dihapus.',
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            'Gagal menghapus data.',
+                            'error'
+                        );
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    Swal.fire(
+                        'Error!',
+                        'Terjadi kesalahan saat menghapus data.',
+                        'error'
+                    );
+                }
+            });
+        }
+    });
+}
+
 </script>
 @endsection
