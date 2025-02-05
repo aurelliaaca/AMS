@@ -7,15 +7,23 @@ use App\Models\ListPerangkat;
 use App\Models\Perangkat;
 use App\Models\BrandPerangkat;
 use App\Models\ListJaringan;
+use App\Models\Fasilitas;
+use App\Models\Tipe;
 use Illuminate\Support\Facades\DB;
+use App\Models\Region;
 
 class AsetController extends Controller
 {
     public function jaringan()
     {
-        // Ambil data dengan pagination, 10 data per halaman
-        $jaringanData = ListJaringan::all();
-        return view('aset.jaringan', compact('jaringanData'));
+        // Ambil semua data jaringan dengan relasi tipe
+        $jaringan = ListJaringan::with('tipe')->get();
+
+        // Ambil semua tipe untuk dropdown
+        $tipeJaringanList = Tipe::all();
+
+        // Kirim data ke view
+        return view('aset.jaringan', compact('jaringan', 'tipeJaringanList'));
     }
 
     public function perangkat()
@@ -188,8 +196,14 @@ public function getPop(Request $request)
 
     public function alatukur()
     {
-        $alat_ukur = Alatukur::all();
-        return view('aset.alatukur', compact('alat_ukur'));
+        // Ambil semua data alat ukur dengan relasi region
+        $alat_ukur = AlatUkur::with('region')->get();
+
+        // Ambil semua region untuk dropdown
+        $regions = Region::all();
+
+        // Kirim data ke view
+        return view('aset.alatukur', compact('alat_ukur', 'regions'));
     }
 
     public function getPerangkatById($wdm)
@@ -313,5 +327,26 @@ public function getPop(Request $request)
                 'message' => 'Gagal mengupdate perangkat: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function getTipeJaringan($tipe)
+    {
+        // Ambil data tipe jaringan berdasarkan tipe yang dipilih
+        $tipeJaringan = ListJaringan::where('tipe_jaringan', $tipe)->get();
+
+        return response()->json($tipeJaringan);
+    }
+
+    public function getJaringanByRegionAndTipe(Request $request)
+    {
+        $region = $request->input('region');
+        $tipe = $request->input('tipe');
+
+        // Ambil data jaringan berdasarkan region dan tipe
+        $jaringan = ListJaringan::where('RO', $region)
+            ->where('tipe_jaringan', $tipe)
+            ->get();
+
+        return response()->json($jaringan);
     }
 }

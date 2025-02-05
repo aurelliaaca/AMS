@@ -52,6 +52,9 @@ Route::middleware('auth')->group(function () {
 // Rute untuk halaman jaringan
 Route::get('/jaringan', [AsetController::class, 'jaringan'])->name('jaringan');
 
+// Route untuk menyimpan data jaringan
+Route::post('/jaringan/storeJaringan', [AsetController::class, 'store'])->name('jaringan.storeJaringan');
+
 // Rute untuk halaman perangkat
 Route::get('/perangkat', [AsetController::class, 'perangkat'])->name('perangkat');
 Route::post('/store-perangkat', [AsetController::class, 'store'])->name('perangkat.store');
@@ -84,3 +87,8 @@ Route::get('/get-perangkat', [AsetController::class, 'getPerangkat']);
 
 // Rute untuk edit dan delete perangkat
 Route::get('/get-perangkat/{wdm}', [AsetController::class, 'getPerangkatById']);
+
+// Route untuk mengambil tipe jaringan berdasarkan pilihan
+Route::get('/jaringan/tipes/{tipe}', [AsetController::class, 'getTipeJaringan']);
+
+Route::get('/jaringan/filter', [AsetController::class, 'getJaringanByRegionAndTipe']);
