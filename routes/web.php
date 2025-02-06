@@ -44,16 +44,17 @@ Route::middleware('auth')->group(function () {
     // DASHBOARD
     Route::get('/dashboard', [HomeController::class, 'data'])->name('dashboard');
     
-    // RACK
-    Route::get('/rack', [HomeController::class, 'dropdown']);
-
+    /// RACK
+    Route::get('/rack', [HomeController::class, 'rack'])->name('rack');
+    Route::get('/get-racks-by-region/{kode_region}', [HomeController::class, 'getRacksByRegion']);
+    
     // DATA
     Route::get('/data', [DataController::class, 'index'])->name('data.index');
     Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
     // Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
 
     // PROFILE
-    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/update', [ProfilController::class, 'update'])->name('profile.update');
 
     // ASET
     // PERANGKAT
@@ -64,8 +65,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-sites', [AsetController::class, 'getSites'])->name('getSites');
     Route::get('/get-perangkat', [AsetController::class, 'getPerangkat']);
     Route::get('/get-perangkat/{wdm}', [AsetController::class, 'getPerangkatById']);
-
-
 
     // FASILITAS
     Route::get('/fasilitas', [AsetController::class, 'fasilitas'])->name('fasilitas');
@@ -110,7 +109,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/data', [DataController::class, 'index'])->name('data');
     Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
     Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
-    Route::get('/data/rack', [DataController::class, 'rack'])->name('data.rack')
+    Route::get('/data/rack', [DataController::class, 'rack'])->name('data.rack');
 
 
     Route::get('/histori', [MenuController::class, 'histori'])->name('histori');
