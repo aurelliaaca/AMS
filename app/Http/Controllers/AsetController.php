@@ -83,12 +83,16 @@ class AsetController extends Controller
         $perangkat->whereIn('listperangkat.kode_brand', $request->brand);
     }
 
+    // Urutkan perangkat berdasarkan WDM secara ascending
+    $perangkat->orderBy('listperangkat.WDM', 'asc');
+
     $listPerangkat = $perangkat->get();
 
     return response()->json([
         'perangkat' => $listPerangkat
     ]);
 }
+
 
 
     // Fetch sites based on the selected regions

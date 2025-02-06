@@ -339,11 +339,11 @@
                         <th>POP</th>
                         <th>No Rack</th>
                         <th>Perangkat</th>
-                        <th>Perangkat ke</th>
+                        <!-- <th>Perangkat ke</th> -->
                         <th>Brand</th>
                         <th>Type</th>
-                        <th>Uawal</th>
-                        <th>Uakhir</th>
+                        <!-- <th>Uawal</th> -->
+                        <!-- <th>Uakhir</th> -->
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -583,11 +583,8 @@
                             <td>${perangkat.nama_site || '-'}</td>
                             <td>${perangkat.no_rack || '-'}</td>
                             <td>${perangkat.nama_pkt || '-'}</td>
-                            <td>${perangkat.pkt_ke || '-'}</td>
                             <td>${perangkat.nama_brand || '-'}</td>
                             <td>${perangkat.type || '-'}</td>
-                            <td>${perangkat.uawal || '-'}</td>
-                            <td>${perangkat.uakhir || '-'}</td>
                             <td>
                                 <button onclick="editPerangkat(${perangkat.WDM})" 
                                     style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
@@ -713,10 +710,7 @@
                     
                     // Isi form dengan data yang ada
                     $('#regionAdd').val(perangkat.kode_region).trigger('change');
-                    
-                    // Tunggu sebentar untuk memastikan site sudah ter-load
-                    setTimeout(() => {
-                        $('#siteAdd').val(perangkat.kode_site);
+                    $('#siteAdd').val(perangkat.kode_site).trigger('change');
                         $('#perangkatAdd').val(perangkat.kode_pkt);
                         $('#brandAdd').val(perangkat.kode_brand);
                         $('#no_rack').val(perangkat.no_rack);
@@ -724,8 +718,7 @@
                         $('#type').val(perangkat.type);
                         $('#uawal').val(perangkat.uawal);
                         $('#uakhir').val(perangkat.uakhir);
-                    }, 1000);
-                    
+
                     // Hapus input hidden WDM yang mungkin ada sebelumnya
                     $('#wdm-input').remove();
                     
