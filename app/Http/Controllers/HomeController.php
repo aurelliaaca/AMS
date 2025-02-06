@@ -35,22 +35,26 @@ class HomeController extends Controller
     }
 
     public function data()
-{
-    $regionCount = Region::count();
-    $siteCount = Site::count();
-    $perangkatCount = ListPerangkat::count();
-    $fasilitasCount = Fasilitas::count();
-    $jaringanCount = ListJaringan::count();
-    $alatukurCount = AlatUkur::count();
+    {
+        $regionCount = Region::count();
+        $siteCount = Site::count();
+        $perangkatCount = ListPerangkat::count();
+        $fasilitasCount = Fasilitas::count();
+        $jaringanCount = ListJaringan::count();
+        $alatukurCount = AlatUkur::count();
 
-    return view('menu.dashboard', compact(
-        'regionCount', 
-        'siteCount', 
-        'perangkatCount', 
-        'fasilitasCount', 
-        'jaringanCount', 
-        'alatukurCount'
-    ));
-}
+        return view('menu.dashboard', compact(
+            'regionCount', 
+            'siteCount', 
+            'perangkatCount', 
+            'fasilitasCount', 
+            'jaringanCount', 
+            'alatukurCount'
+        ));
+    }
 
+    public function datapage()
+    {
+        return view('data.datapage');
+    }
 }
