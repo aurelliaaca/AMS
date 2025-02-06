@@ -349,4 +349,58 @@ public function getPop(Request $request)
 
         return response()->json($jaringan);
     }
+
+    public function deleteJaringan($id_jaringan)
+    {
+        try {
+            $jaringan = ListJaringan::where('id_jaringan', $id_jaringan)->firstOrFail();
+            $jaringan->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error deleting jaringan: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus data'
+            ]);
+        }
+    }
+    
+    public function editJaringan($id_jaringan)
+    {
+        try {
+            $jaringan = ListJaringan::where('id_jaringan', $id_jaringan)->firstOrFail();
+            return response()->json([
+                'success' => true,
+                'jaringan' => $jaringan
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data jaringan'
+            ]);
+        }
+    }
+
+    public function updateJaringan(Request $request, $id_jaringan)
+    {
+        try {
+            $jaringan = ListJaringan::where('id_jaringan', $id_jaringan)->firstOrFail();
+            $jaringan->update($request->all());
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Data jaringan berhasil diupdate'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengupdate data jaringan'
+            ]);
+        }
+    }
 }

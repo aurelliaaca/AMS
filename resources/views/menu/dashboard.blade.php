@@ -73,7 +73,6 @@
         bottom: 15px;   
     }
 
-
     /* Warna card dengan opacity yang lebih solid */
     .primary {
         background: linear-gradient(45deg, #4f52ba 0%, #6f86e0 100%);
@@ -120,11 +119,12 @@
             <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Dashboard</h3>
         </div>
         <div class="card-grid">
-            <div class="card-counter primary">
+            <a href="{{ route('pengaturan') }}" class="card-counter primary" style="text-decoration: none;">
                 <i class="material-symbols-outlined">map</i>
                 <span class="count-numbers">{{ $regionCount }}</span>
                 <span class="count-name">Region</span>
-            </div>
+            </a>
+
             
             <div class="card-counter primary">
                 <i class="material-symbols-outlined">location_on</i>
