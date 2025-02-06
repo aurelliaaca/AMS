@@ -279,7 +279,9 @@
                         <td>{{ $alat->harga_pembelian }}</td>
                         <td>{{ $alat->no_kontrak_spk }}</td>
                         <td>
-                            <button class="edit-btn" onclick="editAlatUkur({{ $alat->urutan }})">Edit</button>
+                            <button type="button" class="edit-button" onclick="editAlatUkur('{{ $alat->urutan }}')" style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">
+                                Edit
+                            </button>
                             <button class="delete-btn" onclick="destroyAlatUkur({{ $alat->urutan }})">Hapus</button>
                         </td>
                     </tr>
@@ -325,7 +327,7 @@
 
                     <div class="form-group">
                         <label for="type">Type</label>
-                        <input type="text" id="type" name="type" required>
+                        <input type="text" id="type" name="type" class="auto-fill-input">
                     </div>
                 
                 </div>
@@ -333,11 +335,11 @@
                 <div class="right-column">
                     <div class="form-group">
                         <label for="serial_number">Serial Number</label>
-                        <input type="text" id="serial_number" name="serial_number" required>
+                        <input type="text" id="serial_number" name="serial_number" class="auto-fill-input">
                     </div>
                     <div class="form-group">
                         <label for="tahun_perolehan">Tahun Perolehan</label>
-                        <input type="number" id="tahun_perolehan" name="tahun_perolehan" required>
+                        <input type="text" id="tahun_perolehan" name="tahun_perolehan" class="auto-fill-input">
                     </div>
 
                     <div class="form-group">
@@ -352,12 +354,12 @@
 
                     <div class="form-group">
                         <label for="harga_pembelian">Harga Pembelian</label>
-                        <input type="number" id="harga_pembelian" name="harga_pembelian" required>
+                        <input type="text" id="harga_pembelian" name="harga_pembelian" class="auto-fill-input">
                     </div>
 
                     <div class="form-group">
                         <label for="no_kontrak_spk">No Kontrak</label>
-                        <input type="text" id="no_kontrak_spk" name="no_kontrak_spk" required>
+                        <input type="text" id="no_kontrak_spk" name="no_kontrak_spk" class="auto-fill-input">
                     </div>
                 </div>
             </div>
@@ -416,7 +418,10 @@
 
     function closeAddAlatUkurModal() {
         $('#addAlatUkurForm')[0].reset();
-        $('#alat-id-input').remove();
+        $('#serial_number').val('-');
+        $('#type').val('-');
+        $('#tahun_perolehan').val('-');
+        $('#harga_pembelian').val('-');
         $('#addAlatUkurModal .modal-content h2').text('Tambah Alat Ukur Baru');
         $('#addAlatUkurModal .add-button[type="submit"]').text('Simpan');
         document.getElementById("addAlatUkurModal").style.display = "none";
@@ -544,6 +549,7 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
+                        console.log('Delete response:', response);
                         if (response.success) {
                             Swal.fire({
                                 title: 'Terhapus!',
@@ -572,6 +578,61 @@
             }
         });
     }
+
+    $(document).ready(function() {
+        // Daftar input yang akan diatur
+        const autoFillInputs = [
+            'serial_number',
+            'type',
+            'tahun_perolehan',
+            'harga_pembelian'
+        ];
+
+        // Tambahkan event listener untuk setiap input
+        autoFillInputs.forEach(function(inputId) {
+            $(`#${inputId}`).blur(function() {
+                if ($(this).val().trim() === '') {
+                    $(this).val('-');
+                }
+            });
+        });
+
+        // Reset form saat modal dibuka
+        function openAddAlatUkurModal() {
+            autoFillInputs.forEach(function(inputId) {
+                if ($(`#${inputId}`).val().trim() === '') {
+                    $(`#${inputId}`).val('-');
+                }
+            });
+            $('#addAlatUkurModal').show();
+        }
+
+        // Reset form saat modal ditutup
+        function closeAddAlatUkurModal() {
+            autoFillInputs.forEach(function(inputId) {
+                $(`#${inputId}`).val('-');
+            });
+            $('#addAlatUkurModal').hide();
+        }
+
+        // Tambahkan event untuk menghapus tanda "-" saat input difokuskan
+        autoFillInputs.forEach(function(inputId) {
+            $(`#${inputId}`).focus(function() {
+                if ($(this).val() === '-') {
+                    $(this).val('');
+                }
+            });
+        });
+
+        // Handler form submit
+        $('#addAlatUkurForm').submit(function(e) {
+            autoFillInputs.forEach(function(inputId) {
+                if ($(`#${inputId}`).val().trim() === '') {
+                    $(`#${inputId}`).val('-');
+                }
+            });
+        });
+    });
 </script>
 @endsection
 
