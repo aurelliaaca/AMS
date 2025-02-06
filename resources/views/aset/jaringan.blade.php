@@ -434,7 +434,7 @@
     console.log("Tipe Filter yang dipilih:", tipeFilter); // Debugging log
 
     rows.forEach(row => {
-        const tipeJaringanCell = row.cells[4].textContent.toLowerCase(); // Pastikan indeks sesuai dengan kolom "Tipe Jaringan"
+        const tipeJaringanCell = row.cells[3].textContent.toLowerCase(); // Pastikan indeks sesuai dengan kolom "Tipe Jaringan"
         console.log("Tipe Jaringan pada row:", tipeJaringanCell); // Debugging log
 
         if (tipeFilter === "" || tipeJaringanCell.includes(tipeFilter)) {

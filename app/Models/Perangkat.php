@@ -9,8 +9,15 @@ class Perangkat extends Model
 {
     use HasFactory;
     protected $table = 'perangkat';
+    protected $primaryKey = 'kode_pkt';
+    public $timestamps = false;
 
     protected $fillable = [
         'nama_pkt', 'kode_pkt',
     ];
+
+    public function listPerangkat()
+    {
+        return $this->hasMany(ListPerangkat::class, 'kode_pkt', 'kode_pkt');
+    }
 }
