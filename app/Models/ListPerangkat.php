@@ -56,24 +56,22 @@ class ListPerangkat extends Model
             try {
                 \Log::info('Creating history for new perangkat: ' . $perangkat->WDM);
                 
-                // Ambil data perangkat dengan eager loading
-                $perangkatData = ListPerangkat::with(['region', 'site', 'perangkat', 'brand'])
-                    ->where('WDM', $perangkat->WDM)
-                    ->first();
+                // Reload perangkat dengan relasi
+                $perangkat->load(['region', 'site', 'perangkat', 'brand']);
 
                 // Debug log
                 \Log::info('Data for history:', [
                     'WDM' => $perangkat->WDM,
                     'kode_pkt' => $perangkat->kode_pkt,
-                    'perangkat_data' => $perangkatData
+                    'perangkat_data' => $perangkat->toArray()
                 ]);
 
                 HistoriPerangkat::create([
                     'idHiPe' => $perangkat->WDM,
-                    'region' => optional($perangkatData->region)->nama_region ?? '-',
-                    'site' => optional($perangkatData->site)->nama_site ?? '-',
-                    'nama_perangkat' => optional($perangkatData->perangkat)->nama_pkt ?? '-',
-                    'brand' => optional($perangkatData->brand)->nama_brand ?? '-',
+                    'region' => $perangkat->region ? $perangkat->region->nama_region : '-',
+                    'site' => $perangkat->site ? $perangkat->site->nama_site : '-',
+                    'nama_perangkat' => $perangkat->perangkat ? $perangkat->perangkat->nama_pkt : '-',
+                    'brand' => $perangkat->brand ? $perangkat->brand->nama_brand : '-',
                     'type' => $perangkat->type ?? '-',
                     'no_rack' => $perangkat->no_rack ?? '-',
                     'uawal' => $perangkat->uawal ?? '-',
@@ -92,19 +90,15 @@ class ListPerangkat extends Model
         // Trigger untuk UPDATE
         static::updated(function ($perangkat) {
             try {
-                \Log::info('Updating history for perangkat: ' . $perangkat->WDM);
-                
-                // Ambil data perangkat dengan eager loading
-                $perangkatData = ListPerangkat::with(['region', 'site', 'perangkat', 'brand'])
-                    ->where('WDM', $perangkat->WDM)
-                    ->first();
+                // Reload perangkat dengan relasi
+                $perangkat->load(['region', 'site', 'perangkat', 'brand']);
 
                 HistoriPerangkat::create([
                     'idHiPe' => $perangkat->WDM,
-                    'region' => optional($perangkatData->region)->nama_region ?? '-',
-                    'site' => optional($perangkatData->site)->nama_site ?? '-',
-                    'nama_perangkat' => optional($perangkatData->perangkat)->nama_pkt ?? '-',
-                    'brand' => optional($perangkatData->brand)->nama_brand ?? '-',
+                    'region' => $perangkat->region ? $perangkat->region->nama_region : '-',
+                    'site' => $perangkat->site ? $perangkat->site->nama_site : '-',
+                    'nama_perangkat' => $perangkat->perangkat ? $perangkat->perangkat->nama_pkt : '-',
+                    'brand' => $perangkat->brand ? $perangkat->brand->nama_brand : '-',
                     'type' => $perangkat->type ?? '-',
                     'no_rack' => $perangkat->no_rack ?? '-',
                     'uawal' => $perangkat->uawal ?? '-',
