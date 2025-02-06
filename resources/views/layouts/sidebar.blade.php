@@ -231,11 +231,14 @@
                 <span class="material-symbols-outlined"> dashboard </span>Dasbor</a>
             </li>
             <li>
-                <a href="#"><span class="material-symbols-outlined"> history </span>Histori</a>
+                <a href="{{ route('histori') }}"><span class="material-symbols-outlined"> history </span>Histori</a>
             </li>
             <li>
-                <a href="#"><span class="material-symbols-outlined"> dataset </span>Rack</a>
-            </li>
+                <a href="{{ route('rack') }}"><span class="material-symbols-outlined"> dataset </span>Rack</a>
+            </li>
+            <li>
+                <a href="{{ route(name: 'data') }}"><span class="material-symbols-outlined"> database </span>Data</a>
+            </li> 
             <h4>
                 <span>Aset</span>
                 <div class="menu-separator"></div>
@@ -252,10 +255,10 @@
             <li>
                 <a href="{{ route('alatukur') }}"><span class="material-symbols-outlined"> square_foot </span>Alat Ukur</a>
             </li>
-            <!-- <li>
+            <li>
                 <a href="#"><span class="material-symbols-outlined">
                     notifications_active </span>Notifications</a>
-            </li> -->
+            </li> 
             <h4>
                 <span>Akun</span>
                 <div class="menu-separator"></div>
