@@ -145,34 +145,67 @@
             margin-bottom: 15px;
         }
 
-        /* Styling for upload photo */
+        /* Styling untuk upload photo yang lebih sederhana */
         .upload-photo-container {
             display: flex;
+            flex-direction: column;
             align-items: center;
             gap: 10px;
-            justify-content: center;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
-        .upload-photo-container label {
+        .button-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-btn, .reset-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .upload-btn {
             background-color: #4f52ba;
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
+        }
+
+        .upload-btn:hover {
+            background-color: #3c3f91;
+        }
+
+        .reset-btn {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .reset-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .upload-btn i, .reset-btn i {
+            margin-right: 5px;
+        }
+
+        .file-info {
+            color: #666;
+            font-size: 13px;
             text-align: center;
         }
 
-        .upload-photo-container input[type="file"] {
+        .file-info i {
+            margin-right: 5px;
+        }
+
+        .account-settings-fileinput {
             display: none;
-        }
-
-        .upload-photo-container .text-light {
-            font-size: 0.85em;
-            color: #777;
-            text-align: center;
-            margin-top: 10px;
         }
 
         .imgediticon {
@@ -180,7 +213,23 @@
             visibility: visible !important;
             opacity: 1 !important;
         }
+        .alert {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
 
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
     </style>
 
     <div class="main">
@@ -189,58 +238,68 @@
             <div class="profile-sidebar">
                 <div class="profile-info">
                     <img class="profile-image" src="{{ asset('img/pgngirls.jpg') }}" alt="Profile Image">
-                    <div class="profile-name">User Name</div>
-                    <div class="profile-role">Role: Superadmin</div>
-                    <div class="profile-email">user@example.com</div>
+                    <div class="profile-name">{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</div>
+                    <div class="profile-role">Role: {{ auth()->user()->role }}</div>
+                    <div class="profile-email">{{ auth()->user()->email }}</div>
                 </div>
 
                 <!-- Upload New Photo -->
                 <div class="upload-photo-container">
-                    <button type="button" class="btn btn-default md-btn-flat" style="padding: 4px 8px; font-size: 12px; height: 28px; line-height: 1;" onclick="document.getElementById('upload-photo').click();">
-                        <img src="{{ asset('assets/images/editicon.png') }}" width="16" height="16" style="margin-right: 3px;">
-                        <i class="fas fa-camera"></i> Ubah Foto Profil
-                    </button>
+                    <div class="button-group">
+                        <button type="button" class="upload-btn" onclick="document.getElementById('upload-photo').click();">
+                            <i class="fas fa-camera"></i>
+                            Ubah Foto Profil
+                        </button>
+                        <button type="button" class="reset-btn">
+                            <i class="fas fa-undo"></i>
+                            Reset Foto
+                        </button>
+                    </div>
                     <input type="file" id="upload-photo" class="account-settings-fileinput" accept="image/*" style="display: none;">
-                    <button type="button" class="btn btn-default md-btn-flat" style="padding: 4px 8px; font-size: 12px; height: 28px; line-height: 1;">Reset</button>
+                    
+                    <div class="file-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Format yang diizinkan: JPG, GIF atau PNG. Ukuran maksimal 800KB</span>
+                    </div>
                 </div>
 
-                <div class="text-light small mt-1" style="color: gray;">
-                    *Allowed JPG, GIF or PNG. Max size of 800K
-                </div>
+                <div class="dashboard-spacer"></div>
 
-                <div style="margin-bottom: 100px;"></div>
-
-                <a href="/dashboard" class="btn-dashboard">Kembali ke Dasbor</a>
+                <a href="/dashboard" class="btn-dashboard">
+                    <i class="fas fa-arrow-left"></i>
+                    Kembali ke Dasbor
+                </a>
             </div>
 
             <!-- Profile Details Section -->
             <div class="profile-details">
                 <h2>Update Profil</h2>
-                <form>
+                <form id="updateProfileForm">
                     @csrf
                     <div class="form-row">
                         <div class="form-group">
                             <label for="first_name">First Name</label>
                             <input type="text" id="first_name" name="first_name" placeholder="First Name"
-                                value="{{ old('first_name') ?: auth()->user()->first_name }}">
+                                value="{{ auth()->user()->first_name }}">
                         </div>
                         <div class="form-group">
                             <label for="last_name">Last Name</label>
                             <input type="text" id="last_name" name="last_name" placeholder="Last Name"
-                                value="{{ old('last_name') ?: auth()->user()->last_name }}">
+                                value="{{ auth()->user()->last_name }}">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="mobile_number">Mobile Number</label>
                             <input type="text" id="mobile_number" name="mobile_number" placeholder="Mobile Number"
-                                value="{{ old('mobile_number') ?: auth()->user()->mobile_number }}">
+                                value="{{ auth()->user()->mobile_number }}">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="Company">Company</label>
-                            <input type="text" id="Company" name="Company" placeholder="Company">
+                            <label for="company">Company</label>
+                            <input type="text" id="company" name="company" placeholder="Company"
+                                value="{{ auth()->user()->company }}">
                         </div>
                     </div>
                     <div style="margin-bottom: 50px;"></div>
@@ -251,4 +310,67 @@
             </div>
         </div>
     </div>
+
+    <script>
+    document.getElementById('updateProfileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Ambil data form
+        const formData = new FormData(this);
+        
+        fetch('/profile/update', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update tampilan profil tanpa reload
+                const firstName = formData.get('first_name');
+                const lastName = formData.get('last_name');
+                
+                // Update nama di sidebar
+                document.querySelector('.profile-name').textContent = `${firstName} ${lastName}`;
+                
+                // Update mobile number jika ditampilkan
+                const mobileNumber = formData.get('mobile_number');
+                const mobileElement = document.querySelector('.profile-mobile');
+                if (mobileElement) {
+                    mobileElement.textContent = mobileNumber;
+                }
+                
+                // Update company jika ditampilkan
+                const company = formData.get('company');
+                const companyElement = document.querySelector('.profile-company');
+                if (companyElement) {
+                    companyElement.textContent = company;
+                }
+
+                // Tampilkan pesan sukses
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: 'Profil berhasil diperbarui',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } else {
+                throw new Error(data.message || 'Terjadi kesalahan');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: error.message || 'Terjadi kesalahan saat menyimpan data',
+                icon: 'error'
+            });
+        });
+    });
+    </script>
 @endsection
