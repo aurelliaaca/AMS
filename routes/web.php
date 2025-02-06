@@ -13,7 +13,8 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Models\Site;
 use App\Http\Controllers\AsetController;
-use App\Http\Controllers\RegionalController;
+use App\Http\Controllers\DataController;
+use App\Http\Controllers\MenuController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -46,6 +47,13 @@ Route::middleware('auth')->group(function () {
     // RACK
     Route::get('/rack', [HomeController::class, 'dropdown']);
 
+    // DATA
+    Route::get('/data', [DataController::class, 'index'])->name('data.index');
+    Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
+    // Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
+
+    // PROFILE
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
     // ASET
     // PERANGKAT
@@ -97,4 +105,15 @@ Route::middleware('auth')->group(function () {
     Route::put('/update-region/{id_region}', [PengaturanController::class, 'updateRegion'])->name('region.update');
     Route::delete('/delete-region/{id_region}', [PengaturanController::class, 'deleteRegion'])->name('region.delete');
     Route::get('/get-region/{id_region}', [PengaturanController::class, 'getRegion'])->name('region.get');
+
+    //DATA
+    Route::get('/data', [DataController::class, 'index'])->name('data');
+    Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
+    Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
+    Route::get('/data/rack', [DataController::class, 'rack'])->name('data.rack')
+
+
+    Route::get('/histori', [MenuController::class, 'histori'])->name('histori');
+    Route::get('/get-history-perangkat', [MenuController::class, 'getHistoryPerangkat'])->name('history.perangkat');
+
 });

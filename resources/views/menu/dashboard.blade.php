@@ -134,7 +134,7 @@
             
             <div class="card-counter primary">
                 <i class="material-symbols-outlined">dataset</i>
-                <span class="count-numbers">??</span>
+                <span class="count-numbers">{{ $totalRacks }}</span>
                 <span class="count-name">Rack</span>
             </div>
 
