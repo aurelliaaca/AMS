@@ -45,13 +45,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'data'])->name('dashboard');
     
     /// RACK
-    Route::get('/rack', [HomeController::class, 'rack'])->name('rack');
+    Route::get('/rack', [HomeController::class, 'dropdown'])->name('rack');
     Route::get('/get-racks-by-region/{kode_region}', [HomeController::class, 'getRacksByRegion']);
     
     // DATA
     Route::get('/data', [DataController::class, 'index'])->name('data.index');
     Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
-    // Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
+    Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
+    
+    // POP Routes
+    Route::get('/get-pops', [DataController::class, 'getAllPOP'])->name('pop.all');
+    Route::get('/get-pop/{id}', [DataController::class, 'getPOP'])->name('pop.get');
+    Route::post('/store-pop', [DataController::class, 'storePOP'])->name('pop.store');
+    Route::post('/update-pop/{id}', [DataController::class, 'updatePOP'])->name('pop.update');
+    Route::delete('/delete-pop/{id}', [DataController::class, 'deletePOP'])->name('pop.delete');
+    
+    Route::get('/data/rack', [DataController::class, 'rack'])->name('data.rack');
 
     // PROFILE
     Route::post('/profile/update', [ProfilController::class, 'update'])->name('profile.update');
@@ -69,7 +78,6 @@ Route::middleware('auth')->group(function () {
     // FASILITAS
     Route::get('/fasilitas', [AsetController::class, 'fasilitas'])->name('fasilitas');
 
-
     // JARINGAN
     Route::get('/jaringan', [AsetController::class, 'jaringan'])->name('jaringan');
     Route::post('/jaringan/storeJaringan', [AsetController::class, 'store'])->name('jaringan.storeJaringan');
@@ -78,7 +86,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/delete-jaringan/{id_jaringan}', [AsetController::class, 'deleteJaringan'])->name('jaringan.delete');
     Route::get('/edit-jaringan/{id_jaringan}', [AsetController::class, 'editJaringan'])->name('jaringan.edit');
     Route::post('/update-jaringan/{id_jaringan}', [AsetController::class, 'updateJaringan'])->name('jaringan.update');
-
 
 
     // ALAT UKUR
@@ -94,8 +101,8 @@ Route::middleware('auth')->group(function () {
     // AKUN
     // PROFIL
     Route::get('/profil', [ProfilController::class, 'getProfil'])->name('profil');
-    Route::post('/update', [ProfilController::class, 'updateProfil'])->name('update');
-    Route::post('/change-password', [ProfilController::class, 'changePassword'])->name('change-password');
+    Route::post('/profil/update', [ProfilController::class, 'updateProfil'])->name('profil.update');
+    Route::post('/profil/change-password', [ProfilController::class, 'changePassword'])->name('profil.change-password');
 
     // PENGATURAN
     Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan');
@@ -109,8 +116,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/data', [DataController::class, 'index'])->name('data');
     Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
     Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
-    Route::get('/data/rack', [DataController::class, 'rack'])->name('data.rack');
+    Route::post('/store-pop', [DataController::class, 'storePOP'])->name('pop.store');
+    Route::get('/get-pop', [DataController::class, 'getAllPOP'])->name('pop.all');
+    Route::put('/update-pop/{no_site}', [DataController::class, 'updatePOP'])->name('pop.update');
+    Route::delete('/delete-pop/{no_site}', [DataController::class, 'deletePOP'])->name('pop.delete');
+    Route::get('/get-pop/{no_site}', [DataController::class, 'getPOP'])->name('pop.get');
 
+    Route::get('/data/rack', [DataController::class, 'rack'])->name('data.rack');
 
     Route::get('/histori', [MenuController::class, 'histori'])->name('histori');
     Route::get('/get-history-perangkat', [MenuController::class, 'getHistoryPerangkat'])->name('history.perangkat');

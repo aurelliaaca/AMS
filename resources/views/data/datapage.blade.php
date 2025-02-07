@@ -24,7 +24,7 @@
     }
 
     .header h2 {
-        color: #333;
+        color: #4f52ba;
         font-size: 24px;
         font-weight: 600;
     }
@@ -115,7 +115,7 @@
 
 <div class="container">
     <div class="header">
-        <h2>Data Overview</h2>
+    <h2 style= color: #4f52ba;>Data Overview</h2>
     </div>
     
     <div class="card-grid">
@@ -135,8 +135,8 @@
                 <i class="fas fa-network-wired"></i>
             </div>
             <h3 class="card-title">POP</h3>
-            <div class="card-count">42</div>
-            <p class="card-description">########</p>
+            <div class="card-count">{{ $popCount }}</div>
+            <p class="card-description">Point of Presence aktif</p>
             <a href="{{ route('data.pop') }}" class="card-link">Lihat Detail <i class="fas fa-arrow-right"></i></a>
         </div>
     </div>

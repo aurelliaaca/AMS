@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Region;
+use App\Models\Pop;
+use Illuminate\Support\Facades\Schema;
 
 class DataController extends Controller
 {
     public function index()
     {
-        $regionCount = Region::count(); // Menghitung jumlah region
-        return view('data.datapage', compact('regionCount'));
+        $regionCount = Schema::hasTable('regions') ? Region::count() : 0;
+        $popCount = Schema::hasTable('pops') ? Pop::count() : 0;
+        return view('data.datapage', compact('regionCount', 'popCount'));
     }
 
     public function region()
@@ -18,8 +21,8 @@ class DataController extends Controller
         return view('data.region');
     }
 
-    // public function pop()
-    // {
-    //     return view('data.pop');
-    // }
+    public function pop()
+    {
+        return view('data.pop');
+    }
 }

@@ -274,7 +274,7 @@
             <!-- Profile Details Section -->
             <div class="profile-details">
                 <h2>Update Profil</h2>
-                <form id="updateProfileForm">
+                <form id="updateProfileForm" action="{{ route('profil.update') }}" method="POST">
                     @csrf
                     <div class="form-row">
                         <div class="form-group">
