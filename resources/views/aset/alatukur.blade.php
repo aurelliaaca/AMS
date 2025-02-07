@@ -279,7 +279,7 @@
                         <td>{{ $alat->harga_pembelian }}</td>
                         <td>{{ $alat->no_kontrak_spk }}</td>
                         <td>
-                            <button type="button" class="edit-button" onclick="editAlatUkur('{{ $alat->urutan }}')" style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">
+                            <button type="button" class="edit-button" onclick="editAlatUkur('{{ $alat->urutan }}')" style="background-color: #4f52ba; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">
                                 Edit
                             </button>
                             <button class="delete-btn" onclick="destroyAlatUkur({{ $alat->urutan }})">Hapus</button>

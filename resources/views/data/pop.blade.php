@@ -167,7 +167,8 @@
         }
 
         .form-group input,
-        .form-group select {
+        .form-group select,
+        .form-group textarea {
             width: 100%;
             padding: 10px;
             font-size: 12px;
@@ -177,11 +178,9 @@
             background-color: #fff;
         }
 
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: #4f52ba;
-            box-shadow: 0 0 5px rgba(79, 82, 186, 0.3);
-            outline: none;
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
         }
 
         .modal-close-btn {
@@ -206,6 +205,89 @@
             gap: 10px;
             margin-top: 20px;
         }
+
+        /* Style untuk Cards */
+        .cards-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: calc(33.333% - 14px);
+            min-width: 250px;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: #4f52ba;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .card-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .card-body p {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .view-btn {
+            background: #4f52ba;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .view-btn:hover {
+            background: #3a3d9c;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .cards-container {
+                flex-direction: column;
+            }
+            
+            .card {
+                width: 100%;
+            }
+        }
     </style>
 
     <div class="main">
@@ -219,10 +301,10 @@
 
             <!-- Table Data POP -->
             <div class="table-container">
-                <table id="tablePOP">
+                <table id="popTable">
                     <thead>
                         <tr>
-                            <th>No Site</th>
+                            <th>No</th>
                             <th>Regional</th>
                             <th>Kode Regional</th>
                             <th>Jenis Site</th>
@@ -236,14 +318,14 @@
                     <tbody>
                         @forelse($pop as $index => $pop)
                             <tr>
-                                <td>${index + 1}</td>
-                                <td>${pop.nama_region}</td>
-                                <td>${pop.kode_regional || '-'}</td>
-                                <td>${pop.jenis_site || '-'}</td>
-                                <td>${pop.site || '-'}</td>
-                                <td>${pop.kode || '-'}</td>
-                                <td>${pop.keterangan || '-'}</td>
-                                <td>${pop.wajib_inspeksi ? 'Ya' : 'Tidak'}</td>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $pop->regional }}</td>
+                                <td>{{ $pop->kode_regional }}</td>
+                                <td>{{ $pop->jenis_site }}</td>
+                                <td>{{ $pop->site }}</td>
+                                <td>{{ $pop->kode }}</td>
+                                <td>{{ $pop->keterangan }}</td>
+                                <td>{{ $pop->wajib_inspeksi ? 'Ya' : 'Tidak' }}</td>
                                 <td>
                                     <button type="button" class="btn-edit" onclick="editPOP({{ $pop->no_site }})">Edit</button>
                                     <button type="button" class="btn-delete" onclick="deletePOP({{ $pop->no_site }})">Hapus</button>
@@ -251,7 +333,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="no-data">Tidak ada data POP</td>
+                                <td colspan="9" class="text-center">Tidak ada data</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -263,13 +345,18 @@
     <!-- Modal Form -->
     <div id="addPOPModal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
-            <button class="modal-close-btn" onclick="closeAddPOPModal()">×</button>
-            <h2>Tambah POP Baru</h2>
+            <span class="modal-close-btn" onclick="closeAddPOPModal()">&times;</span>
+            <h2>Tambah POP</h2>
             <form id="addPOPForm">
                 @csrf
                 <div class="form-group">
                     <label for="regional">Regional</label>
-                    <input type="text" id="regional" name="nama_region" required>
+                    <select id="regional" name="regional" required>
+                        <option value="">Pilih Region</option>
+                        @foreach($regions as $region)
+                            <option value="{{ $region->nama_region }}">{{ $region->nama_region }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="kode_regional">Kode Regional</label>
@@ -289,7 +376,7 @@
                 </div>
                 <div class="form-group">
                     <label for="keterangan">Keterangan</label>
-                    <textarea id="keterangan" name="keterangan" rows="3"></textarea>
+                    <textarea id="keterangan" name="keterangan"></textarea>
                 </div>
                 <div class="form-group">
                     <label for="wajib_inspeksi">Wajib Inspeksi</label>
@@ -298,188 +385,142 @@
                         <option value="0">Tidak</option>
                     </select>
                 </div>
-                <div class="button-container">
-                    <button type="submit" class="add-button">Simpan</button>
-                </div>
+                <button type="submit" class="add-button">Simpan</button>
             </form>
         </div>
     </div>
 
     <script>
-        $(document).ready(function() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    $(document).ready(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        // ----------------------- FUNCTION ADD/EDIT -----------------------
+        $('#addPOPForm').submit(function(e) {
+            e.preventDefault();
+            
+            const no_site = $('#id-input').val();
+            const url = no_site ? `/update-pop/${no_site}` : '/store-pop';
+            const method = no_site ? 'PUT' : 'POST';
+            
+            $.ajax({
+                url: url,
+                type: method,
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        closeAddPOPModal();
+                        showSwal('success', no_site ? 'POP berhasil diupdate!' : 'POP berhasil ditambahkan!');
+                        window.location.reload();
+                        $('#addPOPForm')[0].reset();
+                        $('#id-input').remove();
+                    } else {
+                        showSwal('error', response.message || 'Terjadi kesalahan');
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error:', xhr.responseText);
+                    showSwal('error', 'Terjadi kesalahan. Silakan coba lagi.');
                 }
             });
+        });
 
-            LoadData();
-
-            // ------------------------- STORE/UPDATE DATA -------------------------
-            $('#addPOPForm').submit(function(e) {
-                e.preventDefault();
-                
-                const no_site = $('#no_site-input').val();
-                const url = no_site ? `/update-pop/${no_site}` : '/store-pop';
-                const method = no_site ? 'PUT' : 'POST';
-                
-                $.ajax({
-                    url: url,
-                    type: method,
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        if (response.success) {
-                            closeAddPOPModal();
-                            showSwal('success', no_site ? 'POP berhasil diupdate!' : 'POP berhasil ditambahkan!');
-                            LoadData();
-                            $('#addPOPForm')[0].reset();
-                            $('#no_site-input').remove();
-                            $('.add-button[type="submit"]').text('Simpan');
-                        } else {
-                            showSwal('error', response.message || 'Terjadi kesalahan');
+        // ----------------------- FUNCTION DELETE -----------------------
+        window.deletePOP = function(no_site) {
+            swal({
+                title: "Apakah Anda yakin?",
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#dc3545",
+                confirmButtonText: "Ya, hapus!",
+                cancelButtonText: "Batal",
+                closeOnConfirm: false
+            }, function(isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: `/delete-pop/${no_site}`,
+                        type: 'DELETE',
+                        success: function(response) {
+                            if (response.success) {
+                                swal("Terhapus!", "POP berhasil dihapus.", "success");
+                                window.location.reload();
+                            } else {
+                                showSwal('error', response.message || "Gagal menghapus POP");
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error('Delete error:', xhr.responseText);
+                            showSwal('error', 'Terjadi kesalahan saat menghapus POP');
                         }
-                    },
-                    error: function(xhr) {
-                        console.error('Error:', xhr.responseText);
-                        showSwal('error', 'Terjadi kesalahan. Silakan coba lagi.');
-                    }
-                });
+                    });
+                }
             });
+        }
 
-            // ----------------------- GLOBAL MODAL FUNCTIONS -----------------------
-            window.openAddPOPModal = function() {
-                $('#addPOPModal').css('display', 'flex');
-            }
+        // ----------------------- FUNCTION EDIT -----------------------
+        window.editPOP = function(no_site) {
+            $.get(`/get-pop/${no_site}`, function(response) {
+                if (response.success) {
+                    const pop = response.pop;
+                    $('#regional').val(pop.regional);
+                    $('#kode_regional').val(pop.kode_regional);
+                    $('#jenis_site').val(pop.jenis_site);
+                    $('#site').val(pop.site);
+                    $('#kode').val(pop.kode);
+                    $('#keterangan').val(pop.keterangan);
+                    $('#wajib_inspeksi').val(pop.wajib_inspeksi ? '1' : '0');
+                    
+                    $('#id-input').remove();
+                    $('#addPOPForm').append(`<input type="hidden" id="id-input" name="id" value="${pop.no_site}">`);
+                    
+                    openAddPOPModal();
+                }
+            });
+        }
 
-            window.closeAddPOPModal = function() {
-                $('#addPOPModal').css('display', 'none');
-            }
+        // ----------------------- MODAL FUNCTIONS -----------------------
+        window.openAddPOPModal = function() {
+            $('#addPOPModal').show();
+            $('#addPOPForm')[0].reset();
+        }
 
-            // ----------------------- ALERT -----------------------
-            function showSwal(type, message) {
+        window.closeAddPOPModal = function() {
+            $('#addPOPModal').hide();
+        }
+
+        // ----------------------- ALERT -----------------------
+        function showSwal(type, message) {
+            if (type === 'success') {
                 swal({
-                    title: type === 'success' ? "Berhasil!" : "Error!",
+                    title: "Berhasil!",
                     text: message,
-                    type: type,
+                    type: "success",
                     button: {
                         text: "OK",
                         value: true,
                         visible: true,
-                        className: type === 'success' ? "btn btn-primary" : "btn btn-danger"
+                        className: "btn btn-primary"
+                    }
+                });
+            } else if (type === 'error') {
+                swal({
+                    title: "Error!",
+                    text: message,
+                    type: "error",
+                    button: {
+                        text: "OK",
+                        value: true,
+                        visible: true,
+                        className: "btn btn-danger"
                     }
                 });
             }
-
-            // ----------------------- FUNCTION LOAD DATA -----------------------
-            function LoadData() {
-                $.get('/get-pop', function(response) {
-                    const tbody = $('#tablePOP tbody');
-                    tbody.empty();
-
-                    if (response.pop && response.pop.length > 0) {
-                        $.each(response.pop, function(index, pop) {
-                            tbody.append(`
-                                <tr>
-                                    <td>${index + 1}</td>
-                                    <td>${pop.nama_region}</td>
-                                    <td>${pop.kode_regional || '-'}</td>
-                                    <td>${pop.jenis_site || '-'}</td>
-                                    <td>${pop.site || '-'}</td>
-                                    <td>${pop.kode || '-'}</td>
-                                    <td>${pop.keterangan || '-'}</td>
-                                    <td>${pop.wajib_inspeksi ? 'Ya' : 'Tidak'}</td>
-                                    <td>
-                                        <button onclick="editPOP(${pop.id})" 
-                                        style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;"
-                                        class="edit-btn">Edit</button>
-                                        <button onclick="deletePOP(${pop.id})" 
-                                        style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;"
-                                        class="delete-btn">Delete</button>
-                                    </td>
-                                </tr>
-                            `);
-                        });
-                    } else {
-                        tbody.append('<tr><td colspan="11" style="text-align: center;">Tidak ada data POP</td></tr>');
-                    }
-                }).fail(function(xhr) {
-                    console.error('LoadData Error:', xhr.responseText);
-                    const tbody = $('#tablePOP tbody');
-                    tbody.empty().append('<tr><td colspan="11" style="text-align: center;">Terjadi kesalahan dalam memuat data</td></tr>');
-                });
-            }
-
-            // ----------------------- FUNCTION EDIT -----------------------
-            window.editPOP = function(no_site) {
-                $.get(`/get-pop/${no_site}`, function(response) {
-                    if (response.success) {
-                        const pop = response.pop;
-                        
-                        $('#addPOPForm')[0].reset();
-                        $('#nama_region').val(pop.nama_region);
-                        $('#kode_regional').val(pop.kode_regional);
-                        $('#jenis_site').val(pop.jenis_site);
-                        $('#site').val(pop.site);
-                        $('#kode').val(pop.kode);
-                        $('#keterangan').val(pop.keterangan);
-                        $('#wajib_inspeksi').val(pop.wajib_inspeksi ? '1' : '0');
-                        
-                        $('#no_site-input').remove();
-                        $('#addPOPForm').append(`<input type="hidden" id="no_site-input" name="no_site" value="${pop.no_site}">`);
-                        
-                        $('h2').text('Edit POP');
-                        $('.add-button[type="submit"]').text('Update');
-                        
-                        openAddPOPModal();
-                    }
-                }).fail(function() {
-                    showSwal('error', 'Gagal mengambil data POP');
-                });
-            }
-
-            // ----------------------- FUNCTION DELETE -----------------------
-            window.deletePOP = function(no_site) {
-                Swal.fire({
-                    title: 'Apakah anda yakin?',
-                    text: "Data POP akan dihapus permanen!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: "#dc3545",
-                    confirmButtonText: "Ya, hapus!",
-                    cancelButtonText: "Batal",
-                    closeOnConfirm: false
-                }, function(isConfirm) {
-                    if (isConfirm) {
-                        $.ajax({
-                            url: `/delete-pop/${no_site}`,
-                            type: 'DELETE',
-                            data: {
-                                _token: '{{ csrf_token() }}'
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    showSwal('success', 'POP berhasil dihapus');
-                                    LoadData();
-                                } else {
-                                    showSwal('error', response.message || 'Gagal menghapus POP');
-                                }
-                            },
-                            error: function() {
-                                showSwal('error', 'Gagal menghapus POP');
-                            }
-                        });
-                    }
-                });
-            }
-
-            // -------------------- TUTUP MODAL KETIKA KLIK DI LUAR --------------------
-            window.onclick = function(event) {
-                const modal = document.getElementById("addPOPModal");
-                if (event.target === modal) {
-                    modal.style.display = "none";
-                }
-            };
-        });
+        }
+    });
     </script>
 @endsection
 

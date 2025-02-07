@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pop extends Model
 {
-    protected $table = 'pops';
+    protected $table = 'pop';
+    protected $primaryKey = 'no_site';
     
     protected $fillable = [
-        'nama_region',
+        'regional',
         'kode_regional',
         'jenis_site',
         'site',
@@ -21,4 +22,10 @@ class Pop extends Model
     protected $casts = [
         'wajib_inspeksi' => 'boolean'
     ];
+
+    // Tambahkan relasi dengan Region
+    public function region()
+    {
+        return $this->belongsTo(Region::class, 'regional', 'nama_region');
+    }
 }
