@@ -44,8 +44,8 @@ Route::middleware('auth')->group(function () {
     // DASHBOARD
     Route::get('/dashboard', [HomeController::class, 'data'])->name('dashboard');
     
-    /// RACK
-    Route::get('/rack', [HomeController::class, 'dropdown'])->name('rack');
+    // RACK
+    Route::get('/rack', [HomeController::class, 'rack'])->name('rack');
     Route::get('/get-racks-by-region/{kode_region}', [HomeController::class, 'getRacksByRegion']);
     
     // DATA
@@ -77,6 +77,11 @@ Route::middleware('auth')->group(function () {
 
     // FASILITAS
     Route::get('/fasilitas', [AsetController::class, 'fasilitas'])->name('fasilitas');
+    Route::post('/store-fasilitas', [AsetController::class, 'store'])->name('fasilitas.store');
+    Route::put('/update-fasilitas/{urutan}', [AsetController::class, 'update'])->name('fasilitas.update');
+    Route::delete('/delete-fasilitas/{urutan}', [AsetController::class, 'destroy'])->name('fasilitas.destroy');
+    Route::put('/update-fasilitas/{urutan}', [AsetController::class, 'editFasilitas'])->name('fasilitas.update');
+
 
     // JARINGAN
     Route::get('/jaringan', [AsetController::class, 'jaringan'])->name('jaringan');
@@ -121,10 +126,15 @@ Route::middleware('auth')->group(function () {
     Route::put('/update-pop/{no_site}', [DataController::class, 'updatePOP'])->name('pop.update');
     Route::delete('/delete-pop/{no_site}', [DataController::class, 'deletePOP'])->name('pop.delete');
     Route::get('/get-pop/{no_site}', [DataController::class, 'getPOP'])->name('pop.get');
-
     Route::get('/data/rack', [DataController::class, 'rack'])->name('data.rack');
 
+    //HISTORI
     Route::get('/histori', [MenuController::class, 'histori'])->name('histori');
     Route::get('/get-history-perangkat', [MenuController::class, 'getHistoryPerangkat'])->name('history.perangkat');
+    Route::prefix('histori')->group(function () {
+        Route::get('/perangkat', [MenuController::class, 'historiPerangkat'])->name('histori.perangkat');
+        Route::get('/fasilitas', [MenuController::class, 'historiFasilitas'])->name('histori.fasilitas');
+        Route::get('/jaringan', [MenuController::class, 'historiJaringan'])->name('histori.jaringan');
+    });
 
 });
