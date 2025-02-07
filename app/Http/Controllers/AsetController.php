@@ -407,4 +407,38 @@ public function getPop(Request $request)
             ]);
         }
     }
+
+    public function editFasilitas(Request $request, $urutan)
+    {
+        try {
+            // Validasi input
+            $validated = $request->validate([
+                'RO' => 'required|string',
+                'nama_POP' => 'required|string',
+                'perangkat' => 'required|string',
+                'merk' => 'required|string',
+                'tipe' => 'required|string',
+                'serial_Number' => 'required|string',
+                'jumlah' => 'required|integer',
+                'satuan' => 'required|string',
+            ]);
+
+            // Mencari fasilitas berdasarkan ID
+            $fasilitas = Fasilitas::findOrFail($urutan);
+
+            // Update data fasilitas
+            $fasilitas->update($validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Fasilitas berhasil diupdate!',
+                'data' => $fasilitas
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengupdate fasilitas: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

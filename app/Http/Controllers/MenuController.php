@@ -50,5 +50,71 @@ class MenuController extends Controller
             ]);
         }
     }
+
+    public function getHistoryFasilitas()
+    {
+        try {
+            $histories = Fasilitas::orderBy('tanggal_perubahan', 'desc')->get();
+            
+            \Log::info('Fetched histories count: ' . $histories->count());
+            \Log::info('Histories data: ' . json_encode($histories));
+            
+            return response()->json([
+                'success' => true,
+                'data' => $histories
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching history: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data history'
+            ]);
+        }
+    }
+
+    public function getHistoryJaringan()
+    {
+        try {
+            $histories = ListJaringan::orderBy('tanggal_perubahan', 'desc')->get();
+            
+            \Log::info('Fetched histories count: ' . $histories->count());
+            \Log::info('Histories data: ' . json_encode($histories));
+            
+            return response()->json([
+                'success' => true,
+                'data' => $histories
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching history: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data history'
+            ]);
+        }
+    }
+
+    public function getHistoryAlatUkur()
+    {
+        try {
+            $histories = AlatUkur::orderBy('tanggal_perubahan', 'desc')->get();
+            
+            \Log::info('Fetched histories count: ' . $histories->count());
+            \Log::info('Histories data: ' . json_encode($histories));
+            
+            return response()->json([
+                'success' => true,
+                'data' => $histories
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching history: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data history'
+            ]);
+        }
+    }
 }
 

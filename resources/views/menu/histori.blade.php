@@ -533,44 +533,49 @@ function showDetail(type) {
     // Set judul
     let title = '';
     let icon = '';
+    let url = '';
     switch(type) {
         case 'perangkat':
             icon = 'construction';
             title = 'Data Histori Perangkat';
-            loadHistoryPerangkat();
+            url = '/get-history-perangkat';
             break;
         case 'fasilitas':
             icon = 'domain';
             title = 'Data Histori Fasilitas';
+            url = '/get-history-fasilitas';
             break;
         case 'jaringan':
             icon = 'hub';
             title = 'Data Histori Jaringan';
+            url = '/get-history-jaringan';
             break;
         case 'alatukur':
             icon = 'square_foot';
             title = 'Data Histori Alat Ukur';
+            url = '/get-history-alatukur';
             break;
-
     }
 
     detailTitle.innerHTML = `
         <i class="material-symbols-outlined">${icon}</i>
         <span>${title}</span>
     `;
+
+    loadHistoryData(url);
 }
 
-function loadHistoryPerangkat() {
+function loadHistoryData(url) {
     const detailData = document.getElementById('detailData');
     
     // Tambahkan console.log untuk debugging
-    console.log('Loading history perangkat...');
+    console.log('Loading history data from:', url);
     
     // Tampilkan loading
     detailData.innerHTML = '<div class="text-center">Loading...</div>';
     
     $.ajax({
-        url: '/get-history-perangkat',
+        url: url,
         type: 'GET',
         success: function(response) {
             // Debug response

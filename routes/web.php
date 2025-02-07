@@ -68,6 +68,11 @@ Route::middleware('auth')->group(function () {
 
     // FASILITAS
     Route::get('/fasilitas', [AsetController::class, 'fasilitas'])->name('fasilitas');
+    Route::post('/store-fasilitas', [AsetController::class, 'store'])->name('fasilitas.store');
+    Route::put('/update-fasilitas/{urutan}', [AsetController::class, 'update'])->name('fasilitas.update');
+    Route::delete('/delete-fasilitas/{urutan}', [AsetController::class, 'destroy'])->name('fasilitas.destroy');
+    Route::put('/update-fasilitas/{urutan}', [AsetController::class, 'editFasilitas'])->name('fasilitas.update');
+
 
 
     // JARINGAN
@@ -111,8 +116,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
     Route::get('/data/rack', [DataController::class, 'rack'])->name('data.rack');
 
-
+    //HISTORI
     Route::get('/histori', [MenuController::class, 'histori'])->name('histori');
     Route::get('/get-history-perangkat', [MenuController::class, 'getHistoryPerangkat'])->name('history.perangkat');
+    Route::prefix('histori')->group(function () {
+        Route::get('/perangkat', [MenuController::class, 'historiPerangkat'])->name('histori.perangkat');
+        Route::get('/fasilitas', [MenuController::class, 'historiFasilitas'])->name('histori.fasilitas');
+        Route::get('/jaringan', [MenuController::class, 'historiJaringan'])->name('histori.jaringan');
+    });
 
 });
