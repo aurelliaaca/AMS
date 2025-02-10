@@ -14,7 +14,6 @@ class Region extends Model
 
 
     protected $fillable = [
-        'id_region',
         'nama_region',
         'kode_region',
         'email',
@@ -30,6 +29,11 @@ class Region extends Model
     public function perangkat()
     {
         return $this->hasMany(ListPerangkat::class, 'kode_site', 'kode_site');
+    }
+
+    public function pop()
+    {
+        return $this->hasMany(Pop::class, 'regional', 'nama_region');
     }
 
 }
