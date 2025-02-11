@@ -85,7 +85,7 @@ Route::middleware('auth')->group(function () {
 
     // JARINGAN
     Route::get('/jaringan', [AsetController::class, 'jaringan'])->name('jaringan');
-    Route::post('/jaringan/storeJaringan', [AsetController::class, 'store'])->name('jaringan.storeJaringan');
+    Route::post('/jaringan/store', [AsetController::class, 'storeJaringan'])->name('jaringan.store');
     Route::get('/jaringan/tipes/{tipe}', [AsetController::class, 'getTipeJaringan']);
     Route::get('/jaringan/filter', [AsetController::class, 'getJaringanByRegionAndTipe']);
     Route::delete('/delete-jaringan/{id_jaringan}', [AsetController::class, 'deleteJaringan'])->name('jaringan.delete');

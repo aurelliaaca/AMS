@@ -11,273 +11,161 @@
     }
 
     .container {
-        width: 100%;
-        background-color: #fff;
-        padding: 70px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
     }
 
-    .header {
-        margin-bottom: 50px;
+    .dashboard-header {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
     }
 
-    .header h3 {
+    .cards-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .icon-wrapper {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .icon-wrapper i {
         font-size: 24px;
+        color: white;
+    }
+
+    .pop-icon { background: linear-gradient(135deg, #4f52ba, #6366F1); }
+    .facility-icon { background: linear-gradient(135deg, #2DD4BF, #14B8A6); }
+    .device-icon { background: linear-gradient(135deg, #F59E0B, #D97706); }
+    .rack-icon { background: linear-gradient(135deg, #EC4899, #DB2777); }
+
+    .header-text {
+        flex-grow: 1;
+    }
+
+    .header-text h3 {
+        color: #2c3e50;
+        font-size: 18px;
         font-weight: 600;
+        margin: 0 0 5px 0;
+    }
+
+    .count {
+        font-size: 24px;
+        font-weight: 700;
         color: #4f52ba;
-        margin: 0;
     }
 
-    .card-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .card-counter {
-        background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    .card-body {
         padding: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: transform 0.2s;
-        position: relative;
-        min-height: 100px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .card-body p {
+        color: #64748b;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .view-btn {
         width: 100%;
-        margin-bottom: 40px;
-    }
-
-    .card-counter .icon-section {
-        display: flex;
-        align-items: center;
-        width: 15%;
-    }
-
-    .count-section {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 40%;
-    }
-
-    .button-section {
-        width: 25%;
-        text-align: right;
-    }
-
-    .open-btn {
-        padding: 8px 16px;
-        border: 2px solid white;
-        background: transparent;
-        color: white;
-        border-radius: 5px;
+        background: #f8fafc;
+        color: #4f52ba;
+        border: 1px solid #e2e8f0;
+        padding: 10px;
+        border-radius: 8px;
         cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
         transition: all 0.3s ease;
     }
 
-    .open-btn:hover {
-        background: white;
-        color: #4f52ba;
-    }
-
-    /* Warna tombol sesuai card */
-    .primary .open-btn:hover {
-        color: #4f52ba;
-    }
-
-    .success .open-btn:hover {
-        color: #1cc88a;
-    }
-
-    .info .open-btn:hover {
-        color: #36b9cc;
-    }
-
-    .danger .open-btn:hover {
-        color: #e74a3b;
-    }
-
-    .content-section {
-        display: none;
-        margin-top: 20px;
-        padding: 20px;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .content-section.active {
-        display: block;
-    }
-
-    .card-counter i {
-        font-size: 48px;
-        opacity: 0.8;
-        margin-right: 20px;
+    .view-btn:hover {
+        background: #4f52ba;
         color: white;
+        border-color: #4f52ba;
     }
 
-    .count-numbers {
-        font-size: 36px;
-        font-weight: bold;
-        margin-bottom: 5px;
-        color: white;
+    .view-btn i {
+        font-size: 12px;
+        transition: transform 0.3s ease;
     }
 
-    .count-name {
-        font-size: 20px;
-        color: white;
-        font-style: italic;
-        opacity: 0.9;
-    }
-
-    /* Warna card dengan gradient */
-    .primary {
-        background: linear-gradient( #4f52ba 0%, #6f86e0 100%);
-    }
-
-    .danger {
-        background: linear-gradient( #4f52ba 0%, #6f86e0 100%);
-    }
-
-    .success {
-        background: linear-gradient( #4f52ba 0%, #6f86e0 100%);
-    }
-
-    .info {
-        background: linear-gradient( #4f52ba 0%, #6f86e0 100%);
-    }
-
-
-    /* Responsive design */
-    @media (max-width: 768px) {
-        .card-counter {
-            padding: 15px;
-        }
-
-        .count-numbers {
-            font-size: 28px;
-        }
-
-        .count-name {
-            font-size: 16px;
-        }
-
-        .card-counter i {
-            font-size: 36px;
-        }
-
-        .header {
-            margin-bottom: 30px;
-            padding-bottom: 10px;
-        }
-
-        .card-grid {
-            padding-top: 15px;
-        }
-    }
-
-    .main-content, .detail-content {
-        width: 100%;
-        transition: all 0.3s ease;
+    .view-btn:hover i {
+        transform: translateX(4px);
     }
 
     .detail-content {
-        display: none;
-    }
-
-    .detail-content.active {
-        display: block;
+        margin-top: 30px;
     }
 
     .back-section {
         display: flex;
         align-items: center;
         margin-bottom: 25px;
-        padding: 10px 0;
-        border-bottom: 2px solid #eef2f7;
-        position: relative;
+        gap: 15px;
     }
 
     .back-btn {
-        position: absolute;
-        left: 0;
+        background: #4f52ba;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 8px 16px;
-        background: linear-gradient(45deg, #4f52ba 0%, #6f86e0 100%);
-        color: white;
-        border: none;
-        border-radius: 50px;
-        cursor: pointer;
         transition: all 0.3s ease;
-        font-size: 14px;
-        font-weight: 500;
-        box-shadow: 0 2px 5px rgba(79, 82, 186, 0.2);
-        z-index: 2;
     }
 
     .back-btn:hover {
-        transform: translateX(-5px);
-        box-shadow: 0 5px 15px rgba(79, 82, 186, 0.3);
-    }
-
-    .back-btn i {
-        font-size: 20px;
-        transition: all 0.3s ease;
-    }
-
-    .back-btn:hover i {
-        transform: translateX(-3px);
+        background: #6366F1;
     }
 
     .page-title {
-        width: 100%;
-        text-align: center;
-        font-size: 24px;
-        font-weight: 600;
-        color: #4f52ba;
-        margin: 0;
-        padding: 0 60px;
         display: flex;
         align-items: center;
-        justify-content: center;
         gap: 10px;
+        margin: 0;
+        font-size: 18px;
+        color: #4f52ba;
     }
 
     .page-title i {
-        font-size: 28px;
-        vertical-align: middle;
-    }
-
-    /* Animasi untuk title */
-    .page-title {
-        opacity: 0;
-        transform: translateY(-10px);
-        animation: fadeInDown 0.5s ease forwards;
-    }
-
-    @keyframes fadeInDown {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Animasi untuk transisi halaman */
-    .detail-content {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.3s ease;
-    }
-
-    .detail-content.active {
-        opacity: 1;
-        transform: translateY(0);
+        font-size: 24px;
     }
 
     .table-container {
@@ -307,6 +195,9 @@
         padding: 15px;
         text-align: left;
         font-size: 14px;
+        position: sticky;
+        top: 0;
+        z-index: 1;
     }
 
     table tbody td {
@@ -318,16 +209,34 @@
     }
 
     table tbody tr:hover {
-        background-color: #f8f9fc;
+        background-color: #f1f5f9;
+        transition: background-color 0.3s ease;
     }
 
-    /* Stripe effect */
     table tbody tr:nth-of-type(odd) {
         background-color: rgba(0, 0, 0, 0.02);
     }
 
-    /* Responsive table */
+    .badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid;
+        text-transform: capitalize;
+    }
+
     @media (max-width: 768px) {
+        .container {
+            padding: 20px;
+        }
+        .cards-container {
+            grid-template-columns: 1fr;
+        }
+        .back-section {
+            flex-direction: column;
+            align-items: flex-start;
+        }
         .table-responsive {
             display: block;
             width: 100%;
@@ -337,175 +246,161 @@
         }
     }
 
-    /* Tambahan CSS untuk badge */
-    .badge {
-        padding: 8px 16px;
-        font-size: 12px;
-        font-weight: 500;
-        border-radius: 4px;
-        text-transform: capitalize;
-        border: 1px solid;
+    .text-center {
+        text-align: center;
+        padding: 20px;
+        color: #4f52ba;
+    }
+
+    .alert {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .alert-info {
+        background-color: #e0f2fe;
+        color: #075985;
+        border: 1px solid #bae6fd;
+    }
+
+    .alert-danger {
+        background-color: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
     }
 
     .text-success {
-        color: #28a745 !important;
-    }
-
-    .border-success {
-        border-color: #28a745 !important;
+        color: #10B981 !important; /* Hijau untuk Di Tambah */
     }
 
     .text-primary {
-        color: #4f52ba !important;
+        color: #4f52ba !important; /* Warna 4f52ba untuk Di Edit */
+    }
+
+    .text-danger {
+        color: #EF4444 !important; /* Merah untuk Di Hapus */
+    }
+
+    .text-secondary {
+        color: #6B7280 !important; /* Warna default jika diperlukan */
+    }
+
+    .border-success {
+        border-color: #10B981 !important;
     }
 
     .border-primary {
         border-color: #4f52ba !important;
     }
 
-    .text-danger {
-        color: #dc3545 !important;
-    }
-
     .border-danger {
-        border-color: #dc3545 !important;
-    }
-
-    .text-secondary {
-        color: #6c757d !important;
+        border-color: #EF4444 !important;
     }
 
     .border-secondary {
-        border-color: #6c757d !important;
+        border-color: #6B7280 !important;
     }
 
     .bg-white {
         background-color: #ffffff !important;
     }
-
-    .table th {
-        background-color: #f8f9fa;
-        color: #4f52ba;
-        font-weight: 600;
-        border-bottom: 2px solid #dee2e6;
-    }
-
-    .table td {
-        vertical-align: middle;
-        padding: 12px;
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: rgba(79, 82, 186, 0.05);
-    }
-
-    /* Loading spinner */
-    .text-center {
-        text-align: center;
-    }
-
-    /* Alert styles */
-    .alert {
-        padding: 12px 20px;
-        border-radius: 4px;
-        margin-bottom: 20px;
-    }
-
-    .alert-danger {
-        background-color: #f8d7da;
-        border-color: #f5c6cb;
-        color: #721c24;
-    }
-
-    /* Custom badge styles */
-    .bg-success {
-        background-color: #28a745 !important;
-        color: white;
-    }
-
-    .bg-primary {
-        background-color: #4f52ba !important;
-        color: white;
-    }
-
-    .bg-danger {
-        background-color: #dc3545 !important;
-        color: white;
-    }
-
-    .bg-secondary {
-        background-color: #6c757d !important;
-        color: white;
-    }
 </style>
 
 <div class="main">
     <div class="container">
-        <!-- Halaman Utama -->
-        <div class="main-content" id="mainContent">
-            <div class="header">
-                <h3>Histori</h3>
-            </div>
-            <div class="card-grid">
-                <div class="card-counter primary">
-                    <div class="icon-section">
+        <div class="dashboard-header">
+            <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Histori</h3>
+        </div>
+
+        <!-- Main Content (Cards) -->
+        <div id="mainContent" class="cards-container">
+            <!-- Card Perangkat -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon-wrapper device-icon">
                         <i class="material-symbols-outlined">construction</i>
                     </div>
-                    <div class="count-section">
-                        <span class="count-numbers">{{ $perangkatCount }}</span>
-                        <span class="count-name">Perangkat</span>
-                    </div>
-                    <div class="button-section">
-                        <button class="open-btn" onclick="showDetail('perangkat')">Buka Disini</button>
+                    <div class="header-text">
+                        <h3>Perangkat</h3>
+                        <span class="count">{{ $perangkatCount }}</span>
                     </div>
                 </div>
-                
-                <div class="card-counter success">
-                    <div class="icon-section">
+                <div class="card-body">
+                    <p>Total Histori Perangkat</p>
+                    <button class="view-btn" onclick="showDetail('perangkat')">
+                        <span>Lihat Detail</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card Fasilitas -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon-wrapper facility-icon">
                         <i class="material-symbols-outlined">domain</i>
                     </div>
-                    <div class="count-section">
-                        <span class="count-numbers">{{ $fasilitasCount }}</span>
-                        <span class="count-name">Fasilitas</span>
-                    </div>
-                    <div class="button-section">
-                        <button class="open-btn" onclick="showDetail('fasilitas')">Buka Disini</button>
+                    <div class="header-text">
+                        <h3>Fasilitas</h3>
+                        <span class="count">{{ $fasilitasCount }}</span>
                     </div>
                 </div>
-                
-                <div class="card-counter info">
-                    <div class="icon-section">
+                <div class="card-body">
+                    <p>Total Histori Fasilitas</p>
+                    <button class="view-btn" onclick="showDetail('fasilitas')">
+                        <span>Lihat Detail</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card Jaringan -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon-wrapper pop-icon">
                         <i class="material-symbols-outlined">hub</i>
                     </div>
-                    <div class="count-section">
-                        <span class="count-numbers">{{ $jaringanCount }}</span>
-                        <span class="count-name">Jaringan</span>
-                    </div>
-                    <div class="button-section">
-                        <button class="open-btn" onclick="showDetail('jaringan')">Buka Disini</button>
+                    <div class="header-text">
+                        <h3>Jaringan</h3>
+                        <span class="count">{{ $jaringanCount }}</span>
                     </div>
                 </div>
-                
-                <div class="card-counter danger">
-                    <div class="icon-section">
+                <div class="card-body">
+                    <p>Total Histori Jaringan</p>
+                    <button class="view-btn" onclick="showDetail('jaringan')">
+                        <span>Lihat Detail</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card Alat Ukur -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon-wrapper rack-icon">
                         <i class="material-symbols-outlined">square_foot</i>
                     </div>
-                    <div class="count-section">
-                        <span class="count-numbers">{{ $alatukurCount }}</span>
-                        <span class="count-name">Alat ukur</span>
+                    <div class="header-text">
+                        <h3>Alat Ukur</h3>
+                        <span class="count">{{ $alatukurCount }}</span>
                     </div>
-                    <div class="button-section">
-                        <button class="open-btn" onclick="showDetail('alatukur')">Buka Disini</button>
-                    </div>
+                </div>
+                <div class="card-body">
+                    <p>Total Histori Alat Ukur</p>
+                    <button class="view-btn" onclick="showDetail('alatukur')">
+                        <span>Lihat Detail</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Halaman Detail -->
-        <div class="detail-content" id="detailContent">
+        <!-- Detail Content -->
+        <div class="detail-content" id="detailContent" style="display: none;">
             <div class="back-section">
                 <button class="back-btn" onclick="showMain()">
-                    <i class="material-symbols-outlined">arrow_back</i>
+                    <i class="fas fa-arrow-left"></i>
                     <span>Kembali</span>
                 </button>
                 <h2 class="page-title" id="detailTitle"></h2>
@@ -515,13 +410,17 @@
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 <script>
 function showDetail(type) {
     console.log('Showing detail for:', type);
     const mainContent = document.getElementById('mainContent');
     const detailContent = document.getElementById('detailContent');
     const detailTitle = document.getElementById('detailTitle');
-    const detailData = document.getElementById('detailData');
 
     mainContent.style.display = 'none';
     detailContent.style.display = 'block';
@@ -530,7 +429,7 @@ function showDetail(type) {
         detailContent.classList.add('active');
     }, 50);
 
-    // Set judul
+    // Set judul dan URL yang benar
     let title = '';
     let icon = '';
     let url = '';
@@ -543,17 +442,17 @@ function showDetail(type) {
         case 'fasilitas':
             icon = 'domain';
             title = 'Data Histori Fasilitas';
-            url = '/get-history-fasilitas';
+            url = '/histori/fasilitas';
             break;
         case 'jaringan':
             icon = 'hub';
             title = 'Data Histori Jaringan';
-            url = '/get-history-jaringan';
+            url = '/histori/jaringan';
             break;
         case 'alatukur':
             icon = 'square_foot';
             title = 'Data Histori Alat Ukur';
-            url = '/get-history-alatukur';
+            url = '/histori/alatukur';
             break;
     }
 
@@ -565,20 +464,27 @@ function showDetail(type) {
     loadHistoryData(url);
 }
 
+function getTextClass(aksi) {
+    switch(aksi?.toLowerCase()) {
+        case 'ditambah':
+            return 'text-success';
+        case 'diedit':
+            return 'text-primary';
+        case 'dihapus':
+            return 'text-danger';
+        default:
+            return 'text-secondary';
+    }
+}
+
 function loadHistoryData(url) {
     const detailData = document.getElementById('detailData');
-    
-    // Tambahkan console.log untuk debugging
-    console.log('Loading history data from:', url);
-    
-    // Tampilkan loading
     detailData.innerHTML = '<div class="text-center">Loading...</div>';
-    
+
     $.ajax({
         url: url,
         type: 'GET',
         success: function(response) {
-            // Debug response
             console.log('Response:', response);
             
             if (response.success) {
@@ -589,13 +495,8 @@ function loadHistoryData(url) {
 
                 let tableRows = '';
                 response.data.forEach((item, index) => {
-                    // Debug setiap item
-                    console.log('Processing item:', item);
-                    
-                    // Set warna badge berdasarkan aksi
-                    const badgeClass = getBadgeClass(item.aksi);
-                    
-                    // Format tanggal
+                    const textClass = getTextClass(item.aksi);
+                    console.log('Aksi:', item.aksi, 'Class:', textClass); // Debugging
                     const tanggal = new Date(item.tanggal_perubahan).toLocaleString('id-ID', {
                         day: '2-digit',
                         month: 'long',
@@ -607,19 +508,17 @@ function loadHistoryData(url) {
                     tableRows += `
                         <tr>
                             <td class="text-center">${index + 1}</td>
-                            <td> ${item.region || '-'}</td>
-                            <td> ${item.site || '-'}</td>
+                            <td>${item.region || '-'}</td>
+                            <td>${item.site || '-'}</td>
                             <td>${item.nama_perangkat || '-'}</td>
-                            <td> ${item.brand || '-'}</td>
-                            <td> ${item.type || '-'}</td>
-                            <td> ${item.no_rack || '-'}</td>
-                            <td> ${item.uawal || '-'}</td>
-                            <td> ${item.uakhir || '-'}</td>
+                            <td>${item.brand || '-'}</td>
+                            <td>${item.type || '-'}</td>
+                            <td>${item.no_rack || '-'}</td>
+                            <td>${item.uawal || '-'}</td>
+                            <td>${item.uakhir || '-'}</td>
                             <td>${tanggal}</td>
-                            <td class="text-center">
-                                <span class="badge ${badgeClass}">
-                                    ${capitalizeFirstLetter(item.aksi || '-')}
-                                </span>
+                            <td class="text-center ${textClass}">
+                                ${capitalizeFirstLetter(item.aksi || '-')}
                             </td>
                         </tr>
                     `;
@@ -639,9 +538,9 @@ function loadHistoryData(url) {
                                         <th style="width: 10%">Type</th>
                                         <th style="width: 10%">No Rack</th>
                                         <th style="width: 10%">U Awal</th>
-                                        <th style="width: 10%">U Akhir  </th>
+                                        <th style="width: 10%">U Akhir</th>
                                         <th style="width: 10%">Tanggal</th>
-                                        <th class="text-center" style="width: 10%">Aksi</th>
+                                        <th class="text-center" style="width: 15%">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -665,19 +564,6 @@ function loadHistoryData(url) {
     });
 }
 
-function getBadgeClass(aksi) {
-    switch(aksi?.toLowerCase()) {
-        case 'tambah':
-            return 'badge text-success bg-white border-success';
-        case 'edit':
-            return 'badge text-primary bg-white border-primary';
-        case 'hapus':
-            return 'badge text-danger bg-white border-danger';
-        default:
-            return 'badge text-secondary bg-white border-secondary';
-    }
-}
-
 function capitalizeFirstLetter(string) {
     if (!string) return '-';
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -687,16 +573,10 @@ function showMain() {
     const mainContent = document.getElementById('mainContent');
     const detailContent = document.getElementById('detailContent');
     
-    detailContent.classList.remove('active');
-    
-    setTimeout(() => {
-        detailContent.style.display = 'none';
-        mainContent.style.display = 'block';
-    }, 300);
+    mainContent.style.display = 'grid';
+    detailContent.style.display = 'none';
 }
 </script>
-
-<!-- Tambahkan ini di bagian head atau sebelum closing body -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 @endsection
+
+<meta name="csrf-token" content="{{ csrf_token() }}">

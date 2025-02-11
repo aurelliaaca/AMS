@@ -76,7 +76,7 @@ class ListPerangkat extends Model
                     'no_rack' => $perangkat->no_rack ?? '-',
                     'uawal' => $perangkat->uawal ?? '-',
                     'uakhir' => $perangkat->uakhir ?? '-',
-                    'aksi' => 'tambah',
+                    'aksi' => 'ditambah',
                     'tanggal_perubahan' => now()
                 ]);
                 
@@ -103,7 +103,7 @@ class ListPerangkat extends Model
                     'no_rack' => $perangkat->no_rack ?? '-',
                     'uawal' => $perangkat->uawal ?? '-',
                     'uakhir' => $perangkat->uakhir ?? '-',
-                    'aksi' => 'edit',
+                    'aksi' => 'diedit',
                     'tanggal_perubahan' => now()
                 ]);
                 
@@ -135,7 +135,7 @@ class ListPerangkat extends Model
                     'no_rack' => $perangkat->no_rack ?? '-',
                     'uawal' => $perangkat->uawal ?? '-',
                     'uakhir' => $perangkat->uakhir ?? '-',
-                    'aksi' => 'hapus',
+                    'aksi' => 'dihapus',
                     'tanggal_perubahan' => now()
                 ]);
                 
