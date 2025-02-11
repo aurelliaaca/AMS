@@ -11,7 +11,7 @@ class Site extends Model
     protected $table = 'site';
 
     protected $fillable = [
-        'no_site', 'kode_region', 'jenis_site','nama_site', 'kode_site',
+        'no_site', 'kode_region', 'jenis_site','nama_site', 'kode_site', 'jml_rack',
     ];
 
     public function region()

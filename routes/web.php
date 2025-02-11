@@ -67,13 +67,16 @@ Route::middleware('auth')->group(function () {
 
     // ASET
     // PERANGKAT
-    Route::get('/perangkat', [AsetController::class, 'perangkat'])->name('perangkat');
-    Route::post('/store-perangkat', [AsetController::class, 'store'])->name('perangkat.store');
-    Route::put('/update-perangkat/{wdm}', [AsetController::class, 'update'])->name('perangkat.update');
-    Route::delete('/delete-perangkat/{wdm}', [AsetController::class, 'destroy'])->name('perangkat.destroy');
-    Route::get('/get-sites', [AsetController::class, 'getSites'])->name('getSites');
-    Route::get('/get-perangkat', [AsetController::class, 'getPerangkat']);
-    Route::get('/get-perangkat/{wdm}', [AsetController::class, 'getPerangkatById']);
+    Route::get('/perangkat', [PerangkatController::class, 'perangkat'])->name('perangkat');
+    Route::get('/get-perangkat', [PerangkatController::class, 'getPerangkat']);
+    Route::get('/get-perangkat/{wdm}', [PerangkatController::class, 'getPerangkatById']);
+    Route::post('/store-perangkat', [PerangkatController::class, 'store']);
+    Route::put('/update-perangkat/{wdm}', [PerangkatController::class, 'update']);
+    Route::delete('/delete-perangkat/{wdm}', [PerangkatController::class, 'destroy']);
+    Route::get('/get-sites', [PerangkatController::class, 'getSites']);
+    // Route::get('/get-jml_rack', [PerangkatController::class, 'getJmlRack']);
+    Route::get('/get-site-rack', [PerangkatController::class, 'getSiteRack']);
+    
 
     // FASILITAS
     Route::get('/fasilitas', [AsetController::class, 'fasilitas'])->name('fasilitas');
