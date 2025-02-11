@@ -62,29 +62,35 @@
         
         .table-container {
             width: 100%;
+            max-width: 100%;
             overflow-x: auto;
             border-radius: 8px;
+            position: relative;
         }
         
         table {
             width: 100%;
+            max-width: 100%;
             border-collapse: collapse;
             background-color: #fff;
-            table-layout: auto;
+            table-layout: fixed;
         }
         
         th, td {
-            padding: 12px;
-            text-align: center;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            border-bottom: 1px solid #ddd;
+            padding: 12px !important;
+            text-align: center !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            border-bottom: 1px solid #ddd !important;
         }
         
         th {
             background-color: #4f52ba;
             color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
         
         .no-data {
@@ -98,6 +104,15 @@
         
         tr:hover {
             background-color: rgba(79, 82, 186, 0.2);
+        }
+
+        /* Atur lebar maksimum dan izinkan pembungkusan teks untuk kolom Segmen */
+        td.segmen {
+            width: 200px; /* Atur lebar kolom sesuai kebutuhan */
+            white-space: normal; /* Izinkan pembungkusan teks */
+            word-wrap: break-word; /* Membungkus kata jika terlalu panjang */
+            word-break: break-word; /* Memastikan pembungkusan kata */
+            overflow: visible; /* Pastikan tidak ada pemotongan teks */
         }
 
         .modal-overlay {
@@ -224,6 +239,34 @@
             gap: 10px;
             margin-top: 20px;
         }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4f52ba;
+            margin: 0;
+        }
+
+        .add-button {
+            background-color: #4f52ba;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-button:hover {
+            background-color: #3e41a1;
+        }
     </style>
 
 <div class="main">
@@ -261,20 +304,15 @@
                     <tr>
                         <th style="width: 50px;">No</th>
                         <th style="width: 100px;">RO</th>
-                        <th style="width: 150px;">Kode Site Insan</th>
+                        <th style="width: 100px;">Kode Site Insan</th>
                         <th style="width: 100px;">Tipe Jaringan</th>
-                        <th style="width: 150px;">Segmen</th>
-                        <th style="width: 100px;">Jartatup/Jartaplok</th>
-                        <th style="width: 150px;">Mainlink/Backuplink</th>
+                        <th style="width: 250px;">Segmen</th>
                         <th style="width: 100px;">Panjang</th>
-                        <th style="width: 150px;">Panjang Drawing</th>
+                        <th style="width: 120px;">Panjang Drawing</th>
                         <th style="width: 100px;">Jumlah Core</th>
-                        <th style="width: 150px;">Jenis Kabel</th>
-                        <th style="width: 150px;">Tipe Kabel</th>
-                        <th style="width: 150px;">Travelling Time</th>
-                        <th style="width: 150px;">Restoration Time</th>
-                        <th style="width: 150px;">Total Corrective Time</th>
-                        <th style="width: 150px;">Aksi</th>
+                        <th style="width: 100px;">Jenis Kabel</th>
+                        <th style="width: 100px;">Tipe Kabel</th>
+                        <th style="width: 120px;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -284,17 +322,12 @@
                         <td class="ro">{{ $data->RO }}</td>
                         <td>{{ $data->kode_site_insan }}</td>
                         <td>{{ $data->tipe_jaringan }}</td>
-                        <td>{{ $data->segmen }}</td>
-                        <td>{{ $data->jartatup_jartaplok }}</td>
-                        <td>{{ $data->mainlink_backuplink }}</td>
+                        <td class="segmen">{{ $data->segmen }}</td>
                         <td>{{ $data->panjang }}</td>
                         <td>{{ $data->panjang_drawing }}</td>
                         <td>{{ $data->jumlah_core }}</td>
                         <td>{{ $data->jenis_kabel }}</td>
                         <td>{{ $data->tipe_kabel }}</td>
-                        <td>{{ $data->travelling_time }}</td>
-                        <td>{{ $data->restoration_time }}</td>
-                        <td>{{ $data->total_corrective_time }}</td>
                         <td>
                             <button class="edit-btn" onclick="editJaringan('{{ $data->id_jaringan }}')">Edit</button>
                             <button class="delete-btn" onclick="deleteJaringan('{{ $data->id_jaringan }}')">Hapus</button>
@@ -311,7 +344,7 @@
     <div class="modal-content">
         <button class="modal-close-btn" onclick="closeAddJaringanModal()">×</button>
         <h2>Tambah Jaringan Baru</h2>
-        <form id="addJaringanForm" method="POST">
+        <form id="addJaringanForm" action="{{ route('jaringan.store') }}" method="POST">
             @csrf
             <div class="form-container">
                 <div class="left-column">
@@ -332,7 +365,7 @@
 
                     <div class="form-group">
                         <label for="tipeJaringanAdd">Tipe Jaringan</label>
-                        <select id="tipeJaringanAdd" name="kode_tipe" required>
+                        <select id="tipeJaringanAdd" name="tipe_jaringan" required>
                             <option value="">Pilih Tipe Jaringan</option>
                             @foreach($tipeJaringanList as $tipe)
                                 <option value="{{ $tipe->kode_tipe }}">{{ $tipe->nama_tipe }}</option>
@@ -346,17 +379,14 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="tipeJaringanAdd">Tipe Jaringan</label>
+                        <label for="jartatup_jartaplok">Jartatup/Jartaplok</label>
                         <select id="jartatup_jartaplok" name="jartatup_jartaplok" required>
                             <option value="">Pilih Jartatup/Jartaplok</option>
                             <option value="Jartatup">Jartatup</option>
                             <option value="Jartaplok">Jartaplok</option>
                         </select>
                     </div>
-                
-                </div>
 
-                <div class="right-column">
                     <div class="form-group">
                         <label for="mainlink_backuplink">Mainlink/Backuplink</label>
                         <input type="text" id="mainlink_backuplink" name="mainlink_backuplink" required>
@@ -365,7 +395,10 @@
                         <label for="panjang">Panjang</label>
                         <input type="text" id="panjang" name="panjang" required>
                     </div>
+                
+                </div>
 
+                <div class="right-column">
                     <div class="form-group">
                         <label for="panjang_drawing">Panjang Drawing</label>
                         <input type="text" id="panjang_drawing" name="panjang_drawing" required>

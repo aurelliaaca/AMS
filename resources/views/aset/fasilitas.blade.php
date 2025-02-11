@@ -4,9 +4,6 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-
-    
-   
     
     <!-- Meta tag CSRF -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -38,6 +35,7 @@
             gap: 20px;
             align-items: center;
             width: 100%;
+            margin-bottom: 20px;
         }
         
         .dropdown-container > * {
@@ -54,29 +52,40 @@
             transition: border-color 0.3s;
         }
         
-        .search-bar input {
-            outline: none;
+        select:focus {
+            border-color: #4f52ba;
+            box-shadow: 0 0 5px #4f52ba);
         }
         
-        select:focus, .search-bar input:focus {
-            border-color: #4f52ba;
-            box-shadow: 0 0 5px rgba(79, 82, 186, 0.5);
+        .search-bar input {
+            outline: none;
         }
         
         .table-container {
             width: 100%;
             overflow-x: auto;
             border-radius: 8px;
+            position: relative;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
             background-color: #fff;
-            table-layout: auto;
+            table-layout: fixed;
         }
         
-        th, td {
+        th {
+            background-color: #4f52ba;
+            color: #fff;
+            padding: 12px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        
+        td {
             padding: 12px;
             text-align: center;
             overflow: hidden;
@@ -216,6 +225,12 @@
         .modal-close-btn:hover {
             color: #333;
         }
+
+        th.hostname, td.hostname {
+            width: 350px;
+        }
+
+
     </style>
 
 <div class="main">
@@ -260,51 +275,41 @@
         </div>
 
         <div class="table-container">
-            <table class="table">
+            <table>
                 <thead>
                     <tr>
-                        <th>Urutan</th>
-                        <th>RO</th>
-                        <th>Nama POP</th>
-                        <th>Perangkat</th>
-                        <th>Merk</th>
-                        <th>Tipe</th>
-                        <th>Serial Number</th>
-                        <th>Jumlah</th>
-                        <th>Satuan</th>
-                        <th>Status</th>
-                        <th>Keterangan</th>
-                        <th>Update Site Visit</th>
-                        <th>Tanggal Site Visit</th>
-                        <th>Hostname</th>
-                        <th>Aksi</th>
+                        <th style = "width : 60px;">Urutan</th>
+                        <th style = "width : 100px;">RO</th>
+                        <th style = "width : 180px;">Nama POP</th>
+                        <th class="perangkat">Perangkat</th>
+                        <th style = "width : 280px;">Hostname</th>
+                        <th style = "width : 150px;">Merk</th>
+                        <th style = "width : 250px;">Tipe</th>
+                        <th style = "width : 60px;">Jumlah</th>
+                        <th style = "width : 150px;">Status</th>
+                        <th style = "width : 150px;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="dataRows">
                     @forelse ($fasilitas as $index => $data)
                         <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $data->RO }}</td>
-                            <td>{{ $data->nama_POP }}</td>
-                            <td>{{ $data->perangkat }}</td>
-                            <td>{{ $data->merk }}</td>
-                            <td>{{ $data->tipe }}</td>
-                            <td>{{ $data->serial_Number }}</td>
-                            <td>{{ $data->jumlah }}</td>
-                            <td>{{ $data->satuan }}</td>
+                            <td class="urutan">{{ $index + 1 }}</td>
+                            <td class="ro">{{ $data->RO }}</td>
+                            <td class="nama-pop">{{ $data->nama_POP }}</td>
+                            <td class="perangkat">{{ $data->perangkat }}</td>
+                            <td class="hostname">{{ $data->hostname }}</td>
+                            <td class="merk">{{ $data->merk }}</td>
+                            <td class="tipe">{{ $data->tipe }}</td>
+                            <td class="jumlah">{{ $data->jumlah }}</td>
                             <td class="status {{ $data->status }}">{{ $data->status }}</td>
-                            <td>{{ $data->keterangan }}</td>
-                            <td>{{ $data->update_site_visit }}</td>
-                            <td>{{ $data->tanggal_site_visit }}</td>
-                            <td>{{ $data->hostname }}</td>
-                            <td>
+                            <td class="aksi">
                                 <button class="edit-btn" onclick="editFasilitas('{{ $data->urutan }}')">Edit</button>
                                 <button class="delete-btn" onclick="deleteFasilitas('{{ $data->urutan }}')">Hapus</button>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="14" class="text-center">Tidak ada data</td>
+                            <td colspan="12" class="text-center">Tidak ada data</td>
                         </tr>
                     @endforelse
                 </tbody>

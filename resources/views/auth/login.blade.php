@@ -35,18 +35,19 @@
 
         .login-wrap {
             background: rgba(255, 255, 255, 0.7);
-            padding: 40px;
-            border-radius: 15px;
-            width: 100%;
-            max-width: 400px;
+            padding: 20px;
+            border-radius: 25px;
+            width: 65%;
+            max-width: 320px;
             text-align: center;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.2);
-            transform: scale(1.1);
-            transition: transform 0.3s ease;
+            transform: scale(1);
+            transition: all 0.3s ease-in-out;
         }
 
         .login-wrap:hover {
-            transform: scale(1.05);
+            transform: scale(1.02);
+            transition: all 0.3s ease-in-out;
         }
 
         .form-group {
@@ -56,15 +57,14 @@
         .form-control {
             background: rgba(255, 255, 255, 0.3);
             border: 1px solid rgba(176, 196, 222, 0.5);
-            padding: 15px 20px;
-            padding-left: 45px; /* Ruang untuk ikon di kiri */
-            font-size: 18px;
-            border-radius: 8px;
+            padding: 12px 15px 12px 40px;
+            font-size: 16px;
+            border-radius: 12px;
             color: #002855;
             width: 100%;
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
+            transition: all 0.3s ease-in-out;
         }
 
         .form-control:focus {
@@ -86,7 +86,7 @@
         }
 
         .btn-primary {
-            background: linear-gradient(45deg, #002855, rgb(48, 106, 164), #ffffff); /* Menambahkan warna putih */
+            background: linear-gradient(45deg, #002855, rgb(102, 156, 209), #ffffff); /* Menambahkan warna putih */
             background-size: 200% 200%; /* Membuat gradien lebih besar untuk efek gerakan */
             color: #fff;
             border: none;
@@ -95,7 +95,7 @@
             border-radius: 8px;
             width: 100%;
             cursor: pointer;
-            transition: color 0.3s;
+            transition: all 0.3s ease-in-out;
         }
 
         .btn-primary:hover {
@@ -147,9 +147,16 @@
             padding-left: 45px;
         }
 
+        .logo-container {
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto 10px auto;
+        }
+
         .logo-container img {
-            max-width: 80px;
-            margin-bottom: 20px;
+            width: 100%;
+            height: auto;
+            margin-bottom: 5px;
         }
 
         .invalid-feedback {
@@ -163,7 +170,7 @@
     <div class="login-wrap">
         <!-- Logo -->
         <div class="logo-container">
-            <img src="img/pgn.png" alt="Logo">
+            <img src="img/pgncom.png" alt="Logo">
         </div>
 
         <!-- Login Form -->
