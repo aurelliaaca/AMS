@@ -81,7 +81,7 @@
         }
 
         .btn-primary {
-            background: linear-gradient(45deg, #002855, rgb(48, 106, 164), #ffffff); /* Menambahkan warna putih */
+            background: linear-gradient(45deg, #002855, rgb(102, 156, 209), #ffffff); /* Menambahkan warna putih */
             background-size: 200% 200%; /* Membuat gradien lebih besar untuk efek gerakan */
             color: #fff;
             border: none;
@@ -128,12 +128,12 @@
         }
         
         .logo-container img {
-            max-width: 80px;
+            max-width: 100px;
             margin-bottom: 20px;
         }
 
         .logo {
-            max-width: 90px;
+            max-width: 100px;
             height: auto;
         }
 
@@ -160,7 +160,7 @@
             <i class="fa fa-arrow-left"></i>
         </a>
         <div class="logo-container">
-            <img src="{{ asset('img/pgn.png') }}" alt="Logo" class="logo">
+            <img src="{{ asset('img/pgncom.png') }}" alt="Logo" class="logo">
         </div>
         <form method="POST" action="{{ route('password.update') }}">
             @csrf

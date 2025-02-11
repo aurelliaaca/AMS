@@ -35,23 +35,36 @@
 
         .form-wrap {
             background: rgba(255, 255, 255, 0.7);
-            padding: 40px;
-            border-radius: 15px;
-            width: 100%;
-            max-width: 400px;
+            padding: 20px;
+            border-radius: 25px;
+            width: 65%;
+            max-width: 320px;
             text-align: center;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.2);
-            transform: scale(1.1);
-            transition: all 0.5s ease-in;
+            transform: scale(1);
+            transition: all 0.3s ease-in-out;
+            position: relative;
         }
 
         .form-wrap:hover {
-            transform: scale(1.05); 
+            transform: scale(1.02);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .logo-container {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto 10px auto;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 5px;
         }
 
         .form-group {
-            margin-bottom: 25px;
-            position: relative;
+            margin-bottom: 10px;
         }
 
         .form-control {
@@ -87,7 +100,7 @@
         }
 
         .btn-primary {
-            background: linear-gradient(45deg, #002855, rgb(48, 106, 164), #ffffff); /* Menambahkan warna putih */
+            background: linear-gradient(45deg, #002855, rgb(102, 156, 209), #ffffff); /* Menambahkan warna putih */
             background-size: 200% 200%; /* Membuat gradien lebih besar untuk efek gerakan */
             color: #fff;
             border: none;
@@ -121,11 +134,6 @@
 
         .form-control {
             padding-left: 40px; /* Space for left icon */
-        }
-
-        .logo-container img {
-            max-width: 80px;
-            margin-bottom: 20px;
         }
 
         .logo {
@@ -162,7 +170,7 @@
             <i class="fa fa-arrow-left"></i>
         </a>
         <div class="logo-container">
-            <img src="{{ asset('img/pgn.png') }}" alt="Logo" class="logo">
+            <img src="{{ asset('img/pgncom.png') }}" alt="Logo" class="logo">
         </div>
 
         @if (session('status'))

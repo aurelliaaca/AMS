@@ -61,7 +61,9 @@
         .table-container {
             width: 100%;
             overflow-x: auto;
+            overflow-y: auto;
             border-radius: 8px;
+            position: relative;
         }
         
         table {
@@ -76,13 +78,19 @@
             text-align: center;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
+            white-space: normal;
+            word-wrap: break-word;
             border-bottom: 1px solid #ddd;
         }
         
         th {
             background-color: #4f52ba;
             color: #fff;
+            padding: 12px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
         
         .no-data {
@@ -96,6 +104,17 @@
         
         tr:hover {
             background-color: rgba(79, 82, 186, 0.2);
+        }
+
+        /* Atur lebar kolom No */
+        th.no, td.no {
+            width: 50px; /* Sesuaikan lebar ini sesuai kebutuhan */
+        }
+
+        /* Atur pembungkusan teks untuk kolom Nama Alat dan Type */
+        td.nama-alat, td.type {
+            white-space: normal; /* Izinkan pembungkusan teks */
+            word-wrap: break-word; /* Membungkus kata jika terlalu panjang */
         }
 
         .modal-overlay {
@@ -222,6 +241,34 @@
             gap: 10px;
             margin-top: 20px;
         }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4f52ba;
+            margin: 0;
+        }
+
+        .add-button {
+            background-color: #4f52ba;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-button:hover {
+            background-color: #3e41a1;
+        }
     </style>
 
 <div class="main">
@@ -250,7 +297,7 @@
             <table id="alatukurTable">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th class="no">No</th>
                         <th>RO</th>
                         <th>Kode</th>
                         <th>Nama Alat</th>
@@ -258,9 +305,6 @@
                         <th>Type</th>
                         <th>Serial Number</th>
                         <th>Tahun Perolehan</th>
-                        <th>Kondisi Alat</th>
-                        <th>Harga Pembelian</th>
-                        <th>No Kontrak</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -268,16 +312,13 @@
                     @foreach($alat_ukur as $alat)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td class="ro">{{ $alat->RO }}</td>
+                        <td>{{ $alat->RO }}</td>
                         <td>{{ $alat->kode }}</td>
-                        <td>{{ $alat->nama_alat }}</td>
+                        <td class="nama-alat">{{ $alat->nama_alat }}</td>
                         <td>{{ $alat->merk }}</td>
-                        <td>{{ $alat->type }}</td>
+                        <td class="type">{{ $alat->type }}</td>
                         <td>{{ $alat->serial_number }}</td>
                         <td>{{ $alat->tahun_perolehan }}</td>
-                        <td class="kondisi">{{ $alat->kondisi_alat }}</td>
-                        <td>{{ $alat->harga_pembelian }}</td>
-                        <td>{{ $alat->no_kontrak_spk }}</td>
                         <td>
                             <button type="button" class="edit-button" onclick="editAlatUkur('{{ $alat->urutan }}')" style="background-color: #4f52ba; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">
                                 Edit

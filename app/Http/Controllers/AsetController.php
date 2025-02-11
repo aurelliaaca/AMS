@@ -374,6 +374,7 @@ public function getPop(Request $request)
         }
     }
     
+       
     public function editJaringan($id_jaringan)
     {
         try {
@@ -406,6 +407,57 @@ public function getPop(Request $request)
                 'message' => 'Gagal mengupdate data jaringan'
             ]);
         }
+    }
+
+  
+    public function storeAlatUkur(Request $request)
+    {
+        $validatedData = $request->validate([
+            'ro' => 'required|string',
+            'kode' => 'required|string',
+            'nama_alat' => 'required|string',
+            'merk' => 'nullable|string',
+            'type' => 'nullable|string',
+            'serial_number' => 'nullable|string',
+            'tahun_perolehan' => 'nullable|integer',
+            'kondisi_alat' => 'nullable|string',
+            'harga_pembelian' => 'nullable|numeric',
+            'no_kontrak_spk' => 'nullable|string',
+        ]);
+
+        AlatUkur::create($validatedData);
+
+        return redirect()->route('alatukur')->with('success', 'Data alat ukur berhasil ditambahkan.');
+    }
+
+    public function updateAlatUkur(Request $request, $urutan)
+    {
+        $alatUkur = AlatUkur::findOrFail($urutan);
+        
+        $validatedData = $request->validate([
+            'ro' => 'required|string',
+            'kode' => 'required|string',
+            'nama_alat' => 'required|string',
+            'merk' => 'nullable|string',
+            'type' => 'nullable|string',
+            'serial_number' => 'nullable|string',
+            'tahun_perolehan' => 'nullable|integer',
+            'kondisi_alat' => 'nullable|string',
+            'harga_pembelian' => 'nullable|numeric',
+            'no_kontrak_spk' => 'nullable|string',
+        ]);
+
+        $alatUkur->update($validatedData);
+
+        return redirect()->route('alatukur')->with('success', 'Data alat ukur berhasil diupdate.');
+    }
+
+    public function destroyAlatUkur($urutan)
+    {
+        $alatUkur = AlatUkur::findOrFail($urutan);
+        $alatUkur->delete();
+
+        return response()->json(['success' => true, 'message' => 'Data alat ukur berhasil dihapus.']);
     }
 
     public function editFasilitas(Request $request, $urutan)
