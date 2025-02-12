@@ -5,19 +5,22 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Region;
 use App\Models\Pop;
+use App\Models\DataPerangkat;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\NamaPerangkat;
+use App\Models\BrandPerangkat;
 
 class DataController extends Controller
 {
     public function index()
     {
         $popCount = DB::table('pop')->count();
-        $fasilitasCount = DB::table('fasilitas')->count();
+        $fasilitasCount = DB::table('list_fasilitas')->count();
         $perangkatCount = DB::table('perangkat')->count();
-        $rackCount = DB::table('rack')->count();
+        // $rackCount = DB::table('rack')->count();
 
-        return view('data.datapage', compact('popCount', 'fasilitasCount', 'perangkatCount', 'rackCount'));
+        return view('data.datapage', compact('popCount', 'fasilitasCount', 'perangkatCount'));
     }
 
     public function region()
@@ -28,7 +31,7 @@ class DataController extends Controller
     public function pop()
     {
         $pop = Pop::all();
-        $regions = Region::all();
+        $region = Region::all();
         return view('data.pop', compact('pop', 'region'));
     }
 
@@ -136,6 +139,115 @@ class DataController extends Controller
                 'success' => false,
                 'message' => 'Gagal menghapus POP: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+
+    public function dataperangkat()
+    {
+        $namaperangkat = NamaPerangkat::all();
+        $brandperangkat = BrandPerangkat::all();
+        return view('data.dataperangkat', compact('namaperangkat', 'brandperangkat'));
+    }
+
+    // Tambah data perangkat
+    public function storeDataPerangkat(Request $request)
+    {
+        try {
+            $perangkat = new NamaPerangkat();
+            $perangkat->perangkat = $request->perangkat;
+            $perangkat->kode_perangkat = $request->kode_perangkat;
+            $perangkat->save();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    // Get data untuk edit
+    public function getDataPerangkat($id)
+    {
+        try {
+            $namaperangkat = NamaPerangkat::find($id);
+            return response()->json(['success' => true, 'namaperangkat' => $namaperangkat]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    // Update data perangkat
+    public function updateDataPerangkat(Request $request, $id)
+    {
+        try {
+            $perangkat = NamaPerangkat::find($id);
+            $perangkat->perangkat = $request->perangkat;
+            $perangkat->kode_perangkat = $request->kode_perangkat;
+            $perangkat->save();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    // Delete data perangkat
+    public function deleteDataPerangkat($id)
+    {
+        try {
+            NamaPerangkat::find($id)->delete();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    // Tambahkan fungsi CRUD untuk brand
+    public function storeBrandPerangkat(Request $request)
+    {
+        try {
+            $brand = new BrandPerangkat();
+            $brand->nama_brand = $request->nama_brand;
+            $brand->kode_brand = $request->kode_brand;
+            $brand->save();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function getBrandPerangkat($id)
+    {
+        try {
+            $brandperangkat = BrandPerangkat::find($id);
+            return response()->json(['success' => true, 'brandperangkat' => $brandperangkat]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function updateBrandPerangkat(Request $request, $id)
+    {
+        try {
+            $brand = BrandPerangkat::find($id);
+            $brand->nama_brand = $request->nama_brand;
+            $brand->kode_brand = $request->kode_brand;
+            $brand->save();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function deleteBrandPerangkat($id)
+    {
+        try {
+            BrandPerangkat::find($id)->delete();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 }
