@@ -6,7 +6,7 @@ use App\Models\Alatukur;
 use App\Models\ListPerangkat;
 use App\Models\Perangkat;
 use App\Models\BrandPerangkat;
-use App\Models\ListJaringan;
+use App\Models\HistoriPerangkat;
 use App\Models\Fasilitas;
 use App\Models\Tipe;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +21,7 @@ class PerangkatController extends Controller
         $regions = Region::orderBy('nama_region', 'asc')->get();
         $listpkt = Perangkat::orderBy('nama_pkt', 'asc')->get();
         $brands = BrandPerangkat::orderBy('nama_brand', 'asc')->get();
-        return view('aset.perangkat', compact('listpkt', 'brands', 'regions'));
+        return view('aset.perangkat.perangkat', compact('listpkt', 'brands', 'regions'));
     }
     
     // tabel
@@ -259,8 +259,21 @@ class PerangkatController extends Controller
     // kebutuhan hapus dan edit (ngefetch wdm)
     public function getPerangkatById($wdm)
     {
-        $perangkat = ListPerangkat::where('wdm', $wdm)->first();
-        
+        $perangkat = \DB::table('listperangkat')
+        ->leftJoin('site', 'listperangkat.kode_site', '=', 'site.kode_site')
+        ->leftJoin('region', 'listperangkat.kode_region', '=', 'region.kode_region')
+        ->leftJoin('perangkat', 'listperangkat.kode_pkt', '=', 'perangkat.kode_pkt')
+        ->leftJoin('brandperangkat', 'listperangkat.kode_brand', '=', 'brandperangkat.kode_brand')
+        ->select(
+            'listperangkat.*', 
+            'site.nama_site', 
+            'region.nama_region', 
+            'perangkat.nama_pkt', 
+            'brandperangkat.nama_brand'
+        )
+        ->where('listperangkat.WDM', $wdm) // Contoh: Filter berdasarkan WDM
+        ->first(); // Ambil satu data
+
         if ($perangkat) {
             return response()->json([
                 'success' => true,
@@ -452,6 +465,21 @@ class PerangkatController extends Controller
         return response()->json([
             'success' => false,
             'next_pkt_ke' => 1
+        ]);
+    }
+
+    public function showHistori($wdm)
+    {
+        // Ambil data histori perangkat berdasarkan wdm
+        $histori = HistoriPerangkat::where('idHiPe', $wdm)
+            ->select('aksi', 'tanggal_perubahan')
+            ->orderBy('tanggal_perubahan', 'desc')
+            ->get();
+
+        // Kembalikan data dalam format JSON
+        return response()->json([
+            'success' => true,
+            'histori' => $histori
         ]);
     }
 

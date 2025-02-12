@@ -18,7 +18,24 @@
             flex-direction: column;
             gap: 15px;
         }
-        
+
+        /* ---------------------- TAMBAH BUTTON ---------------------- */
+
+        .add-button {
+            background-color: #4f52ba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 18.75%;
+            /* margin-top: 10px; */
+        }
+
+        /* -------------------------- FILTER -------------------------- */
         .filter-container {
             display: flex;
             gap: 20px;
@@ -50,12 +67,52 @@
             box-shadow: 0 0 5px rgba(79, 82, 186, 0.5);
         }
         
+        .select2-container {
+            width: 100%;
+        }
+        
+        .select2-selection {
+            width: 100%;
+            font-size: 12px;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            transition: border-color 0.3s;
+            border: 1px solid #4f52ba !important;
+        }
+
+        .select2-selection:focus {
+            border-color: #4f52ba !important; /* Maintain the same border color on focus */
+            box-shadow: 0 0 5px rgba(79, 82, 186, 0.5) !important;
+        }
+        
+        .select2-selection__placeholder {
+            color: #4f52ba;
+            font-size: 12px;
+        }
+        
+        .select2-container--open .select2-selection {
+            border-color: #4f52ba;
+            box-shadow: 0 0 5px rgba(79, 82, 186, 0.5);
+        }
+        
+        .select2-results__option {
+            font-size: 12px;
+            padding: 10px;
+        }
+        
+        .select2-results__option--highlighted {
+            background-color: #4f52ba !important;
+            color: #fff;
+        }
+        
+        /* -------------------------- TABEL -------------------------- */
         .table-container {
             width: 100%;
             overflow-x: auto;
             border-radius: 8px;
         }
-        
         
         table {
             width: 100%;
@@ -82,45 +139,6 @@
             color: rgba(79, 82, 186, 0.2);
         }
         
-        .select2-container {
-            width: 100%;
-        }
-        
-        .select2-selection {
-            width: 100%;
-            font-size: 12px;
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #fff;
-            transition: border-color 0.3s;
-            border: 1px solid #4f52ba !important; /* Apply your custom border color */
-        }
-        
-
-        .select2-selection:focus {
-            border-color: #4f52ba !important; /* Maintain the same border color on focus */
-            box-shadow: 0 0 5px rgba(79, 82, 186, 0.5) !important;
-        }
-        .select2-selection__placeholder {
-            color: #4f52ba;
-            font-size: 12px;
-        }
-        
-        .select2-container--open .select2-selection {
-            border-color: #4f52ba;
-            box-shadow: 0 0 5px rgba(79, 82, 186, 0.5);
-        }
-        
-        .select2-results__option {
-            font-size: 12px;
-            padding: 10px;
-        }
-        
-        .select2-results__option--highlighted {
-            background-color: #4f52ba !important;
-            color: #fff;
-        }
         
         tr:nth-child(even) {
             background-color: #f9f9f9;
@@ -130,14 +148,15 @@
             background-color: rgba(79, 82, 186, 0.2);
         }
 
+        /* -------------------------- MODAL -------------------------- */
         .modal-overlay {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
@@ -159,12 +178,54 @@
             text-align: center;
             margin-bottom: 25px;
         }
+        .modal-content table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .modal-content th {
+            background-color: #4f52ba;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .modal-content td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: center;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .modal-content tr:nth-child(even) {
+            background-color: #f7f7f7;
+        }
+
+        .modal-content tr:hover {
+            background-color: rgba(79, 82, 186, 0.2);
+        }
+
+        .modal-content table thead {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
 
         .form-container {
             display: flex;
             justify-content: space-between;
             width: 100%;
             margin-bottom: 20px;
+        }
+
+        .left-column, .right-column {
+            width: 48%;
         }
 
         .form-group {
@@ -197,18 +258,13 @@
             outline: none;
         }
 
-        .add-button {
-            background-color: #4f52ba;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            width: 18.75%;
-            /* margin-top: 10px; */
+        .form-group p {
+            margin: 0;
+            padding: 5px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-weight: normal;
         }
 
         .modal-close-btn {
@@ -217,10 +273,9 @@
             right: 15px;
             background: none;
             border: none;
-            color: white;
+            color: #666;
             cursor: pointer;
             font-size: 20px;
-            color: #666;
             transition: color 0.3s ease;
         }
 
@@ -234,3 +289,18 @@
             gap: 10px;
             margin-top: 20px;
         }
+
+        .pagination-btn {
+            background-color: #4f52ba;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            margin: 0 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .pagination-btn.active {
+            background-color: #9697D6;
+        }
+        

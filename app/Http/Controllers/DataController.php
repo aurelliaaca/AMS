@@ -13,11 +13,11 @@ class DataController extends Controller
     public function index()
     {
         $popCount = DB::table('pop')->count();
-        $fasilitasCount = DB::table('fasilitas')->count();
+        $fasilitasCount = DB::table('list_fasilitas')->count();
         $perangkatCount = DB::table('perangkat')->count();
-        $rackCount = DB::table('rack')->count();
+        // $rackCount = DB::table('rack')->count();
 
-        return view('data.datapage', compact('popCount', 'fasilitasCount', 'perangkatCount', 'rackCount'));
+        return view('data.datapage', compact('popCount', 'fasilitasCount', 'perangkatCount'));
     }
 
     public function region()
@@ -28,7 +28,7 @@ class DataController extends Controller
     public function pop()
     {
         $pop = Pop::all();
-        $regions = Region::all();
+        $region = Region::all();
         return view('data.pop', compact('pop', 'region'));
     }
 

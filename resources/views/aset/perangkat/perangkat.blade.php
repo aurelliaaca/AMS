@@ -79,8 +79,10 @@
         </div>
     </div>
 
-    @include('aset.modals.add-perangkat')
-    @include('aset.modals.edit-perangkat')
+    @include('aset.perangkat.add-perangkat')
+    @include('aset.perangkat.edit-perangkat')
+    @include('aset.perangkat.lihat-perangkat')
+
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -154,6 +156,10 @@
                         <td>${perangkat.nama_brand || '-'}</td>
                         <td>${perangkat.type || '-'}</td>
                         <td>
+                            <button onclick="lihatPerangkat(${perangkat.WDM})"
+                                style="background-color: #9697D6; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
+                                Lihat detail
+                            </button>
                             <button onclick="editPerangkat(${perangkat.WDM})" 
                                 style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
                                 Edit
@@ -227,6 +233,5 @@ function searchTable() {
                 rows[i].style.display = found ? '' : 'none';
             }
         }
-
     </script>
 @endsection
