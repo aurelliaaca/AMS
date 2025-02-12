@@ -310,7 +310,6 @@
                             <th>Jenis Site</th>
                             <th>Site</th>
                             <th>Kode</th>
-                            <th>Keterangan</th>
                             <th>Wajib Inspeksi</th>
                             <th>Aksi</th>
                         </tr>
@@ -324,7 +323,6 @@
                                 <td>{{ $pop->jenis_site }}</td>
                                 <td>{{ $pop->site }}</td>
                                 <td>{{ $pop->kode }}</td>
-                                <td>{{ $pop->keterangan }}</td>
                                 <td>{{ $pop->wajib_inspeksi ? 'Ya' : 'Tidak' }}</td>
                                 <td>
                                     <button type="button" class="btn-edit" onclick="editPOP({{ $pop->no_site }})">Edit</button>
@@ -373,10 +371,6 @@
                 <div class="form-group">
                     <label for="kode">Kode</label>
                     <input type="text" id="kode" name="kode" required>
-                </div>
-                <div class="form-group">
-                    <label for="keterangan">Keterangan</label>
-                    <textarea id="keterangan" name="keterangan"></textarea>
                 </div>
                 <div class="form-group">
                     <label for="wajib_inspeksi">Wajib Inspeksi</label>

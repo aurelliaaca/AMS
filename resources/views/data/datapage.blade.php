@@ -1,5 +1,9 @@
 @extends('layouts.sidebar')
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
 @section('content')
 <div class="main">
     <div class="container">
@@ -8,6 +12,26 @@
         </div>
 
         <div class="cards-container">
+            <!-- Card Region -->
+            <div class="card">
+                <div class="card-header">
+                <div class="icon-wrapper device-icon">
+                    <span class="material-symbols-outlined">distance</span>
+                </div>
+                    <div class="header-text">
+                        <h3>Region</h3>
+                        <span class="count">{{ $regionCount ?? 0 }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p>Jumlah Region</p>
+                    <button class="view-btn" onclick="window.location.href='/data/region'">
+                        <span>Lihat Detail</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
             <!-- Card POP -->
             <div class="card">
                 <div class="card-header">
@@ -28,12 +52,13 @@
                 </div>
             </div>
 
+
             <!-- Card Fasilitas -->
             <div class="card">
                 <div class="card-header">
-                    <div class="icon-wrapper facility-icon">
-                        <i class="fas fa-tools"></i>
-                    </div>
+                <div class="icon-wrapper device-icon">
+                    <span class="material-symbols-outlined">domain</span>
+                </div>
                     <div class="header-text">
                         <h3>Fasilitas</h3>
                         <span class="count">{{ $fasilitasCount ?? 0 }}</span>
@@ -49,10 +74,10 @@
             </div>
 
             <!-- Card Perangkat -->
-            <div class="card">
+            <div class="card" onclick="window.location.href='/data/dataperangkat'" style="cursor: pointer;">
                 <div class="card-header">
                     <div class="icon-wrapper device-icon">
-                        <i class="fas fa-microchip"></i>
+                        <span class="material-symbols-outlined">construction</span>
                     </div>
                     <div class="header-text">
                         <h3>Perangkat</h3>
@@ -61,10 +86,10 @@
                 </div>
                 <div class="card-body">
                     <p>Total Perangkat Aktif</p>
-                    <button class="view-btn" onclick="window.location.href='/data/perangkat'">
+                    <div class="view-btn">
                         <span>Lihat Detail</span>
                         <i class="fas fa-arrow-right"></i>
-                    </button>
+                    </div>
                 </div>
             </div>
 
@@ -253,6 +278,23 @@
         font-size: 20px;  /* Font lebih kecil di mobile */
     }
 }
+
+/* Membuat background tetap gradient seperti sebelumnya */
+.icon-wrapper {
+    width: 60px; /* Membesarkan kotak ikon */
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Membuat ikon menjadi lebih besar dan berwarna putih */
+.icon-wrapper .material-symbols-outlined {
+    font-size: 36px;  /* Memperbesar ukuran ikon */
+    color: white;     /* Mengganti warna ikon menjadi putih */
+}
+
 </style>
 
 <!-- Tambahkan Font Awesome untuk icons -->

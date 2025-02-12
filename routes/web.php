@@ -15,6 +15,7 @@ use App\Models\Site;
 use App\Http\Controllers\AsetController;
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\MenuController;
+use App\Models\DataPerangkat;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -128,6 +129,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-pop/{no_site}', [DataController::class, 'getPOP'])->name('pop.get');
     Route::get('/data/rack', [DataController::class, 'rack'])->name('data.rack');
 
+    Route::get('/data/dataperangkat', [DataController::class, 'dataperangkat'])->name('data.dataperangkat');
+    Route::post('/store-dataperangkat', [DataController::class, 'storeDataPerangkat']);
+    Route::get('/get-dataperangkat/{id}', [DataController::class, 'getDataPerangkat']);
+    Route::put('/update-dataperangkat/{id}', [DataController::class, 'updateDataPerangkat']);
+    Route::delete('/delete-dataperangkat/{id}', [DataController::class, 'deleteDataPerangkat']);
+
+    
+    // Routes untuk Brand Perangkat
+    Route::post('/store-brandperangkat', [DataController::class, 'storeBrandPerangkat']);
+    Route::get('/get-brandperangkat/{id}', [DataController::class, 'getBrandPerangkat']);
+    Route::put('/update-brandperangkat/{id}', [DataController::class, 'updateBrandPerangkat']);
+    Route::delete('/delete-brandperangkat/{id}', [DataController::class, 'deleteBrandPerangkat']);
+
+    
     //HISTORI
     Route::get('/histori', [MenuController::class, 'histori'])->name('histori');
     Route::get('/get-history-perangkat', [MenuController::class, 'getHistoryPerangkat'])->name('history.perangkat');
