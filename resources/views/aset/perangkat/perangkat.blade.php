@@ -61,11 +61,11 @@
                     <thead>
                         <tr>
                             <th>No</th>
+                            <th>Hostname</th>
                             <th>Region</th>
                             <th>POP</th>
                             <th>No Rack</th>
                             <th>Perangkat</th>
-                            <!-- <th>Perangkat ke</th> -->
                             <th>Brand</th>
                             <th>Type</th>
                             <!-- <th>Uawal</th> -->
@@ -138,6 +138,15 @@
             brand: brands 
         }, function(response) {
             const tbody = $('#tablePerangkat tbody');
+            const values = [
+                perangkat.kode_region,
+                perangkat.kode_site,
+                perangkat.no_rack,
+                perangkat.kode_pkt,
+                perangkat.pkt_ke,
+                perangkat.kode_brand,
+                perangkat.type
+            ];
             tbody.empty();
 
             if (response.perangkat.length === 0) {
@@ -146,9 +155,20 @@
             }
 
             $.each(response.perangkat, function(index, perangkat) {
+                const kodePerangkat = [
+                    perangkat.kode_region, 
+                    perangkat.kode_site, 
+                    perangkat.no_rack, 
+                    perangkat.kode_pkt, 
+                    perangkat.pkt_ke, 
+                    perangkat.kode_brand, 
+                    perangkat.type
+                ].filter(val => val !== null && val !== undefined && val !== '').join('-');
+
                 tbody.append(`
                     <tr>
                         <td>${index + 1}</td>
+                        <td>${kodePerangkat || '-'}</td>
                         <td>${perangkat.nama_region}</td>
                         <td>${perangkat.nama_site || '-'}</td>
                         <td>${perangkat.no_rack || '-'}</td>

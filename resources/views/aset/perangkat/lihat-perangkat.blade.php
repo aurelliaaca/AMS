@@ -6,7 +6,7 @@
             <div class="left-column">
                 <div class="form-group">
                     <label>Kode</label>
-                    <p id="concatView"></p>
+                    <p id="hostnameView"></p>
                 </div>
                 <div class="form-group">
                     <label>Region</label>
@@ -74,7 +74,7 @@ function lihatPerangkat(wdm) {
             ];
 
             // Filter nilai yang bukan null atau undefined, lalu gabungkan dengan "-"
-            $('#concatView').text(values.filter(val => val).join('-'));
+            $('#hostnameView').text(values.filter(val => val).join('-'));
             $('#regionView').text(perangkat.nama_region);
             $('#siteView').text(perangkat.nama_site);
             $('#perangkatView').text(perangkat.nama_pkt);
@@ -88,31 +88,39 @@ function lihatPerangkat(wdm) {
             document.getElementById("lihatPerangkatModal").style.display = "flex";
 
             // Ambil data histori perangkat
-            $.get(`/histori-perangkat/${wdm}`, function(response) {
-                if (response.success) {
-                    const histori = response.histori;
-                    const tableBody = $('#historiTableBody');
-                    tableBody.empty(); // Kosongkan tabel sebelum mengisi data baru
+$.get(`/histori-perangkat/${wdm}`, function(response) {
+    if (response.success) {
+        const histori = response.histori;
+        const tableBody = $('#historiTableBody');
+        tableBody.empty(); // Kosongkan tabel sebelum mengisi data baru
 
-                    // Isi tabel dengan data histori
-                    if (histori.length > 0) {
-                        histori.forEach(item => {
-                            tableBody.append(`
-                                <tr>
-                                    <td>${item.aksi}</td>
-                                    <td>${item.tanggal_perubahan}</td>
-                                </tr>
-                            `);
-                        });
-                    } else {
-                        tableBody.append(`
-                            <tr>
-                                <td colspan="2" style="text-align: center;">Tidak ada histori tersedia</td>
-                            </tr>
-                        `);
-                    }
-                }
+        // Isi tabel dengan data histori
+        if (histori.length > 0) {
+            histori.forEach(item => {
+                const tanggal = new Date(item.tanggal_perubahan);
+                const options = {
+                    weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                };
+                const formattedTanggal = tanggal.toLocaleDateString('id-ID', options).replace('pukul', 'pada pukul');
+
+                tableBody.append(`
+                    <tr>
+                        <td>${item.aksi}</td>
+                        <td>${formattedTanggal}</td>
+                    </tr>
+                `);
             });
+        } else {
+            tableBody.append(`
+                <tr>
+                    <td colspan="2" style="text-align: center;">Tidak ada histori tersedia</td>
+                </tr>
+            `);
+        }
+    }
+});
+
         }
     });
 }

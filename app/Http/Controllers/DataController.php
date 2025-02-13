@@ -18,9 +18,10 @@ class DataController extends Controller
         $popCount = DB::table('pop')->count();
         $fasilitasCount = DB::table('list_fasilitas')->count();
         $perangkatCount = DB::table('perangkat')->count();
+        $regionCount = DB::table('region')->count();
         // $rackCount = DB::table('rack')->count();
 
-        return view('data.datapage', compact('popCount', 'fasilitasCount', 'perangkatCount'));
+        return view('data.datapage', compact('popCount', 'fasilitasCount', 'perangkatCount', 'regionCount'));
     }
 
     public function region()
