@@ -16,14 +16,13 @@ class AsetController extends Controller
 {
     public function jaringan()
     {
-        // Ambil semua data jaringan dengan relasi tipe
         $jaringan = ListJaringan::with('tipe')->get();
+        \Log::info('Data jaringan:', $jaringan->toArray()); // Debugging log
 
-        // Ambil semua tipe untuk dropdown
-        $tipeJaringanList = Tipe::all();
+        $regions = Region::all();
+        $tipeJaringan = Tipe::all();
 
-        // Kirim data ke view
-        return view('aset.jaringan', compact('jaringan', 'tipeJaringanList'));
+        return view('aset.jaringan', compact('jaringan', 'regions', 'tipeJaringan'));
     }
 
     public function perangkat()
@@ -356,38 +355,29 @@ public function getPop(Request $request)
 
     public function deleteJaringan($id_jaringan)
     {
+        \Log::info('Menghapus jaringan dengan ID:', ['id_jaringan' => $id_jaringan]); // Debugging log
+
         try {
-            $jaringan = ListJaringan::where('id_jaringan', $id_jaringan)->firstOrFail();
+            $jaringan = ListJaringan::findOrFail($id_jaringan);
             $jaringan->delete();
-            
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil dihapus'
-            ]);
+
+            return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            \Log::error('Error deleting jaringan: ' . $e->getMessage());
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menghapus data'
-            ]);
+            \Log::error('Error saat menghapus data jaringan: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
     
-       
     public function editJaringan($id_jaringan)
     {
+        \Log::info('Mengambil data jaringan dengan ID:', ['id_jaringan' => $id_jaringan]); // Debugging log
+
         try {
-            $jaringan = ListJaringan::where('id_jaringan', $id_jaringan)->firstOrFail();
-            return response()->json([
-                'success' => true,
-                'jaringan' => $jaringan
-            ]);
+            $jaringan = ListJaringan::with('tipe')->findOrFail($id_jaringan);
+            return response()->json(['success' => true, 'data' => $jaringan]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengambil data jaringan'
-            ]);
+            \Log::error('Error saat mengambil data jaringan: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat mengambil data jaringan']);
         }
     }
 
@@ -402,6 +392,7 @@ public function getPop(Request $request)
                 'message' => 'Data jaringan berhasil diupdate'
             ]);
         } catch (\Exception $e) {
+            \Log::error('Error saat mengupdate data jaringan: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengupdate data jaringan'
@@ -412,6 +403,8 @@ public function getPop(Request $request)
   
     public function storeAlatUkur(Request $request)
     {
+        \Log::info('Data yang diterima:', $request->all()); // Debugging log
+
         $validatedData = $request->validate([
             'ro' => 'required|string',
             'kode' => 'required|string',
@@ -492,5 +485,55 @@ public function getPop(Request $request)
                 'message' => 'Gagal mengupdate fasilitas: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function storeJaringan(Request $request)
+    {
+        \Log::info('Data yang diterima:', $request->all()); // Debugging log
+
+        try {
+            $validatedData = $request->validate([
+                'RO' => 'required|string',
+                'kode_site_insan' => 'required|string',
+                'tipe_jaringan' => 'required|string',
+                'segmen' => 'required|string',
+                'jartatup_jartaplok' => 'required|string',
+                'mainlink_backuplink' => 'nullable|string',
+                'panjang' => 'required|numeric',
+                'panjang_drawing' => 'required|numeric',
+                'jumlah_core' => 'required|integer',
+                'jenis_kabel' => 'required|string',
+                'tipe_kabel' => 'required|string',
+                'travelling_time' => 'nullable|string',
+                'verification_time' => 'nullable|string',
+                'restoration_time' => 'nullable|string',
+                'total_corrective_time' => 'nullable|string',
+            ]);
+
+            $jaringan = ListJaringan::create($validatedData);
+            \Log::info('Data jaringan disimpan dengan ID:', ['id_jaringan' => $jaringan->id_jaringan]); // Debugging log
+
+            return response()->json(['success' => true, 'id_jaringan' => $jaringan->id_jaringan]);
+        } catch (\Exception $e) {
+            \Log::error('Error saat menyimpan data jaringan: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function getAlatUkurById($urutan)
+    {
+        $alatukur = AlatUkur::where('urutan', $urutan)->first();
+        
+        if ($alatukur) {
+            return response()->json([
+                'success' => true,
+                'alatukur' => $alatukur
+            ]);
+        }
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Alat ukur tidak ditemukan'
+        ], 404);
     }
 }

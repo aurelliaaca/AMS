@@ -9,11 +9,12 @@ class Tipe extends Model
     use HasFactory;
 
     protected $table = 'tipe';
+    protected $primaryKey = 'kode_tipe';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
-        'nama_tipe',
         'kode_tipe',
+        'nama_tipe',
     ];
-
-
 }
