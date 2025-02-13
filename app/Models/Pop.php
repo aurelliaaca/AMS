@@ -23,9 +23,9 @@ class Pop extends Model
         'wajib_inspeksi' => 'boolean'
     ];
 
-    // Tambahkan relasi dengan Region
-    public function region()
-    {
-        return $this->belongsTo(Region::class, 'regional', 'nama_region');
-    }
+    // // Tambahkan relasi dengan Region
+    // public function region()
+    // {
+    //     return $this->belongsTo(Region::class, 'regional', 'nama_region');
+    // }
 }

@@ -9,7 +9,14 @@ use App\Models\DataPerangkat;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\NamaPerangkat;
+use App\Models\Site;
 use App\Models\BrandPerangkat;
+use App\Models\BrandFasilitas;
+use App\Models\DataFasilitas;
+use App\Models\NamaFasilitas;
+
+
+
 
 class DataController extends Controller
 {
@@ -31,9 +38,9 @@ class DataController extends Controller
 
     public function pop()
     {
-        $pop = Pop::all();
+        $site = Site::all();
         $region = Region::all();
-        return view('data.pop', compact('pop', 'region'));
+        return view('data.pop', compact('site', 'region'));
     }
 
     public function getAllPOP()
@@ -250,5 +257,13 @@ class DataController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
+    }
+
+
+    public function datafasilitas()
+    {
+        $namafasilitas = NamaFasilitas::all();
+        $brandfasilitas = BrandFasilitas::all();
+        return view('data.datafasilitas', compact('namafasilitas', 'brandfasilitas'));
     }
 }

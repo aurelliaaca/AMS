@@ -93,7 +93,8 @@
                 </div>
             </div>
 
-            <!-- Card Rack
+<!--       
+            Card Rack
             <div class="card">
                 <div class="card-header">
                     <div class="icon-wrapper rack-icon">
@@ -113,7 +114,7 @@
                 </div>
             </div> -->
         </div>
-    </div>
+    </div> 
 </div>
 
 <style>
