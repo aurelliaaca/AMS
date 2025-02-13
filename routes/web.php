@@ -77,6 +77,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/update-perangkat/{wdm}', [PerangkatController::class, 'update']);
     Route::delete('/delete-perangkat/{wdm}', [PerangkatController::class, 'destroy']);
     Route::get('/get-sites', [PerangkatController::class, 'getSites']);
+    Route::get('/histori-perangkat/{wdm}', [PerangkatController::class, 'showHistori']);
     // Route::get('/get-jml_rack', [PerangkatController::class, 'getJmlRack']);
     Route::get('/get-site-rack', [PerangkatController::class, 'getSiteRack']);
     

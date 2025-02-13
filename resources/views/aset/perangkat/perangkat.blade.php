@@ -61,11 +61,11 @@
                     <thead>
                         <tr>
                             <th>No</th>
+                            <th>Hostname</th>
                             <th>Region</th>
                             <th>POP</th>
                             <th>No Rack</th>
                             <th>Perangkat</th>
-                            <!-- <th>Perangkat ke</th> -->
                             <th>Brand</th>
                             <th>Type</th>
                             <!-- <th>Uawal</th> -->
@@ -79,8 +79,10 @@
         </div>
     </div>
 
-    @include('aset.modals.add-perangkat')
-    @include('aset.modals.edit-perangkat')
+    @include('aset.perangkat.add-perangkat')
+    @include('aset.perangkat.edit-perangkat')
+    @include('aset.perangkat.lihat-perangkat')
+
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -136,6 +138,15 @@
             brand: brands 
         }, function(response) {
             const tbody = $('#tablePerangkat tbody');
+            const values = [
+                perangkat.kode_region,
+                perangkat.kode_site,
+                perangkat.no_rack,
+                perangkat.kode_pkt,
+                perangkat.pkt_ke,
+                perangkat.kode_brand,
+                perangkat.type
+            ];
             tbody.empty();
 
             if (response.perangkat.length === 0) {
@@ -144,9 +155,20 @@
             }
 
             $.each(response.perangkat, function(index, perangkat) {
+                const kodePerangkat = [
+                    perangkat.kode_region, 
+                    perangkat.kode_site, 
+                    perangkat.no_rack, 
+                    perangkat.kode_pkt, 
+                    perangkat.pkt_ke, 
+                    perangkat.kode_brand, 
+                    perangkat.type
+                ].filter(val => val !== null && val !== undefined && val !== '').join('-');
+
                 tbody.append(`
                     <tr>
                         <td>${index + 1}</td>
+                        <td>${kodePerangkat || '-'}</td>
                         <td>${perangkat.nama_region}</td>
                         <td>${perangkat.nama_site || '-'}</td>
                         <td>${perangkat.no_rack || '-'}</td>
@@ -154,6 +176,10 @@
                         <td>${perangkat.nama_brand || '-'}</td>
                         <td>${perangkat.type || '-'}</td>
                         <td>
+                            <button onclick="lihatPerangkat(${perangkat.WDM})"
+                                style="background-color: #9697D6; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
+                                Lihat detail
+                            </button>
                             <button onclick="editPerangkat(${perangkat.WDM})" 
                                 style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
                                 Edit
@@ -227,6 +253,5 @@ function searchTable() {
                 rows[i].style.display = found ? '' : 'none';
             }
         }
-
     </script>
 @endsection

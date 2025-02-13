@@ -1,169 +1,11 @@
 @extends('layouts.sidebar')
 @section('content')
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Inter", sans-serif;
-            font-size: 12px;
-        }
-        
-        .container {
-            width: 100%;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .dropdown-container {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            width: 100%;
-            
-        }
-        
-        .dropdown-container > * {
-            flex: 1;
-        }
-        
-        select, .search-bar input {
-            width: 100%;
-            font-size: 12px;
-            padding: 12px 12px;
-            border: 1px solid #4f52ba;
-            border-radius: 5px;
-            background-color: #fff;
-            transition: border-color 0.3s;
-        }
-
-        .no-data {
-            text-align: center;
-            color: rgba(79, 82, 186, 0.2);
-        }
-        
-        .select2-container {
-            width: 100%;
-        }
-        
-        .select2-selection {
-            width: 100%;
-            font-size: 12px;
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #fff;
-            transition: border-color 0.3s;
-            border: 1px solid #4f52ba !important; /* Apply your custom border color */
-        }
-        
-        .select2-selection:focus {
-            border-color: #4f52ba !important; /* Maintain the same border color on focus */
-            box-shadow: 0 0 5px rgba(79, 82, 186, 0.5) !important;
-        }
-        .select2-selection__placeholder {
-            color: #4f52ba;
-            font-size: 12px;
-        }
-        
-        .select2-container--open .select2-selection {
-            border-color: #4f52ba;
-            box-shadow: 0 0 5px rgba(79, 82, 186, 0.5);
-        }
-        
-        .select2-results__option {
-            font-size: 12px;
-            padding: 10px;
-        }
-        
-        .select2-results__option--highlighted {
-            background-color: #4f52ba !important;
-            color: #fff;
-        }
-
-        .header {
-            margin-bottom: 10px;
-        }
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-        .card-wrapper {
-            /* Pada grid, tiap card-wrapper menjadi satu cell */
-        }
-        .card-counter {
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: flex-end;
-            transition: transform 0.2s;
-            position: relative;
-            overflow: hidden;
-            min-height: 140px;
-            cursor: pointer;
-        }
-        .card-counter i {
-            position: absolute;
-            top: 50%;
-            left: 0px;
-            transform: translateY(-50%);
-            font-size: 125px;
-            opacity: 0.2;
-            z-index: 1;
-        }
-        .count-numbers {
-            font-size: 35px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 2;
-            text-align: right;
-        }
-        .count-name {
-            font-size: 16px;
-            position: relative;
-            z-index: 2;
-            text-align: right;
-            font-style: italic;
-            opacity: 0.6;
-            bottom: 15px;
-        }
-        .primary {
-            background: linear-gradient(45deg, #4f52ba 0%, #6f86e0 100%);
-            color: white;
-        }
-        .toggle-table {
-            display: none;
-        }
-
-        .toggle-table table {
-            width: 100%;
-            border-collapse: separate; /* Ubah border-collapse menjadi separate */
-            border-radius: 5px;
-            overflow: hidden; /* Pastikan border-radius berfungsi */
-        }
-
-        .toggle-table tr td {
-            border: 1px solid #ddd;
-            padding: 5px;
-            text-align: center;
-            border-radius: 4px; /* Tumpulkan border untuk setiap cell */
-        }
-
 </style>
+
+    <head>
+        <link rel="stylesheet" href="{{ asset('css/aset.css') }}">
+    </head>
 
 <div class="main">
     <div class="container">
@@ -171,8 +13,7 @@
             <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Dashboard</h3>
         </div>
 
-        <div class="dropdown-container">
-            <!-- Dropdown Region -->
+        <div class="filter-container">
             <select id="region" name="region[]" multiple>
                 <option value="">Pilih Region</option>
                 @foreach ($regions as $region)
@@ -180,12 +21,10 @@
                 @endforeach
             </select>
 
-            <!-- Dropdown Site -->
             <select id="site" name="site[]" multiple disabled>
                 <option value="">Pilih Site</option>
             </select>
 
-            <!-- Search Bar -->
             <div class="search-bar">
                 <input type="text" id="searchInput" class="custom-select" placeholder="Cari" />
             </div>
