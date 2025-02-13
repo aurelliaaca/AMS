@@ -233,14 +233,14 @@
                     <span class="material-symbols-outlined"> dashboard </span>Dasbor</a>
                 </li>
                 <li>
-                    <a href="{{ route('histori') }}"><span class="material-symbols-outlined"> history </span>Histori</a>
-                </li>
+                    <a href="{{ route(name: 'data') }}"><span class="material-symbols-outlined"> database </span>Data</a>
+                </li> 
                 <li>
                     <a href="{{ route('rack') }}"><span class="material-symbols-outlined"> dataset </span>Rack</a>
                 </li>
                 <li>
-                    <a href="{{ route(name: 'data') }}"><span class="material-symbols-outlined"> database </span>Data</a>
-                </li> 
+                    <a href="{{ route('histori') }}"><span class="material-symbols-outlined"> history </span>Histori</a>
+                </li>
             <h4>
                 <span>Aset</span>
                 <div class="menu-separator"></div>

@@ -43,10 +43,7 @@ class HomeController extends Controller
         $jaringanCount = ListJaringan::count();
         $alatukurCount = AlatUkur::count();
 
-        $totalRacks = ListPerangkat::join('site', 'listperangkat.kode_site', '=', 'site.kode_site')
-            ->join('region', 'listperangkat.kode_region', '=', 'region.kode_region')
-            ->distinct('listperangkat.kode_site')
-            ->count('listperangkat.kode_site'); // Menghitung semua site unik
+        $totalRacks = Site::sum('jml_rack');
 
         $perangkatQuery = \DB::table('listperangkat')
             ->join('site', 'listperangkat.kode_site', '=', 'site.kode_site')
@@ -100,10 +97,7 @@ class HomeController extends Controller
             ->orderBy('listperangkat.wdm', 'asc') // Change 'listperangkat.wdm' to the appropriate column if needed.
             ->get();
 
-        $totalRacks = ListPerangkat::join('site', 'listperangkat.kode_site', '=', 'site.kode_site')
-            ->join('region', 'listperangkat.kode_region', '=', 'region.kode_region')
-            ->distinct('listperangkat.kode_site')
-            ->count('listperangkat.kode_site'); // Menghitung semua site unik
+        $totalRacks = Site::sum('jml_rack');
 
         // Query for listPerangkat with the order.
         $listPerangkat = ListPerangkat::select(

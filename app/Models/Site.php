@@ -9,9 +9,15 @@ class Site extends Model
 {
     use HasFactory;
     protected $table = 'site';
+    protected $primaryKey = 'kode_site';
 
     protected $fillable = [
-        'no_site', 'kode_region', 'jenis_site','nama_site', 'kode_site', 'jml_rack',
+        'nama_site',
+        'kode_site',
+        'no_site',
+        'jenis_site',
+        'kode_region',
+        'jml_rack'
     ];
 
     public function region()
@@ -24,4 +30,13 @@ class Site extends Model
         return $this->hasMany(Perangkat::class, 'kode_site', 'kode_site');
     }
 
+    // protected $casts = [
+    //     'wajib_inspeksi' => 'boolean'
+    // ];
+
+    // // Tambahkan relasi dengan Region
+    // public function region()
+    // {
+    //     return $this->belongsTo(Region::class, 'regional', 'nama_region');
+    // }
 }

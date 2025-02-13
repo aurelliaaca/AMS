@@ -66,8 +66,11 @@ class ListPerangkat extends Model
                     'perangkat_data' => $perangkat->toArray()
                 ]);
 
+                $maxWdm = ListPerangkat::max('WDM') ?? 0;
+                $newWdm = $maxWdm;
+
                 HistoriPerangkat::create([
-                    'idHiPe' => $perangkat->WDM,
+                    'idHiPe' => $newWdm,
                     'region' => $perangkat->region ? $perangkat->region->nama_region : '-',
                     'site' => $perangkat->site ? $perangkat->site->nama_site : '-',
                     'nama_perangkat' => $perangkat->perangkat ? $perangkat->perangkat->nama_pkt : '-',

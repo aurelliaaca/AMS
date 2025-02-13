@@ -20,7 +20,7 @@
                 </div>
                     <div class="header-text">
                         <h3>Region</h3>
-                        <span class="count">{{ $regionCount ?? 0 }}</span>
+                        <span class="count">{{ $regionCount}}</span>
                     </div>
                 </div>
                 <div class="card-body">
@@ -93,7 +93,8 @@
                 </div>
             </div>
 
-            <!-- Card Rack -->
+<!--       
+            Card Rack
             <div class="card">
                 <div class="card-header">
                     <div class="icon-wrapper rack-icon">
@@ -111,9 +112,9 @@
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
-            </div>
+            </div> -->
         </div>
-    </div>
+    </div> 
 </div>
 
 <style>

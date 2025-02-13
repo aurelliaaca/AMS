@@ -16,6 +16,8 @@ use App\Http\Controllers\AsetController;
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\MenuController;
 use App\Models\DataPerangkat;
+use App\Models\DataFasilitas;
+
 
 Route::get('/', function () {
     return view('auth.login');
@@ -75,6 +77,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/update-perangkat/{wdm}', [PerangkatController::class, 'update']);
     Route::delete('/delete-perangkat/{wdm}', [PerangkatController::class, 'destroy']);
     Route::get('/get-sites', [PerangkatController::class, 'getSites']);
+    Route::get('/histori-perangkat/{wdm}', [PerangkatController::class, 'showHistori']);
     // Route::get('/get-jml_rack', [PerangkatController::class, 'getJmlRack']);
     Route::get('/get-site-rack', [PerangkatController::class, 'getSiteRack']);
     
@@ -145,7 +148,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/update-brandperangkat/{id}', [DataController::class, 'updateBrandPerangkat']);
     Route::delete('/delete-brandperangkat/{id}', [DataController::class, 'deleteBrandPerangkat']);
 
-    
+    Route::get('/data/datafasilitas', [DataController::class, 'datafasilitas'])->name('data.datafasilitas');
+    Route::get('/get-datafasilitas/{id}', [DataController::class, 'getDataFasilitas']);
+
     //HISTORI
     Route::get('/histori', [MenuController::class, 'histori'])->name('histori');
     Route::get('/get-history-perangkat', [MenuController::class, 'getHistoryPerangkat'])->name('history.perangkat');

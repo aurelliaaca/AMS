@@ -305,33 +305,37 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Regional</th>
-                            <th>Kode Regional</th>
+                            <th>Nama Site</th>
+                            <th>Kode Site</th>
+                            <th>No Site</th>
                             <th>Jenis Site</th>
-                            <th>Site</th>
-                            <th>Kode</th>
+                            <th>Kode Region</th>
                             <th>Wajib Inspeksi</th>
+                            <th>Jumlah Rack</th>
+                            <!-- <th>Wajib Inspeksi</th> -->
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($pop as $index => $pop)
+                        @forelse($site as $index => $item)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $pop->regional }}</td>
-                                <td>{{ $pop->kode_regional }}</td>
-                                <td>{{ $pop->jenis_site }}</td>
-                                <td>{{ $pop->site }}</td>
-                                <td>{{ $pop->kode }}</td>
-                                <td>{{ $pop->wajib_inspeksi ? 'Ya' : 'Tidak' }}</td>
+                                <td>{{ $item->nama_site }}</td>
+                                <td>{{ $item->kode_site }}</td>
+                                <td>{{ $item->no_site }}</td>
+                                <td>{{ $item->jenis_site }}</td>
+                                <td>{{ $item->kode_region }}</td>
+                                <td>{{ $item->wajib_inspeksi ? 'Ya' : 'Tidak' }}</td>
+                                <td>{{ $item->jml_rack }}</td>
+                                
                                 <td>
-                                    <button type="button" class="btn-edit" onclick="editPOP({{ $pop->no_site }})">Edit</button>
-                                    <button type="button" class="btn-delete" onclick="deletePOP({{ $pop->no_site }})">Hapus</button>
+                                    <button type="button" class="btn-edit" onclick="editPOP({{ $item->kode_site }})">Edit</button>
+                                    <button type="button" class="btn-delete" onclick="deletePOP({{ $item->kode_site }})">Hapus</button>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center">Tidak ada data</td>
+                                <td colspan="8" class="text-center">Tidak ada data</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -397,7 +401,7 @@
             e.preventDefault();
             
             const no_site = $('#id-input').val();
-            const url = no_site ? `/update-pop/${no_site}` : '/store-pop';
+            const url = no_site ? `/update-site/${no_site}` : '/store-site';
             const method = no_site ? 'PUT' : 'POST';
             
             $.ajax({
@@ -436,7 +440,7 @@
             }, function(isConfirm) {
                 if (isConfirm) {
                     $.ajax({
-                        url: `/delete-pop/${no_site}`,
+                        url: `/delete-site/${no_site}`,
                         type: 'DELETE',
                         success: function(response) {
                             if (response.success) {
@@ -457,19 +461,19 @@
 
         // ----------------------- FUNCTION EDIT -----------------------
         window.editPOP = function(no_site) {
-            $.get(`/get-pop/${no_site}`, function(response) {
+            $.get(`/get-site/${no_site}`, function(response) {
                 if (response.success) {
-                    const pop = response.pop;
-                    $('#regional').val(pop.regional);
-                    $('#kode_regional').val(pop.kode_regional);
-                    $('#jenis_site').val(pop.jenis_site);
-                    $('#site').val(pop.site);
-                    $('#kode').val(pop.kode);
-                    $('#keterangan').val(pop.keterangan);
-                    $('#wajib_inspeksi').val(pop.wajib_inspeksi ? '1' : '0');
+                    const site = response.site;
+                    $('#regional').val(site.regional);
+                    $('#kode_regional').val(site.kode_regional);
+                    $('#jenis_site').val(site.jenis_site);
+                    $('#site').val(site.site);
+                    $('#kode').val(site.kode);
+                    $('#keterangan').val(site.keterangan);
+                    $('#wajib_inspeksi').val(site.wajib_inspeksi ? '1' : '0');
                     
                     $('#id-input').remove();
-                    $('#addPOPForm').append(`<input type="hidden" id="id-input" name="id" value="${pop.no_site}">`);
+                    $('#addPOPForm').append(`<input type="hidden" id="id-input" name="id" value="${site.no_site}">`);
                     
                     openAddPOPModal();
                 }
