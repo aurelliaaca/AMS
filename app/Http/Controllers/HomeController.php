@@ -89,12 +89,12 @@ class HomeController extends Controller
 
     public function rack()
     {
-        // Query for distinct racks with an ordering by the 'wdm' column in ascending order.
+        // Query for distinct racks with an ordering by the 'id_perangkat' column in ascending order.
         $racks = ListPerangkat::join('site', 'listperangkat.kode_site', '=', 'site.kode_site')
             ->join('region', 'listperangkat.kode_region', '=', 'region.kode_region')
             ->select('listperangkat.kode_region', 'region.nama_region', 'listperangkat.kode_site', 'site.nama_site', 'listperangkat.no_rack')
             ->distinct()
-            ->orderBy('listperangkat.wdm', 'asc') // Change 'listperangkat.wdm' to the appropriate column if needed.
+            ->orderBy('listperangkat.id_perangkat', 'asc') // Change 'listperangkat.id_perangkat' to the appropriate column if needed.
             ->get();
 
         $totalRacks = Site::sum('jml_rack');
@@ -111,7 +111,7 @@ class HomeController extends Controller
                 'type'
             )
             ->join('perangkat', 'listperangkat.kode_pkt', '=', 'perangkat.kode_pkt')
-            ->orderBy('listPerangkat.wdm', 'asc') // Use the proper table/column name; if 'wdm' is in the 'perangkat' table, change accordingly.
+            ->orderBy('listPerangkat.id_perangkat', 'asc') // Use the proper table/column name; if 'id_perangkat' is in the 'perangkat' table, change accordingly.
             ->get();
 
         return view('menu.rack', compact('totalRacks', 'racks', 'listPerangkat'));

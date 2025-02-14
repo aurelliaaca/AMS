@@ -4,7 +4,7 @@
         <h2>Edit Perangkat</h2>
         <form id="editPerangkatForm" method="POST">
             @csrf
-            <input type="hidden" id="wdm-input" name="wdm">
+            <input type="hidden" id="id_perangkat-input" name="id_perangkat">
             <div class="form-container">
                 <div class="left-column">
                     <div class="form-group">
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle form submission for editing perangkat
     $('#editPerangkatForm').on('submit', function(e) {
         e.preventDefault();
-        const wdm = $('#wdm-input').val();
+        const id_perangkat = $('#id_perangkat-input').val();
         closeEditPerangkatModal(); // Ini akan menutup modal sebelum SweetAlert muncul
         
         Swal.fire({
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitButton.prop('disabled', true).text('Mengupdate...'); // Change button text
 
                 $.ajax({
-                    url: `/update-perangkat/${wdm}`,
+                    url: `/update-perangkat/${id_perangkat}`,
                     type: 'PUT',
                     data: $(this).serialize(),
                     headers: {
@@ -198,13 +198,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function editPerangkat(wdm) {
-    $.get(`/get-perangkat/${wdm}`, function(response) {
+function editPerangkat(id_perangkat) {
+    $.get(`/get-perangkat/${id_perangkat}`, function(response) {
         if (response.success) {
             const perangkat = response.perangkat;
             
             // Set initial form values
-            $('#wdm-input').val(perangkat.WDM);
+            $('#id_perangkat-input').val(perangkat.id_perangkat);
             $('#perangkatEdit').val(perangkat.kode_pkt);
             $('#brandEdit').val(perangkat.kode_brand);
             $('#typeEdit').val(perangkat.type);

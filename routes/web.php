@@ -72,12 +72,12 @@ Route::middleware('auth')->group(function () {
     // PERANGKAT
     Route::get('/perangkat', [PerangkatController::class, 'perangkat'])->name('perangkat');
     Route::get('/get-perangkat', [PerangkatController::class, 'getPerangkat']);
-    Route::get('/get-perangkat/{wdm}', [PerangkatController::class, 'getPerangkatById']);
+    Route::get('/get-perangkat/{id_perangkat}', [PerangkatController::class, 'getPerangkatById']);
     Route::post('/store-perangkat', [PerangkatController::class, 'store']);
-    Route::put('/update-perangkat/{wdm}', [PerangkatController::class, 'update']);
-    Route::delete('/delete-perangkat/{wdm}', [PerangkatController::class, 'destroy']);
+    Route::put('/update-perangkat/{id_perangkat}', [PerangkatController::class, 'update']);
+    Route::delete('/delete-perangkat/{id_perangkat}', [PerangkatController::class, 'destroy']);
     Route::get('/get-sites', [PerangkatController::class, 'getSites']);
-    Route::get('/histori-perangkat/{wdm}', [PerangkatController::class, 'showHistori']);
+    Route::get('/histori-perangkat/{id_perangkat}', [PerangkatController::class, 'showHistori']);
     // Route::get('/get-jml_rack', [PerangkatController::class, 'getJmlRack']);
     Route::get('/get-site-rack', [PerangkatController::class, 'getSiteRack']);
     

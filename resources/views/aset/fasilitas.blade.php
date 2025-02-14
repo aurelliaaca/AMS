@@ -436,9 +436,9 @@
 
             $('#addFasilitasForm').submit(function(e) {
                 e.preventDefault();
-                const wdm = $('#wdm-input').val();
-                const url = wdm ? `/update-fasilitas/${wdm}` : '/store-fasilitas';
-                const method = wdm ? 'PUT' : 'POST';
+                const id_perangkat = $('#id_perangkat-input').val();
+                const url = id_perangkat ? `/update-fasilitas/${id_perangkat}` : '/store-fasilitas';
+                const method = id_perangkat ? 'PUT' : 'POST';
                 
                 $.ajax({
                     url: url,
@@ -450,10 +450,10 @@
                     success: function(response) {
                         if (response.success) {
                             closeAddFasilitasModal();
-                            showSwal('success', wdm ? 'Fasilitas berhasil diupdate!' : 'Fasilitas berhasil ditambahkan!');
+                            showSwal('success', id_perangkat ? 'Fasilitas berhasil diupdate!' : 'Fasilitas berhasil ditambahkan!');
                             LoadData();
                             $('#addFasilitasForm')[0].reset();
-                            $('#wdm-input').remove();
+                            $('#id_perangkat-input').remove();
                         } else {
                             showSwal('error', response.message || 'Terjadi kesalahan');
                         }
@@ -490,7 +490,7 @@
                     $('#jumlah').val(fasilitas.jumlah);
                     $('#satuan').val(fasilitas.satuan);
                     
-                    $('#addFasilitasForm').append(`<input type="hidden" id="wdm-input" name="urutan" value="${fasilitas.urutan}">`);
+                    $('#addFasilitasForm').append(`<input type="hidden" id="id_perangkat-input" name="urutan" value="${fasilitas.urutan}">`);
                     
                     $('h2').text('Edit Fasilitas');
                     $('.add-button[type="submit"]').text('Update');

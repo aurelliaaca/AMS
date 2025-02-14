@@ -18,10 +18,10 @@ class HistoriPerangkatSeeder extends Seeder
 
         foreach ($listPerangkat as $perangkat) {
             DB::table('histori_perangkat')->insert([
-                'idHiPe' => $perangkat->WDM,
+                'idHiPe' => $perangkat->id_perangkat,
                 'region' => $perangkat->kode_region,
                 'site' => $perangkat->kode_site,
-                'nama_perangkat' => $perangkat->WDM,  // Sesuaikan nama_perangkat jika ada data lain
+                'nama_perangkat' => $perangkat->id_perangkat,  // Sesuaikan nama_perangkat jika ada data lain
                 'brand' => $perangkat->kode_brand,
                 'type' => $perangkat->type,
                 'no_rack' => $perangkat->no_rack,

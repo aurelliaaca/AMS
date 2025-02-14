@@ -72,8 +72,8 @@ class PerangkatController extends Controller
         $totalAfterFilter = $perangkat->count();
         \Log::info('Total data after filters: ' . $totalAfterFilter);
 
-        // Urutkan perangkat berdasarkan WDM secara ascending
-        $perangkat->orderBy('listperangkat.WDM', 'asc');
+        // Urutkan perangkat berdasarkan id_perangkat secara ascending
+        $perangkat->orderBy('listperangkat.id_perangkat', 'asc');
 
         $listPerangkat = $perangkat->get();
 
@@ -203,9 +203,9 @@ class PerangkatController extends Controller
             }
         }
 
-        // Mendapatkan nilai WDM tertinggi dan tambahkan 1
-        $maxWdm = ListPerangkat::max('WDM') ?? 0;
-        $newWdm = $maxWdm + 1;
+        // Mendapatkan nilai id_perangkat tertinggi dan tambahkan 1
+        $maxid_perangkat = ListPerangkat::max('id_perangkat') ?? 0;
+        $newid_perangkat = $maxid_perangkat + 1;
 
         // Menghitung pkt_ke berdasarkan kode_region dan kode_site
         $lastPktKe = ListPerangkat::where('kode_region', $request->kode_region)
@@ -214,9 +214,9 @@ class PerangkatController extends Controller
 
         $pktKe = $lastPktKe + 1;
 
-        // Menyimpan perangkat dengan WDM baru dan pkt_ke yang dihitung
+        // Menyimpan perangkat dengan id_perangkat baru dan pkt_ke yang dihitung
         $perangkat = ListPerangkat::create([
-            'WDM' => $newWdm,
+            'id_perangkat' => $newid_perangkat,
             'kode_region' => $request->kode_region,
             'kode_site' => $request->kode_site,
             'kode_pkt' => $request->kode_pkt,
@@ -256,8 +256,8 @@ class PerangkatController extends Controller
         ], 500);
     }
 }
-    // kebutuhan hapus dan edit (ngefetch wdm)
-    public function getPerangkatById($wdm)
+    // kebutuhan hapus dan edit (ngefetch id_perangkat)
+    public function getPerangkatById($id_perangkat)
     {
         $perangkat = \DB::table('listperangkat')
         ->leftJoin('site', 'listperangkat.kode_site', '=', 'site.kode_site')
@@ -271,7 +271,7 @@ class PerangkatController extends Controller
             'perangkat.nama_pkt', 
             'brandperangkat.nama_brand'
         )
-        ->where('listperangkat.WDM', $wdm) // Contoh: Filter berdasarkan WDM
+        ->where('listperangkat.id_perangkat', $id_perangkat) // Contoh: Filter berdasarkan id_perangkat
         ->first(); // Ambil satu data
 
         if ($perangkat) {
@@ -288,15 +288,15 @@ class PerangkatController extends Controller
     }
 
     // hapus
-    public function destroy($wdm)
+    public function destroy($id_perangkat)
     {
         try {
-            \Log::info('Attempting to delete perangkat with WDM: ' . $wdm);
+            \Log::info('Attempting to delete perangkat with id_perangkat: ' . $id_perangkat);
             
-            $perangkat = ListPerangkat::where('WDM', $wdm)->first();
+            $perangkat = ListPerangkat::where('id_perangkat', $id_perangkat)->first();
             
             if (!$perangkat) {
-                \Log::warning('Perangkat not found with WDM: ' . $wdm);
+                \Log::warning('Perangkat not found with id_perangkat: ' . $id_perangkat);
                 return response()->json([
                     'success' => false,
                     'message' => 'Perangkat tidak ditemukan'
@@ -310,7 +310,7 @@ class PerangkatController extends Controller
                 $perangkat->delete();
                 DB::commit();
                 
-                \Log::info('Successfully deleted perangkat with WDM: ' . $wdm);
+                \Log::info('Successfully deleted perangkat with id_perangkat: ' . $id_perangkat);
                 
                 return response()->json([
                     'success' => true,
@@ -333,7 +333,7 @@ class PerangkatController extends Controller
     }
 
     // edit
-    public function update(Request $request, $wdm)
+    public function update(Request $request, $id_perangkat)
 {
     try {
         // Validasi input
@@ -351,8 +351,8 @@ class PerangkatController extends Controller
         // Debug: log data yang diterima
         \Log::info('Update received data:', $request->all());
 
-        // Cari perangkat berdasarkan WDM
-        $perangkat = ListPerangkat::where('WDM', $wdm)->first();
+        // Cari perangkat berdasarkan id_perangkat
+        $perangkat = ListPerangkat::where('id_perangkat', $id_perangkat)->first();
 
         if (!$perangkat) {
             return response()->json([
@@ -366,7 +366,7 @@ class PerangkatController extends Controller
             $overlapExists = ListPerangkat::where('kode_region', $request->kode_region)
                 ->where('kode_site', $request->kode_site)
                 ->where('no_rack', $request->no_rack)
-                ->where('WDM', '!=', $wdm) // Exclude the current device being updated
+                ->where('id_perangkat', '!=', $id_perangkat) // Exclude the current device being updated
                 ->where(function ($query) use ($request) {
                     $query->whereBetween('uawal', [$request->uawal, $request->uakhir])
                         ->orWhereBetween('uakhir', [$request->uawal, $request->uakhir])
@@ -468,10 +468,10 @@ class PerangkatController extends Controller
         ]);
     }
 
-    public function showHistori($wdm)
+    public function showHistori($id_perangkat)
     {
-        // Ambil data histori perangkat berdasarkan wdm
-        $histori = HistoriPerangkat::where('idHiPe', $wdm)
+        // Ambil data histori perangkat berdasarkan id_perangkat
+        $histori = HistoriPerangkat::where('idHiPe', $id_perangkat)
             ->select('aksi', 'tanggal_perubahan')
             ->orderBy('tanggal_perubahan', 'desc')
             ->get();

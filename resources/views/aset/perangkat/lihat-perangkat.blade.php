@@ -59,8 +59,8 @@
 
 <script>
 // Fungsi untuk menampilkan detail perangkat
-function lihatPerangkat(wdm) {
-    $.get(`/get-perangkat/${wdm}`, function(response) {
+function lihatPerangkat(id_perangkat) {
+    $.get(`/get-perangkat/${id_perangkat}`, function(response) {
         if (response.success) {
             const perangkat = response.perangkat;
             const values = [
@@ -88,7 +88,7 @@ function lihatPerangkat(wdm) {
             document.getElementById("lihatPerangkatModal").style.display = "flex";
 
             // Ambil data histori perangkat
-$.get(`/histori-perangkat/${wdm}`, function(response) {
+$.get(`/histori-perangkat/${id_perangkat}`, function(response) {
     if (response.success) {
         const histori = response.histori;
         const tableBody = $('#historiTableBody');

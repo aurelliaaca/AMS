@@ -176,15 +176,15 @@
                         <td>${perangkat.nama_brand || '-'}</td>
                         <td>${perangkat.type || '-'}</td>
                         <td>
-                            <button onclick="lihatPerangkat(${perangkat.WDM})"
+                            <button onclick="lihatPerangkat(${perangkat.id_perangkat})"
                                 style="background-color: #9697D6; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
                                 Lihat detail
                             </button>
-                            <button onclick="editPerangkat(${perangkat.WDM})" 
+                            <button onclick="editPerangkat(${perangkat.id_perangkat})" 
                                 style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
                                 Edit
                             </button>
-                            <button onclick="deletePerangkat(${perangkat.WDM})"
+                            <button onclick="deletePerangkat(${perangkat.id_perangkat})"
                                 style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
                                 Delete
                             </button>
@@ -198,8 +198,8 @@
         });
     }
 
-    function deletePerangkat(wdm) {
-    console.log("Delete function called with WDM:", wdm); // Debugging line
+    function deletePerangkat(id_perangkat) {
+    console.log("Delete function called with id_perangkat:", id_perangkat); // Debugging line
     Swal.fire({
         title: 'Apakah Anda yakin?',
         text: "Data yang dihapus tidak dapat dikembalikan!",
@@ -212,7 +212,7 @@
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/delete-perangkat/${wdm}`,
+                url: `/delete-perangkat/${id_perangkat}`,
                 type: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
