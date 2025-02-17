@@ -34,10 +34,10 @@
                 </div>
 
                 <div>
-                    <select id="perangkat" name="perangkat[]" multiple data-placeholder="Pilih Perangkat">
-                        <option value="" disabled>Pilih Perangkat</option>
+                    <select id="jenisperangkat" name="jenisperangkat[]" multiple data-placeholder="Pilih Jenis Perangkat">
+                        <option value="" disabled>Pilih Jenis Perangkat</option>
                         @foreach ($listpkt as $perangkat)
-                            <option value="{{ $perangkat->kode_pkt }}">{{ $perangkat->nama_pkt }}</option>
+                            <option value="{{ $perangkat->kode_perangkat }}">{{ $perangkat->nama_perangkat }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -68,8 +68,6 @@
                             <th>Perangkat</th>
                             <th>Brand</th>
                             <th>Type</th>
-                            <!-- <th>Uawal</th> -->
-                            <!-- <th>Uakhir</th> -->
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -90,63 +88,54 @@
 
     <script>
     $(document).ready(function() {
-        // Inisialisasi Select2 dengan placeholder
-        $('#region, #site, #perangkat, #brand').select2({
+        // Update the Select2 initialization
+        $('#region, #site, #jenisperangkat, #brand').select2({
             placeholder: function() {
                 return $(this).data('placeholder');
             },
             allowClear: true
         });
 
-        // Event handlers untuk filter
-        $('#region').change(function() {
-            const selectedRegions = $(this).val();
-            $('#site').prop('disabled', true).empty().append('<option value="">Pilih Site</option>');
+            // Event handlers untuk filter
+            $('#region').change(function() {
+                const selectedRegions = $(this).val();
+                $('#site').prop('disabled', true).empty().append('<option value="">Pilih Site</option>');
 
-            if (selectedRegions && selectedRegions.length > 0) {
-                $.get('/get-sites', { regions: selectedRegions }, function(data) {
-                    $('#site').prop('disabled', false);
-                    $.each(data, function(key, value) {
-                        $('#site').append(new Option(value, key));
+                if (selectedRegions && selectedRegions.length > 0) {
+                    $.get('/get-sites', { regions: selectedRegions }, function(data) {
+                        $('#site').prop('disabled', false);
+                        $.each(data, function(key, value) {
+                            $('#site').append(new Option(value, key));
+                        });
                     });
-                });
-            }
+                }
 
-            LoadData(selectedRegions);
-        });
+                LoadData(selectedRegions);
+            });
 
-        ['#site', '#perangkat', '#brand'].forEach(selector => {
+            ['#site', '#jenisperangkat', '#brand'].forEach(selector => {
             $(selector).change(function() {
                 LoadData(
                     $('#region').val(),
                     $('#site').val(),
-                    $('#perangkat').val(),
+                    $('#jenisperangkat').val(),
                     $('#brand').val()
                 );
             });
         });
 
-        // Inisialisasi awal
-        LoadData();
-    });
+            // Inisialisasi awal
+            LoadData();
+        });
 
-    function LoadData(regions = [], sites = [], perangkat = [], brands = []) {
+        function LoadData(regions = [], sites = [], jenisperangkat = [], brands = []) {
         $.get('/get-perangkat', { 
             region: regions, 
             site: sites, 
-            perangkat: perangkat, 
+            jenisperangkat: jenisperangkat,
             brand: brands 
         }, function(response) {
             const tbody = $('#tablePerangkat tbody');
-            const values = [
-                perangkat.kode_region,
-                perangkat.kode_site,
-                perangkat.no_rack,
-                perangkat.kode_pkt,
-                perangkat.pkt_ke,
-                perangkat.kode_brand,
-                perangkat.type
-            ];
             tbody.empty();
 
             if (response.perangkat.length === 0) {
@@ -159,8 +148,8 @@
                     perangkat.kode_region, 
                     perangkat.kode_site, 
                     perangkat.no_rack, 
-                    perangkat.kode_pkt, 
-                    perangkat.pkt_ke, 
+                    perangkat.kode_perangkat, 
+                    perangkat.perangkat_ke, 
                     perangkat.kode_brand, 
                     perangkat.type
                 ].filter(val => val !== null && val !== undefined && val !== '').join('-');
@@ -172,7 +161,7 @@
                         <td>${perangkat.nama_region}</td>
                         <td>${perangkat.nama_site || '-'}</td>
                         <td>${perangkat.no_rack || '-'}</td>
-                        <td>${perangkat.nama_pkt || '-'}</td>
+                        <td>${perangkat.nama_perangkat || '-'}</td>
                         <td>${perangkat.nama_brand || '-'}</td>
                         <td>${perangkat.type || '-'}</td>
                         <td>
@@ -199,59 +188,59 @@
     }
 
     function deletePerangkat(id_perangkat) {
-    console.log("Delete function called with id_perangkat:", id_perangkat); // Debugging line
-    Swal.fire({
-        title: 'Apakah Anda yakin?',
-        text: "Data yang dihapus tidak dapat dikembalikan!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#4f52ba',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: `/delete-perangkat/${id_perangkat}`,
-                type: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    if (response.success) {
-                        Swal.fire('Terhapus!', 'Perangkat berhasil dihapus.', 'success');
-                        LoadData();
-                    } else {
-                        Swal.fire('Error!', response.message || 'Terjadi kesalahan saat menghapus', 'error');
+        console.log("Delete function called with id_perangkat:", id_perangkat); // Debugging line
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data yang dihapus tidak dapat dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#4f52ba',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/delete-perangkat/${id_perangkat}`,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire('Terhapus!', 'Perangkat berhasil dihapus.', 'success');
+                            LoadData();
+                        } else {
+                            Swal.fire('Error!', response.message || 'Terjadi kesalahan saat menghapus', 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error:', xhr);
+                        Swal.fire('Error!', 'Terjadi kesalahan saat menghapus perangkat', 'error');
                     }
-                },
-                error: function(xhr) {
-                    console.error('Error:', xhr);
-                    Swal.fire('Error!', 'Terjadi kesalahan saat menghapus perangkat', 'error');
-                }
-            });
-        }
-    });
-}
-
-function searchTable() {
-            const input = document.getElementById('searchInput');
-            const filter = input.value.toLowerCase();
-            const table = document.querySelector('#tablePerangkat');
-            const rows = table.getElementsByTagName('tr');
-
-            for (let i = 1; i < rows.length; i++) {
-                let cells = rows[i].getElementsByTagName('td');
-                let found = false;
-
-                for (let j = 0; j < cells.length; j++) {
-                    if (cells[j] && cells[j].innerText.toLowerCase().includes(filter)) {
-                        found = true;
-                    }
-                }
-
-                rows[i].style.display = found ? '' : 'none';
+                });
             }
+        });
+    }
+
+    function searchTable() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toLowerCase();
+        const table = document.querySelector('#tablePerangkat');
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            let cells = rows[i].getElementsByTagName('td');
+            let found = false;
+
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j] && cells[j].innerText.toLowerCase().includes(filter)) {
+                    found = true;
+                }
+            }
+            rows[i].style.display = found ? '' : 'none';
         }
+    }
+    
     </script>
 @endsection

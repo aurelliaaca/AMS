@@ -26,10 +26,10 @@
 
                     <div class="form-group">
                         <label for="perangkatEdit">Perangkat</label>
-                        <select id="perangkatEdit" name="kode_pkt" required>
+                        <select id="perangkatEdit" name="kode_perangkat" required>
                             <option value="">Pilih Perangkat</option>
                             @foreach($listpkt as $p)
-                                <option value="{{ $p->kode_pkt }}">{{ $p->nama_pkt }}</option>
+                                <option value="{{ $p->kode_perangkat }}">{{ $p->nama_perangkat }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -205,7 +205,7 @@ function editPerangkat(id_perangkat) {
             
             // Set initial form values
             $('#id_perangkat-input').val(perangkat.id_perangkat);
-            $('#perangkatEdit').val(perangkat.kode_pkt);
+            $('#perangkatEdit').val(perangkat.kode_perangkat);
             $('#brandEdit').val(perangkat.kode_brand);
             $('#typeEdit').val(perangkat.type);
             $('#uawalEdit').val(perangkat.uawal);

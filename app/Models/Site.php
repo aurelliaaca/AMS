@@ -27,16 +27,6 @@ class Site extends Model
 
     public function perangkat()
     {
-        return $this->hasMany(Perangkat::class, 'kode_site', 'kode_site');
+        return $this->hasMany(JenisPerangkat::class, 'kode_site', 'kode_site');
     }
-
-    // protected $casts = [
-    //     'wajib_inspeksi' => 'boolean'
-    // ];
-
-    // // Tambahkan relasi dengan Region
-    // public function region()
-    // {
-    //     return $this->belongsTo(Region::class, 'regional', 'nama_region');
-    // }
 }

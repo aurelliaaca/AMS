@@ -67,8 +67,8 @@ function lihatPerangkat(id_perangkat) {
                 perangkat.kode_region,
                 perangkat.kode_site,
                 perangkat.no_rack,
-                perangkat.kode_pkt,
-                perangkat.pkt_ke,
+                perangkat.kode_perangkat,
+                perangkat.perangkat_ke,
                 perangkat.kode_brand,
                 perangkat.type
             ];
@@ -77,7 +77,7 @@ function lihatPerangkat(id_perangkat) {
             $('#hostnameView').text(values.filter(val => val).join('-'));
             $('#regionView').text(perangkat.nama_region);
             $('#siteView').text(perangkat.nama_site);
-            $('#perangkatView').text(perangkat.nama_pkt);
+            $('#perangkatView').text(perangkat.nama_perangkat);
             $('#brandView').text(perangkat.nama_brand || '-');
             $('#typeView').text(perangkat.type || '-');
             $('#noRackView').text(`Rack ${perangkat.no_rack || '-'}`);
@@ -88,44 +88,41 @@ function lihatPerangkat(id_perangkat) {
             document.getElementById("lihatPerangkatModal").style.display = "flex";
 
             // Ambil data histori perangkat
-$.get(`/histori-perangkat/${id_perangkat}`, function(response) {
-    if (response.success) {
-        const histori = response.histori;
-        const tableBody = $('#historiTableBody');
-        tableBody.empty(); // Kosongkan tabel sebelum mengisi data baru
+            $.get(`/histori-perangkat/${id_perangkat}`, function(response) {
+                if (response.success) {
+                    const histori = response.histori;
+                    const tableBody = $('#historiTableBody');
+                    tableBody.empty(); // Kosongkan tabel sebelum mengisi data baru
 
-        // Isi tabel dengan data histori
-        if (histori.length > 0) {
-            histori.forEach(item => {
-                const tanggal = new Date(item.tanggal_perubahan);
-                const options = {
-                    weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit'
-                };
-                const formattedTanggal = tanggal.toLocaleDateString('id-ID', options).replace('pukul', 'pada pukul');
+                    // Isi tabel dengan data histori
+                    if (histori.length > 0) {
+                        histori.forEach(item => {
+                            const tanggal = new Date(item.tanggal_perubahan);
+                            const options = {
+                                weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
+                                hour: '2-digit', minute: '2-digit'
+                            };
+                            const formattedTanggal = tanggal.toLocaleDateString('id-ID', options).replace('pukul', 'pada pukul');
 
-                tableBody.append(`
-                    <tr>
-                        <td>${item.aksi}</td>
-                        <td>${formattedTanggal}</td>
-                    </tr>
-                `);
+                            tableBody.append(`
+                                <tr>
+                                    <td>${item.aksi}</td>
+                                    <td>${formattedTanggal}</td>
+                                </tr>
+                            `);
+                        });
+                    } else {
+                        tableBody.append(`
+                            <tr>
+                                <td colspan="2" style="text-align: center;">Tidak ada histori tersedia</td>
+                            </tr>
+                        `);
+                    }
+                }
             });
-        } else {
-            tableBody.append(`
-                <tr>
-                    <td colspan="2" style="text-align: center;">Tidak ada histori tersedia</td>
-                </tr>
-            `);
-        }
-    }
-});
-
         }
     });
 }
-
-// Fungsi untuk menutup modal
 function closeLihatPerangkatModal() {
     document.getElementById("lihatPerangkatModal").style.display = "none";
 }

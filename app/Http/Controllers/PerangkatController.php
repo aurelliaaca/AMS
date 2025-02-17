@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use App\Models\Alatukur;
 use App\Models\ListPerangkat;
-use App\Models\Perangkat;
+use App\Models\JenisPerangkat;
 use App\Models\BrandPerangkat;
 use App\Models\HistoriPerangkat;
-use App\Models\Fasilitas;
-use App\Models\Tipe;
 use Illuminate\Support\Facades\DB;
 use App\Models\Region;
 use App\Models\Site;
@@ -19,7 +16,7 @@ class PerangkatController extends Controller
     public function perangkat()
     {
         $regions = Region::orderBy('nama_region', 'asc')->get();
-        $listpkt = Perangkat::orderBy('nama_pkt', 'asc')->get();
+        $listpkt = JenisPerangkat::orderBy('nama_perangkat', 'asc')->get();
         $brands = BrandPerangkat::orderBy('nama_brand', 'asc')->get();
         return view('aset.perangkat.perangkat', compact('listpkt', 'brands', 'regions'));
     }
@@ -34,13 +31,13 @@ class PerangkatController extends Controller
         $perangkat = \DB::table('listperangkat')
             ->leftJoin('site', 'listperangkat.kode_site', '=', 'site.kode_site')
             ->leftJoin('region', 'listperangkat.kode_region', '=', 'region.kode_region')
-            ->leftJoin('perangkat', 'listperangkat.kode_pkt', '=', 'perangkat.kode_pkt')
+            ->leftJoin('jenisperangkat', 'listperangkat.kode_perangkat', '=', 'jenisperangkat.kode_perangkat')
             ->leftJoin('brandperangkat', 'listperangkat.kode_brand', '=', 'brandperangkat.kode_brand')
             ->select(
                 'listperangkat.*', 
                 'site.nama_site', 
                 'region.nama_region', 
-                'perangkat.nama_pkt', 
+                'jenisperangkat.nama_perangkat', 
                 'brandperangkat.nama_brand'
             );
 
@@ -58,10 +55,10 @@ class PerangkatController extends Controller
             $perangkat->whereIn('listperangkat.kode_site', $request->site);
         }
 
-        // Filter perangkat berdasarkan perangkat yang dipilih
-        if ($request->has('perangkat') && !empty($request->perangkat)) {
-            $perangkat->whereIn('listperangkat.kode_pkt', $request->perangkat);
-        }
+        // Filter perangkat berdasarkan jenis perangkat yang dipilih
+if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
+    $perangkat->whereIn('listperangkat.kode_perangkat', $request->jenisperangkat);
+}
 
         // Filter perangkat berdasarkan brand yang dipilih
         if ($request->has('brand') && !empty($request->brand)) {
@@ -95,8 +92,8 @@ class PerangkatController extends Controller
                 })
                 ->orWhereNotExists(function($query) {
                     $query->select(\DB::raw(1))
-                        ->from('perangkat')
-                        ->whereRaw('listperangkat.kode_pkt = perangkat.kode_pkt');
+                        ->from('jenisperangkat')
+                        ->whereRaw('listperangkat.kode_perangkat = jenisperangkat.kode_perangkat');
                 })
                 ->orWhereNotExists(function($query) {
                     $query->select(\DB::raw(1))
@@ -162,27 +159,38 @@ class PerangkatController extends Controller
     }
 
     // tambah
+    // tambah
     public function store(Request $request)
 {
     try {
+        // Logging di awal function
+        \Log::info('Starting store process with data:', $request->all());
+
         // Validasi input
         $validated = $request->validate([
             'kode_region' => 'required|exists:region,kode_region',
             'kode_site' => 'required|exists:site,kode_site',
-            'kode_pkt' => 'required|exists:perangkat,kode_pkt',
+            'kode_perangkat' => 'required|exists:jenisperangkat,kode_perangkat',
             'kode_brand' => 'nullable|exists:brandperangkat,kode_brand',
             'no_rack' => 'nullable|string',
             'type' => 'nullable|string',
-            'uawal' => 'nullable|integer|required_with:no_rack', // Required if no_rack is present
-            'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal', // Required if no_rack is present and must be greater than uawal
+            'uawal' => 'nullable|integer|required_with:no_rack',
+            'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal',
         ]);
 
-        // Debug: log data yang diterima
-        \Log::info('Received data:', $request->all());
+        \Log::info('Validation passed, validated data:', $validated);
 
-        // Jika no_rack ada, lakukan pengecekan overlap
+        // Logging sebelum pengecekan overlap
+        \Log::info('Checking for overlap with parameters:', [
+            'region' => $request->kode_region,
+            'site' => $request->kode_site,
+            'rack' => $request->no_rack,
+            'uawal' => $request->uawal,
+            'uakhir' => $request->uakhir
+        ]);
+
         if ($request->has('no_rack') && $request->no_rack !== null) {
-            $overlapExists = ListPerangkat::where('kode_region', $request->kode_region)
+            $overlapQuery = ListPerangkat::where('kode_region', $request->kode_region)
                 ->where('kode_site', $request->kode_site)
                 ->where('no_rack', $request->no_rack)
                 ->where(function ($query) use ($request) {
@@ -192,9 +200,16 @@ class PerangkatController extends Controller
                             $query->where('uawal', '<=', $request->uawal)
                                 ->where('uakhir', '>=', $request->uakhir);
                         });
-                })
-                ->exists();
+                });
+            
+            // Log the actual SQL query
+            \Log::info('Overlap check query:', [
+                'sql' => $overlapQuery->toSql(),
+                'bindings' => $overlapQuery->getBindings()
+            ]);
 
+            $overlapExists = $overlapQuery->exists();
+            
             if ($overlapExists) {
                 return response()->json([
                     'success' => false,
@@ -203,33 +218,47 @@ class PerangkatController extends Controller
             }
         }
 
-        // Mendapatkan nilai id_perangkat tertinggi dan tambahkan 1
+        // Logging sebelum mengambil max id_perangkat
+        \Log::info('Getting max id_perangkat value');
+        
         $maxid_perangkat = ListPerangkat::max('id_perangkat') ?? 0;
         $newid_perangkat = $maxid_perangkat + 1;
 
-        // Menghitung pkt_ke berdasarkan kode_region dan kode_site
+        \Log::info('Calculated new id_perangkat value:', ['maxid_perangkat' => $maxid_perangkat, 'newid_perangkat' => $newid_perangkat]);
+
+        // Logging sebelum menghitung perangkat_ke
+        \Log::info('Calculating perangkat_ke for:', [
+            'region' => $request->kode_region,
+            'site' => $request->kode_site
+        ]);
+
         $lastPktKe = ListPerangkat::where('kode_region', $request->kode_region)
             ->where('kode_site', $request->kode_site)
             ->count();
 
         $pktKe = $lastPktKe + 1;
 
-        // Menyimpan perangkat dengan id_perangkat baru dan pkt_ke yang dihitung
-        $perangkat = ListPerangkat::create([
+        \Log::info('Calculated perangkat_ke:', ['lastPktKe' => $lastPktKe, 'newPktKe' => $pktKe]);
+
+        // Menyiapkan data untuk disimpan
+        $dataToStore = [
             'id_perangkat' => $newid_perangkat,
             'kode_region' => $request->kode_region,
             'kode_site' => $request->kode_site,
-            'kode_pkt' => $request->kode_pkt,
+            'kode_perangkat' => $request->kode_perangkat,
             'kode_brand' => $request->kode_brand,
             'no_rack' => $request->no_rack ?: null,
             'type' => $request->type,
             'uawal' => $request->uawal,
             'uakhir' => $request->uakhir,
-            'pkt_ke' => $pktKe, // Menyimpan pkt_ke yang dihitung
-        ]);
+            'perangkat_ke' => $pktKe,
+        ];
 
-        // Debug: log data yang disimpan
-        \Log::info('Stored data:', $perangkat->toArray());
+        \Log::info('Attempting to store data:', $dataToStore);
+
+        $perangkat = ListPerangkat::create($dataToStore);
+
+        \Log::info('Successfully stored perangkat:', $perangkat->toArray());
 
         return response()->json([
             'success' => true,
@@ -238,21 +267,35 @@ class PerangkatController extends Controller
         ]);
 
     } catch (\Illuminate\Validation\ValidationException $e) {
-        // Tangani error validasi
+        \Log::error('Validation Exception:', [
+            'message' => $e->getMessage(),
+            'errors' => $e->errors(),
+            'request_data' => $request->all()
+        ]);
         return response()->json([
             'success' => false,
-            'message' => 'Validasi gagal: ' . $e->getMessage(),
+            'message' => 'Validasi gagal: ' . implode(', ', array_map(function($errors) {
+                return implode(', ', $errors);
+            }, $e->errors())),
             'errors' => $e->errors(),
         ], 422);
 
     } catch (\Exception $e) {
-        // Debug: log error
-        \Log::error('Error storing perangkat: ' . $e->getMessage());
-        \Log::error($e->getTraceAsString());
-
+        \Log::error('Unexpected Error in store method:', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+            'request_data' => $request->all(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ]);
+        
         return response()->json([
             'success' => false,
-            'message' => 'Gagal menambahkan perangkat: ' . $e->getMessage()
+            'message' => 'Terjadi kesalahan pada server: ' . $e->getMessage(),
+            'debug_info' => [
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]
         ], 500);
     }
 }
@@ -262,13 +305,13 @@ class PerangkatController extends Controller
         $perangkat = \DB::table('listperangkat')
         ->leftJoin('site', 'listperangkat.kode_site', '=', 'site.kode_site')
         ->leftJoin('region', 'listperangkat.kode_region', '=', 'region.kode_region')
-        ->leftJoin('perangkat', 'listperangkat.kode_pkt', '=', 'perangkat.kode_pkt')
+        ->leftJoin('jenisperangkat', 'listperangkat.kode_perangkat', '=', 'jenisperangkat.kode_perangkat')
         ->leftJoin('brandperangkat', 'listperangkat.kode_brand', '=', 'brandperangkat.kode_brand')
         ->select(
             'listperangkat.*', 
             'site.nama_site', 
             'region.nama_region', 
-            'perangkat.nama_pkt', 
+            'jenisperangkat.nama_perangkat', 
             'brandperangkat.nama_brand'
         )
         ->where('listperangkat.id_perangkat', $id_perangkat) // Contoh: Filter berdasarkan id_perangkat
@@ -340,7 +383,7 @@ class PerangkatController extends Controller
         $validated = $request->validate([
             'kode_region' => 'required|exists:region,kode_region',
             'kode_site' => 'required|exists:site,kode_site',
-            'kode_pkt' => 'required|exists:perangkat,kode_pkt',
+            'kode_perangkat' => 'required|exists:jenisperangkat,kode_perangkat',
             'kode_brand' => 'nullable|exists:brandperangkat,kode_brand',
             'no_rack' => 'nullable|string',
             'type' => 'nullable|string',
@@ -389,7 +432,7 @@ class PerangkatController extends Controller
         $perangkat->update([
             'kode_region' => $request->kode_region,
             'kode_site' => $request->kode_site,
-            'kode_pkt' => $request->kode_pkt,
+            'kode_perangkat' => $request->kode_perangkat,
             'kode_brand' => $request->kode_brand,
             'no_rack' => $request->no_rack ?: null,
             'type' => $request->type,
@@ -449,25 +492,6 @@ class PerangkatController extends Controller
         }
     }
 
-    public function getLastPktKe(Request $request)
-    {
-        if ($request->has(['kode_region', 'kode_site', 'no_rack'])) {
-            $lastPktKe = ListPerangkat::where('kode_region', $request->kode_region)
-                ->where('kode_site', $request->kode_site)
-                ->count();
-            
-            return response()->json([
-                'success' => true,
-                'next_pkt_ke' => $lastPktKe + 1
-            ]);
-        }
-        
-        return response()->json([
-            'success' => false,
-            'next_pkt_ke' => 1
-        ]);
-    }
-
     public function showHistori($id_perangkat)
     {
         // Ambil data histori perangkat berdasarkan id_perangkat
@@ -482,53 +506,5 @@ class PerangkatController extends Controller
             'histori' => $histori
         ]);
     }
-
-        // Get the list of perangkat with optional filters for region and site
-    // public function listPerangkat(Request $request)
-    // {
-    //     $perangkat = ListPerangkat::query();
-    
-    //     // Filter perangkat based on region and site if provided
-    //     if ($request->region) {
-    //         $perangkat->where('kode_region', $request->region);
-    //     }
-    
-    //     if ($request->site) {
-    //         $perangkat->where('kode_site', $request->site);
-    //     }
-    
-    //     $listPerangkat = $perangkat->get();
-    
-    //     return view('aset.perangkat', compact('listPerangkat'));
-    // }
-
-    // public function getJmlRack(Request $request)
-    // {
-    //     try {
-    //         \Log::info('getJmlRack called with request:', $request->all());
-
-    //         $siteId = $request->input('site');
-            
-    //         // Query untuk mendapatkan racks
-    //         $racks = DB::table('rack')
-    //             ->where('kode_site', $siteId)
-    //             ->select('id', 'no_rack as text')
-    //             ->get();
-
-    //         \Log::info('Found racks:', ['count' => $racks->count(), 'racks' => $racks->toArray()]);
-
-    //         return response()->json($racks);
-    //     } catch (\Exception $e) {
-    //         \Log::error('Error in getJmlRack:', [
-    //             'message' => $e->getMessage(),
-    //             'trace' => $e->getTraceAsString()
-    //         ]);
-            
-    //         return response()->json([
-    //             'error' => 'Failed to fetch racks',
-    //             'message' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
 }
 

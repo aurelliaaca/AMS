@@ -27,10 +27,10 @@
 
                     <div class="form-group">
                         <label for="perangkatAdd">Perangkat</label>
-                        <select id="perangkatAdd" name="kode_pkt" required>
+                        <select id="perangkatAdd" name="kode_perangkat" required>
                             <option value="">Pilih Perangkat</option>
                             @foreach($listpkt as $p)
-                                <option value="{{ $p->kode_pkt }}">{{ $p->nama_pkt }}</option>
+                                <option value="{{ $p->kode_perangkat }}">{{ $p->nama_perangkat }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -279,4 +279,4 @@ function showSwal(type, message) {
         });
     }
 }
-</script> 
+</script>

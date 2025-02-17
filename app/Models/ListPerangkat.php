@@ -19,8 +19,8 @@ class ListPerangkat extends Model
         'kode_region',
         'kode_site',
         'no_rack',
-        'kode_pkt',
-        'pkt_ke',
+        'kode_perangkat',
+        'perangkat_ke',
         'kode_brand',
         'type',
         'uawal',
@@ -37,9 +37,9 @@ class ListPerangkat extends Model
         return $this->belongsTo(Site::class, 'kode_site', 'kode_site');
     }
 
-    public function perangkat()
+    public function jenisperangkat()
     {
-        return $this->belongsTo(Perangkat::class, 'kode_pkt', 'kode_pkt');
+        return $this->belongsTo(JenisPerangkat::class, 'kode_perangkat', 'kode_perangkat');
     }
 
     public function brand()
@@ -62,7 +62,7 @@ class ListPerangkat extends Model
                 // Debug log
                 \Log::info('Data for history:', [
                     'id_perangkat' => $perangkat->id_perangkat,
-                    'kode_pkt' => $perangkat->kode_pkt,
+                    'kode_perangkat' => $perangkat->kode_perangkat,
                     'perangkat_data' => $perangkat->toArray()
                 ]);
 
@@ -73,7 +73,7 @@ class ListPerangkat extends Model
                     'idHiPe' => $newid_perangkat,
                     'region' => $perangkat->region ? $perangkat->region->nama_region : '-',
                     'site' => $perangkat->site ? $perangkat->site->nama_site : '-',
-                    'nama_perangkat' => $perangkat->perangkat ? $perangkat->perangkat->nama_pkt : '-',
+                    'nama_perangkat' => $perangkat->jenisperangkat ? $perangkat->jenisperangkat->nama_perangkat : '-',
                     'brand' => $perangkat->brand ? $perangkat->brand->nama_brand : '-',
                     'type' => $perangkat->type ?? '-',
                     'no_rack' => $perangkat->no_rack ?? '-',
@@ -100,7 +100,7 @@ class ListPerangkat extends Model
                     'idHiPe' => $perangkat->id_perangkat,
                     'region' => $perangkat->region ? $perangkat->region->nama_region : '-',
                     'site' => $perangkat->site ? $perangkat->site->nama_site : '-',
-                    'nama_perangkat' => $perangkat->perangkat ? $perangkat->perangkat->nama_pkt : '-',
+                    'nama_perangkat' => $perangkat->jenisperangkat ? $perangkat->jenisperangkat->nama_perangkat : '-',
                     'brand' => $perangkat->brand ? $perangkat->brand->nama_brand : '-',
                     'type' => $perangkat->type ?? '-',
                     'no_rack' => $perangkat->no_rack ?? '-',
@@ -125,7 +125,7 @@ class ListPerangkat extends Model
                 // Untuk delete, kita gunakan data yang sudah ada di model
                 $regionName = $perangkat->region ? $perangkat->region->nama_region : '-';
                 $siteName = $perangkat->site ? $perangkat->site->nama_site : '-';
-                $perangkatName = $perangkat->perangkat ? $perangkat->perangkat->nama_pkt : '-';
+                $perangkatName = $perangkat->jenisperangkat ? $perangkat->jenisperangkat->nama_perangkat : '-';
                 $brandName = $perangkat->brand ? $perangkat->brand->nama_brand : '-';
 
                 HistoriPerangkat::create([
