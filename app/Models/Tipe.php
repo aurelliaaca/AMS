@@ -12,6 +12,7 @@ class Tipe extends Model
     protected $primaryKey = 'kode_tipe';
     public $incrementing = false;
     protected $keyType = 'string';
+    public $timestamps = false;
 
     protected $fillable = [
         'kode_tipe',

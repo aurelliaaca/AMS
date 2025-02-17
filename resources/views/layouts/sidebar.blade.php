@@ -257,10 +257,9 @@
             <li>
                 <a href="{{ route('jaringan') }}"><span class="material-symbols-outlined"> hub </span>Jaringan</a>
             </li>
-            <li>
-                <a href="#"><span class="material-symbols-outlined">
-                    notifications_active </span>Notifications</a>
-            </li> 
+            <!-- <li>
+                <a href="#"><span class="material-symbols-outlined">notifications_active </span>Notifications</a>
+            </li>  -->
             <h4>
                 <span>Akun</span>
                 <div class="menu-separator"></div>

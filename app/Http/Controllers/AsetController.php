@@ -494,7 +494,6 @@ public function getPop(Request $request)
         try {
             $validatedData = $request->validate([
                 'RO' => 'required|string',
-                'kode_site_insan' => 'required|string',
                 'tipe_jaringan' => 'required|string',
                 'segmen' => 'required|string',
                 'jartatup_jartaplok' => 'required|string',
@@ -504,10 +503,14 @@ public function getPop(Request $request)
                 'jumlah_core' => 'required|integer',
                 'jenis_kabel' => 'required|string',
                 'tipe_kabel' => 'required|string',
-                'travelling_time' => 'nullable|string',
-                'verification_time' => 'nullable|string',
-                'restoration_time' => 'nullable|string',
-                'total_corrective_time' => 'nullable|string',
+                'status' => 'nullable|string',
+                'keterangan' => 'nullable|string',
+                'keterangan_2' => 'nullable|string',
+                'kode_site_insan' => 'required|string',
+                'update' => 'nullable|string',
+                'route' => 'nullable|string',
+                'dci_eqx' => 'nullable|string',
+                
             ]);
 
             $jaringan = ListJaringan::create($validatedData);
