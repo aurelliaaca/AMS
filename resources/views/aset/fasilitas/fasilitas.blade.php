@@ -66,6 +66,7 @@
                             <th>POP</th>
                             <th>Fasilitas</th>
                             <th>Brand</th>
+                            <th>Type</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -160,6 +161,7 @@
                         <td>${fasilitas.nama_site || '-'}</td>
                         <td>${fasilitas.nama_fasilitas || '-'}</td>
                         <td>${fasilitas.nama_brand || '-'}</td>
+                        <td>${fasilitas.type || '-'}</td>
                         <td>
                             <button onclick="lihatFasilitas(${fasilitas.id_fasilitas})"
                                 style="background-color: #9697D6; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
