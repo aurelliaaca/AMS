@@ -36,4 +36,9 @@ class Region extends Model
         return $this->hasMany(Pop::class, 'regional', 'nama_region');
     }
 
+    public function jaringan()
+    {
+        return $this->hasMany(ListJaringan::class, 'kode_region', 'kode_region');
+    }
+
 }

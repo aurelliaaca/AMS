@@ -111,42 +111,55 @@
             background-color: rgba(79, 82, 186, 0.2);
         }
 
-
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 1000;
         }
+
+        .form-container {
+         display: flex;
+        justify-content: space-between;
+        gap: 10px; /* Perkecil jarak antar kolom */
+        }
+
+        .left-column,
+        .right-column {
+        width: 50%; /* Membuat kedua kolom seimbang */
+        }
+
 
         .modal-content {
             background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            width: 500px;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             position: relative;
         }
 
-        .modal-content h2 {
-            color: #595959;
-            font-size: 20px;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 25px;
+        .modal-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
         }
 
         .form-container {
             display: flex;
             justify-content: space-between;
-            width: 100%;
-            margin-bottom: 20px;
+            gap: 20px;
         }
 
         .form-group {
@@ -155,21 +168,16 @@
 
         .form-group label {
             display: block;
-            font-size: 13px;
-            color: #595959;
-            font-weight: 600;
             margin-bottom: 5px;
+            font-weight: bold;
         }
 
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 10px;
-            font-size: 12px;
+            padding: 8px;
             border: 1px solid #ccc;
-            border-radius: 5px;
-            font-weight: normal;
-            background-color: #fff;
+            border-radius: 4px;
         }
 
         .form-group input:focus,
@@ -234,7 +242,7 @@
             display: flex;
             justify-content: right;
             gap: 10px;
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
         .header {
@@ -287,20 +295,28 @@
         .swal2-cancel:hover {
             background-color: rgb(46, 50, 158) !important;
         }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
     </style>
 
 <div class="main">
     <div class="container">
-        <div class="text-right">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Jaringan</h3>
             <button class="add-button" onclick="storeJaringan()">Tambah Jaringan</button>
         </div>
         
         <div class="dropdown-container">
             <!-- Dropdown RO -->
             <select id="roFilter" onchange="filterTable()">
-                <option value="">Pilih RO</option>
+                <option value="">Pilih Region</option>
                 @foreach ($regions as $region)
-                    <option value="{{ $region->nama_region }}">{{ $region->nama_region }}</option>
+                    <option value="{{ $region->kode_region }}">{{ $region->nama_region }}</option>
                 @endforeach
             </select>
             <!-- Dropdown Tipe Jaringan -->
@@ -317,70 +333,74 @@
             </div>
         </div>
 
-        <!-- Table Data -->
-        <div class="table-container">
-            <table id="jaringanTable">
-                <thead>
-                    <tr>
-                        <th style="width: 50px;">No</th>
-                        <th style="width: 100px;">RO</th>
-                        <th style="width: 100px;">Kode Site Insan</th>
-                        <th style="width: 100px;">Tipe Jaringan</th>
-                        <th style="width: 150px;">Segmen</th>
-                        <th style="width: 100px;">Panjang</th>
-                        <th style="width: 120px;">Panjang Drawing</th>
-                        <th style="width: 100px;">Jumlah Core</th>
-                        <th style="width: 100px;">Jenis Kabel</th>
-                        <th style="width: 100px;">Tipe Kabel</th>
-                        <th style="width: 120px;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($jaringan as $data)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td class="ro">{{ $data->RO }}</td>
-                        <td>{{ $data->kode_site_insan }}</td>
-                        <td>{{ $data->tipe ? $data->tipe->nama_tipe : 'Tipe tidak ditemukan' }}</td>
-                        <td>{{ $data->segmen }}</td>
-                        <td>{{ $data->panjang }}</td>
-                        <td>{{ $data->panjang_drawing }}</td>
-                        <td>{{ $data->jumlah_core }}</td>
-                        <td>{{ $data->jenis_kabel }}</td>
-                        <td>{{ $data->tipe_kabel }}</td>
-                        <td>
-                            <button class="edit-btn" onclick="editJaringan('{{ $data->id_jaringan }}')">Edit</button>
-                            <button class="delete-btn" onclick="deleteJaringan('{{ $data->id_jaringan }}')">Hapus</button>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
+  <!-- Table Container -->
+<div class="table-container" style="overflow-x: auto; width: 100%;">
+    <table id="jaringanTable" style="width: 100%; min-width: 1300px; border-collapse: collapse; table-layout: fixed; border: 1px solid #ddd;">
+        <thead>
+            <tr style="background-color: #f8f8f8;">
+                <th style="width: 5%; border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">No</th>
+                <th style="width: 8%; border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">Region</th>
+                <th style="width: 10%; border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">Tipe Jaringan</th>
+                <th style="width: 15%; border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">Segmen</th>
+                <th style="width: 12%; border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">Jartatup/Jartaplok</th>
+                <th style="width: 13%; border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">Mainlink/Backuplink</th>
+                <th style="width: 7%; border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">Panjang</th>
+                <th style="width: 7%; border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">Panjang Drawing</th>
+                <th style="width: 7%; border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">Jumlah Core</th>
+                <th style="width: 10%; border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">Jenis Kabel</th>
+                <th style="width: 8%; border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">Tipe Kabel</th>
+                <th style="width: 7%; border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">Status</th>
+                <th style="width: 20%; border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($jaringan as $data)
+            <tr data-id="{{ $data->id_jaringan }}">
+                <td style="border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">{{ $loop->iteration }}</td>
+                <td style="border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">{{ $data->region ? $data->region->nama_region : 'Region Tidak Ditemukan' }}</td>
+                <td style="border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">{{ $data->tipe ? $data->tipe->nama_tipe : 'Tipe Tidak Ditemukan' }}</td>
+                <td style="border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">{{ $data->segmen }}</td>
+                <td style="border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">{{ $data->jartatup_jartaplok }}</td>
+                <td style="border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">{{ $data->mainlink_backuplink }}</td>
+                <td style="border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">{{ $data->panjang }}</td>
+                <td style="border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">{{ $data->panjang_drawing }}</td>
+                <td style="border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">{{ $data->jumlah_core }}</td>
+                <td style="border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">{{ $data->jenis_kabel }}</td>
+                <td style="border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">{{ $data->tipe_kabel }}</td>
+                <td style="border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">{{ $data->status }}</td>
+                <td style="border-bottom: 1px solid #ddd; padding: 10px;">
+                    <div style="display: flex; gap: 8px; justify-content: flex-end; flex-wrap: nowrap;">
+                        <button class="detail-button" onclick="lihatDetail(this)" style="font-size: 0.8rem; padding: 6px 14px; background-color: #9697D6; color: white; border: none; border-radius: 5px; cursor: pointer; white-space: nowrap;">Lihat Detail</button>
+                        <button class="edit-btn" onclick="editJaringan('{{ $data->id_jaringan }}')" style="font-size: 0.8rem; padding: 6px 10px; background-color: #4f52ba; color: white; border: none; border-radius: 5px; cursor: pointer;">Edit</button>
+                        <button class="delete-btn" onclick="deleteJaringan('{{ $data->id_jaringan }}')" style="font-size: 0.8rem; padding: 6px 10px; background-color: #danger; color: white; border: none; border-radius: 5px; cursor: pointer;">Hapus</button>
+                    </div>
+                </td>
+            </tr>
+            @endforeach
+            <tr id="noDataMessage" style="display: none;">
+                <td colspan="13" style="text-align: center; padding: 10px;">Data Jaringan Tidak Tersedia</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 </div>
 
 <div id="addJaringanModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
         <button class="modal-close-btn" onclick="closeAddJaringanModal()">×</button>
-        <h2>Tambah Jaringan Baru</h2>
+        <h2 class="modal-title">Tambah Jaringan Baru</h2>
         <form id="addJaringanForm" action="{{ route('jaringan.store') }}" method="POST">
             @csrf
             <div class="form-container">
                 <div class="left-column">
                     <div class="form-group">
-                        <label for="RO">RO</label>
+                        <label for="RO">Region</label>
                         <select id="RO" name="RO" required>
-                            <option value="">Pilih RO</option>
+                            <option value="">Pilih Region</option>
                             @foreach($regions as $region)
-                                <option value="{{ $region->nama_region }}">{{ $region->nama_region }}</option>
+                                <option value="{{ $region->kode_region }}">{{ $region->nama_region }}</option>
                             @endforeach
                         </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="kode_site_insan">Kode Site Insan</label>
-                        <input type="text" id="kode_site_insan" name="kode_site_insan" placeholder="Kode Site Insan" required>
                     </div>
 
                     <div class="form-group">
@@ -415,10 +435,6 @@
                         <label for="panjang">Panjang</label>
                         <input type="text" id="panjang" name="panjang" required>
                     </div>
-                
-                </div>
-
-                <div class="right-column">
                     <div class="form-group">
                         <label for="panjang_drawing">Panjang Drawing</label>
                         <input type="text" id="panjang_drawing" name="panjang_drawing" required>
@@ -429,29 +445,59 @@
                         <input type="text" id="jumlah_core" name="jumlah_core" required>
                     </div>
 
+                   
                     <div class="form-group">
                         <label for="jenis_kabel">Jenis Kabel</label>
-                        <input type="text" id="jenis_kabel" name="jenis_kabel" required>
+                        <select id="jenis_kabel" name="jenis_kabel" required>
+                            <option value="">Pilih Jenis Kabel</option>
+                            <option value="Kabel Tanah">Kabel Tanah</option>
+                            <option value="Kabel Udara">Kabel Udara</option>
+                            <option value="Mix Kabel Tanah & Udara">Mix Kabel Tanah & Udara</option>
+                        </select>
                     </div>
 
+
+                </div>
+
+                <div class="right-column">
                     <div class="form-group">
                         <label for="tipe_kabel">Tipe Kabel</label>
                         <input type="text" id="tipe_kabel" name="tipe_kabel" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="travelling_time">Travelling Time</label>
-                        <input type="text" id="travelling_time" name="travelling_time" required>
+                        <label for="status">Status</label>
+                        <input type="text" id="status" name="status" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="restoration_time">Restoration Time</label>
-                        <input type="text" id="restoration_time" name="restoration_time" required>
+                        <label for="keterangan">Keterangan</label>
+                        <input type="text" id="keterangan" name="keterangan" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="total_corrective_time">Total Corrective Time</label>
-                        <input type="text" id="total_corrective_time" name="total_corrective_time" required>
+                        <label for="keterangan_2">Keterangan 2</label>  
+                        <input type="text" id="keterangan_2" name="keterangan_2" required>      
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kode_site_insan">Kode Site Insan</label>
+                        <input type="text" id="kode_site_insan" name="kode_site_insan" placeholder="Kode Site Insan" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dci_eqx">DCI/EQX</label>
+                        <input type="text" id="dci_eqx" name="dci_eqx" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update">Update</label>
+                        <input type="text" id="update" name="update" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="route">Route</label>
+                        <input type="text" id="route" name="route" required>
                     </div>
                 </div>
             </div>
@@ -465,26 +511,20 @@
 
 <div id="editJaringanModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
-        <button class="modal-close-btn" onclick="closeEditJaringanModal()">×</button>
-        <h2>Edit Jaringan</h2>
+        <button class="modal-close-btn" onclick="closeEditJaringanModal()">&times;</button>
+        <h2 class="modal-title">Edit Jaringan</h2>
         <form id="editJaringanForm">
             <div class="form-container">
                 <div class="left-column">
                     <div class="form-group">
-                        <label for="editRO">RO</label>
+                        <label for="editRO">Region</label>
                         <select id="editRO" name="RO" required>
-                            <option value="">Pilih RO</option>
+                            <option value="">Pilih Region</option>
                             @foreach($regions as $region)
-                                <option value="{{ $region->nama_region }}">{{ $region->nama_region }}</option>
+                                <option value="{{ $region->kode_region }}">{{ $region->nama_region }}</option>
                             @endforeach
                         </select>
                     </div>
-
-                    <div class="form-group">
-                        <label for="editKodeSiteInsan">Kode Site Insan</label>
-                        <input type="text" id="editKodeSiteInsan" name="kode_site_insan" required>
-                    </div>
-
                     <div class="form-group">
                         <label for="editTipeJaringan">Tipe Jaringan</label>
                         <select id="editTipeJaringan" name="tipe_jaringan" required>
@@ -494,12 +534,10 @@
                             @endforeach
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label for="editSegmen">Segmen</label>
                         <input type="text" id="editSegmen" name="segmen" required>
                     </div>
-
                     <div class="form-group">
                         <label for="editJartatupJartaplok">Jartatup/Jartaplok</label>
                         <select id="editJartatupJartaplok" name="jartatup_jartaplok" required>
@@ -508,7 +546,6 @@
                             <option value="Jartaplok">Jartaplok</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label for="editMainlinkBackuplink">Mainlink/Backuplink</label>
                         <input type="text" id="editMainlinkBackuplink" name="mainlink_backuplink" required>
@@ -517,52 +554,66 @@
                         <label for="editPanjang">Panjang</label>
                         <input type="text" id="editPanjang" name="panjang" required>
                     </div>
-                </div>
-
-                        <div class="right-column">
-                            <div class="form-group">
-                                <label for="editPanjangDrawing">Panjang Drawing</label>
-                                <input type="text" id="editPanjangDrawing" name="panjang_drawing" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="editJumlahCore">Jumlah Core</label>
-                                <input type="text" id="editJumlahCore" name="jumlah_core" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="editJenisKabel">Jenis Kabel</label>
-                                <input type="text" id="editJenisKabel" name="jenis_kabel" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="editTipeKabel">Tipe Kabel</label>
-                                <input type="text" id="editTipeKabel" name="tipe_kabel" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="editTravellingTime">Travelling Time</label>
-                                <input type="text" id="editTravellingTime" name="travelling_time" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="editRestorationTime">Restoration Time</label>
-                                <input type="text" id="editRestorationTime" name="restoration_time" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="editTotalCorrectiveTime">Total Corrective Time</label>
-                                <input type="text" id="editTotalCorrectiveTime" name="total_corrective_time" required>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label for="editPanjangDrawing">Panjang Drawing</label>
+                        <input type="text" id="editPanjangDrawing" name="panjang_drawing" required>
                     </div>
-
+                    <div class="form-group">
+                        <label for="editJumlahCore">Jumlah Core</label>
+                        <input type="text" id="editJumlahCore" name="jumlah_core" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editJenisKabel">Jenis Kabel</label>
+                        <select id="editJenisKabel" name="jenis_kabel" required>
+                            <option value="">Pilih Jenis Kabel</option>
+                            <option value="Kabel Tanah">Kabel Tanah</option>
+                            <option value="Kabel Udara">Kabel Udara</option>
+                            <option value="Mix Kabel Tanah & Udara">Mix Kabel Tanah & Udara</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div class="form-group">
+                        <label for="editTipeKabel">Tipe Kabel</label>
+                        <input type="text" id="editTipeKabel" name="tipe_kabel" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editStatus">Status</label>
+                        <input type="text" id="editStatus" name="status" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editKeterangan">Keterangan</label>
+                        <input type="text" id="editKeterangan" name="keterangan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editKeterangan_2">Keterangan 2</label>
+                        <input type="text" id="editKeterangan_2" name="keterangan_2" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editKodeSiteInsan">Kode Site Insan</label>
+                        <input type="text" id="editKodeSiteInsan" name="kode_site_insan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDCI_EQX">DCI/EQX</label>
+                        <input type="text" id="editDCI_EQX" name="dci_eqx" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUpdate">Update</label>
+                        <input type="text" id="editUpdate" name="update" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editRoute">Route</label>
+                        <input type="text" id="editRoute" name="route" required>
+                    </div>
+                </div>
+            </div>
             <div class="button-container">
                 <button type="button" class="add-button" onclick="updateJaringan()">Simpan</button>
             </div>
         </form>
     </div>
 </div>
+
 
 <script>
     $.ajaxSetup({
@@ -575,20 +626,27 @@
         const roFilter = document.getElementById("roFilter").value.toLowerCase();
         const tipeFilter = document.getElementById("tipeJaringanFilter").value.toLowerCase();
         const rows = document.querySelectorAll("#jaringanTable tbody tr");
+        let hasVisibleRow = false;
 
         rows.forEach(row => {
-            const roCell = row.querySelector(".ro").textContent.toLowerCase();
-            const tipeJaringanCell = row.cells[3].textContent.toLowerCase(); // Pastikan indeks sesuai dengan kolom "Tipe Jaringan"
+            if (row.id === "noDataMessage") return; // Skip the no data message row
+
+            const roCell = row.cells[1].textContent.toLowerCase();
+            const tipeJaringanCell = row.cells[2].textContent.toLowerCase();
 
             const matchesRO = roFilter === "" || roCell.includes(roFilter);
             const matchesTipe = tipeFilter === "" || tipeJaringanCell.includes(tipeFilter);
 
             if (matchesRO && matchesTipe) {
-                row.style.display = ""; // Menampilkan baris
+                row.style.display = "";
+                hasVisibleRow = true;
             } else {
-                row.style.display = "none"; // Menyembunyikan baris
+                row.style.display = "none";
             }
         });
+
+        // Show or hide the no data message
+        document.getElementById("noDataMessage").style.display = hasVisibleRow ? "none" : "";
     }
 
     function searchTable() {
@@ -668,7 +726,6 @@
                 if (response.success) {
                     // Isi form dengan data yang diterima
                     $('#editRO').val(response.data.RO);
-                    $('#editKodeSiteInsan').val(response.data.kode_site_insan);
                     $('#editTipeJaringan').val(response.data.tipe_jaringan);
                     $('#editSegmen').val(response.data.segmen);
                     $('#editJartatupJartaplok').val(response.data.jartatup_jartaplok);
@@ -678,9 +735,13 @@
                     $('#editJumlahCore').val(response.data.jumlah_core);
                     $('#editJenisKabel').val(response.data.jenis_kabel);
                     $('#editTipeKabel').val(response.data.tipe_kabel);
-                    $('#editTravellingTime').val(response.data.travelling_time);
-                    $('#editRestorationTime').val(response.data.restoration_time);
-                    $('#editTotalCorrectiveTime').val(response.data.total_corrective_time);
+                    $('#editStatus').val(response.data.status);
+                    $('#editKeterangan').val(response.data.keterangan);
+                    $('#editKeterangan_2').val(response.data.keterangan_2);
+                    $('#editKodeSiteInsan').val(response.data.kode_site_insan);
+                    $('#editDCI_EQX').val(response.data.dci_eqx);
+                    $('#editUpdate').val(response.data.update);
+                    $('#editRoute').val(response.data.route);
                     $('#editJaringanForm').data('id_jaringan', id_jaringan); // Simpan ID jaringan
                     // Tampilkan modal edit
                     openEditJaringanModal();
@@ -737,6 +798,7 @@
                         location.reload(); // Muat ulang halaman untuk melihat perubahan
                     });
                 } else {
+                    closeEditJaringanModal(); // Tutup modal setelah berhasil
                     Swal.fire({
                         title: "Gagal!",
                         text: response.message || "Gagal mengupdate data jaringan.",
@@ -750,6 +812,7 @@
                 }
             },
             error: function(xhr, status, error) {
+                closeEditJaringanModal(); // Tutup modal setelah berhasil
                 Swal.fire({
                     title: "Error!",
                     text: "Terjadi kesalahan saat menghubungi server.",
@@ -834,7 +897,6 @@ $(document).ready(function() {
         
         var formData = {
             RO: $('#RO').val(),
-            kode_site_insan: $('#kode_site_insan').val(),
             tipe_jaringan: $('#tipeJaringanAdd').val(),
             segmen: $('#segmen').val(),
             jartatup_jartaplok: $('#jartatup_jartaplok').val(),
@@ -844,10 +906,13 @@ $(document).ready(function() {
             jumlah_core: $('#jumlah_core').val(),
             jenis_kabel: $('#jenis_kabel').val(),
             tipe_kabel: $('#tipe_kabel').val(),
-            travelling_time: $('#travelling_time').val(),
-            verification_time: $('#verification_time').val(),
-            restoration_time: $('#restoration_time').val(),
-            total_corrective_time: $('#total_corrective_time').val()
+            status: $('#status').val(),
+            keterangan: $('#keterangan').val(),
+            keterangan_2: $('#keterangan_2').val(),
+            kode_site_insan: $('#kode_site_insan').val(),
+            dci_eqx: $('#dci_eqx').val(),
+            update: $('#update').val(),
+            route: $('#route').val()
         };
 
         $.ajax({
@@ -856,6 +921,7 @@ $(document).ready(function() {
             data: formData,
             success: function(response) {
                 if (response.success) {
+                    closeAddJaringanModal();
                     Swal.fire({
                         title: "Berhasil!",
                         text: "Data jaringan berhasil ditambahkan.",
@@ -914,5 +980,147 @@ function closeEditJaringanModal() {
     document.getElementById('editJaringanModal').style.display = 'none';
 }
 
+function lihatDetail(button) {
+    const row = button.closest('tr');
+    const id_jaringan = row.getAttribute('data-id');
+
+    // Ambil detail jaringan
+    fetch(`/jaringan/${id_jaringan}/detail`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const jaringan = data.data;
+
+                // Ambil histori perubahan
+                fetch(`/histori/jaringan/${id_jaringan}`)
+                    .then(response => response.json())
+                    .then(historiData => {
+                        let historiRows = '';
+                        if (historiData.success && historiData.data.length > 0) {
+                            historiData.data.forEach(histori => {
+                                historiRows += `
+                                    <tr>
+                                        <td style="padding: 5px;">${histori.aksi}</td>
+                                        <td style="padding: 5px;">${new Date(histori.tanggal_perubahan).toLocaleString('id-ID')}</td>
+                                    </tr>
+                                `;
+                            });
+                        } else {
+                            historiRows = `
+                                <tr>
+                                    <td colspan="2" style="text-align: center; padding: 5px;">Histori tidak tersedia</td>
+                                </tr>
+                            `;
+                        }
+
+                        // Tampilkan detail jaringan dan histori
+                        Swal.fire({
+                            title: 'Detail Jaringan',
+                            html: `
+                                <button id="closeButton" style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 16px; cursor: pointer;">&times;</button>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.85rem; padding: 10px;">
+                                    <div>
+                                        ${generateInputField('Region', jaringan.RO)}
+                                        ${generateInputField('Tipe Jaringan', jaringan.tipe_jaringan)}
+                                        ${generateInputField('Segmen', jaringan.segmen)}
+                                        ${generateInputField('Jartatup/Jartaplok', jaringan.jartatup_jartaplok)}
+                                        ${generateInputField('Mainlink/Backuplink', jaringan.mainlink_backuplink)}
+                                        ${generateInputField('Panjang', jaringan.panjang)}
+                                        ${generateInputField('Panjang Drawing', jaringan.panjang_drawing)}
+                                        ${generateInputField('Jumlah Core', jaringan.jumlah_core)}
+                                    </div>
+                                    <div>
+                                        ${generateInputField('Jenis Kabel', jaringan.jenis_kabel)}
+                                        ${generateInputField('Tipe Kabel', jaringan.tipe_kabel)}
+                                        ${generateInputField('Status', jaringan.status)}
+                                        ${generateInputField('Keterangan', jaringan.keterangan)}
+                                        ${generateInputField('Keterangan 2', jaringan.keterangan_2)}
+                                        ${generateInputField('Kode Site Insan', jaringan.kode_site_insan)}
+                                        ${generateInputField('DCI-EQX', jaringan.dci_eqx)}
+                                        ${generateInputField('Update', jaringan.update)}
+                                        ${generateInputField('Route', jaringan.route)}
+                                    </div>
+                                </div>
+                                
+                                <hr style="margin: 10px 0;">
+
+                                <h4 style="font-size: 14px; text-align: center; margin-bottom: 5px;">Histori Perubahan</h4>
+                                <div style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 5px; border-radius: 6px; background: #f8f9fa;">
+                                    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                        <thead>
+                                            <tr style="background: #f0f0f0;">
+                                                <th style="text-align: left; padding: 5px;">Aksi</th>
+                                                <th style="text-align: left; padding: 5px;">Tanggal Perubahan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="historiTableBody">
+                                            ${historiRows}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            `,
+                            icon: 'info',
+                            width: '500px',
+                            showConfirmButton: false,
+                            customClass: {
+                                popup: 'swal2-popup-custom'
+                            },
+                            didOpen: () => {
+                                const closeButton = document.getElementById('closeButton');
+                                closeButton.addEventListener('click', () => {
+                                    Swal.close();
+                                });
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching histori:', error);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Terjadi kesalahan saat mengambil histori',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                            buttonsStyling: false,
+                            customClass: {
+                                confirmButton: 'swal2-confirm2'
+                            }
+                        });
+                    });
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: data.message,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: 'swal2-confirm2'
+                    }
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: 'Terjadi kesalahan saat mengambil data',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'swal2-confirm2'
+                }
+            });
+        });
+}
+
+function generateInputField(label, value) {
+    return `
+        <div style="display: flex; flex-direction: column;">
+            <label style="font-weight: bold; font-size: 0.75rem; color: #444;">${label}:</label>
+            <input type="text" value="${value}" readonly class="swal2-input" style="background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; padding: 5px; font-size: 0.85rem;">
+        </div>
+    `;
+}
 </script>
 @endsection

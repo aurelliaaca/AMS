@@ -1,5 +1,6 @@
 @extends('layouts.sidebar')
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/style.css') }}">
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
@@ -461,7 +462,7 @@ function showDetail(type) {
         <span>${title}</span>
     `;
 
-    loadHistoryData(url);
+    loadHistoryData(url, type);
 }
 
 function getTextClass(aksi) {
@@ -477,7 +478,7 @@ function getTextClass(aksi) {
     }
 }
 
-function loadHistoryData(url) {
+function loadHistoryData(url, type) {
     const detailData = document.getElementById('detailData');
     detailData.innerHTML = '<div class="text-center">Loading...</div>';
 
@@ -496,7 +497,6 @@ function loadHistoryData(url) {
                 let tableRows = '';
                 response.data.forEach((item, index) => {
                     const textClass = getTextClass(item.aksi);
-                    console.log('Aksi:', item.aksi, 'Class:', textClass); // Debugging
                     const tanggal = new Date(item.tanggal_perubahan).toLocaleString('id-ID', {
                         day: '2-digit',
                         month: 'long',
@@ -504,52 +504,105 @@ function loadHistoryData(url) {
                         hour: '2-digit',
                         minute: '2-digit'
                     });
-                    
-                    tableRows += `
-                        <tr>
-                            <td class="text-center">${index + 1}</td>
-                            <td>${item.region || '-'}</td>
-                            <td>${item.site || '-'}</td>
-                            <td>${item.nama_perangkat || '-'}</td>
-                            <td>${item.brand || '-'}</td>
-                            <td>${item.type || '-'}</td>
-                            <td>${item.no_rack || '-'}</td>
-                            <td>${item.uawal || '-'}</td>
-                            <td>${item.uakhir || '-'}</td>
-                            <td>${tanggal}</td>
-                            <td class="text-center ${textClass}">
-                                ${capitalizeFirstLetter(item.aksi || '-')}
-                            </td>
-                        </tr>
-                    `;
+
+                    if (type === 'perangkat') {
+                        tableRows += `
+                            <tr>
+                                <td class="text-center">${index + 1}</td>
+                                <td>${item.region || '-'}</td>
+                                <td>${item.site || '-'}</td>
+                                <td>${item.nama_perangkat || '-'}</td>
+                                <td>${item.brand || '-'}</td>
+                                <td>${item.type || '-'}</td>
+                                <td>${item.no_rack || '-'}</td>
+                                <td>${item.uawal || '-'}</td>
+                                <td>${item.uakhir || '-'}</td>
+                                <td>${tanggal}</td>
+                                <td class="text-center ${textClass}">
+                                    ${capitalizeFirstLetter(item.aksi || '-')}
+                                </td>
+                            </tr>
+                        `;
+                    } else if (type === 'jaringan') {
+                        tableRows += `
+                            <tr>
+                                <td class="text-center">${index + 1}</td>
+                                <td>${item.RO || '-'}</td>
+                                <td>${item.tipe_jaringan || '-'}</td>
+                                <td>${item.segmen || '-'}</td>
+                                <td>${item.jartatup_jartaplok || '-'}</td>
+                                <td>${item.mainlink_backuplink || '-'}</td>
+                                <td>${item.panjang || '-'}</td>
+                                <td>${item.panjang_drawing || '-'}</td>
+                                <td>${item.jumlah_core || '-'}</td>
+                                <td>${item.jenis_kabel || '-'}</td>
+                                <td>${item.tipe_kabel || '-'}</td>
+                                <td>${tanggal}</td>
+                                <td class="text-center ${textClass}">
+                                    ${capitalizeFirstLetter(item.aksi || '-')}
+                                </td>
+                            </tr>
+                        `;
+                    }
                 });
 
-                detailData.innerHTML = `
-                    <div class="table-container">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center" style="width: 5%">No</th>
-                                        <th style="width: 10%">Region</th>
-                                        <th style="width: 10%">Site</th>
-                                        <th style="width: 10%">Nama Perangkat</th>
-                                        <th style="width: 10%">Brand</th>
-                                        <th style="width: 10%">Type</th>
-                                        <th style="width: 10%">No Rack</th>
-                                        <th style="width: 10%">U Awal</th>
-                                        <th style="width: 10%">U Akhir</th>
-                                        <th style="width: 10%">Tanggal</th>
-                                        <th class="text-center" style="width: 15%">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${tableRows}
-                                </tbody>
-                            </table>
+                if (type === 'perangkat') {
+                    detailData.innerHTML = `
+                        <div class="table-container">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center" style="width: 5%">No</th>
+                                            <th style="width: 10%">Region</th>
+                                            <th style="width: 10%">Site</th>
+                                            <th style="width: 10%">Nama Perangkat</th>
+                                            <th style="width: 10%">Brand</th>
+                                            <th style="width: 10%">Type</th>
+                                            <th style="width: 10%">No Rack</th>
+                                            <th style="width: 10%">U Awal</th>
+                                            <th style="width: 10%">U Akhir</th>
+                                            <th style="width: 10%">Tanggal</th>
+                                            <th class="text-center" style="width: 15%">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${tableRows}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                } else if (type === 'jaringan') {
+                    detailData.innerHTML = `
+                        <div class="table-container">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center" style="width: 5%">No</th>
+                                            <th style="width: 10%">RO</th>
+                                            <th style="width: 10%">Tipe Jaringan</th>
+                                            <th style="width: 10%">Segmen</th>
+                                            <th style="width: 10%">Jartatup/Jartaplok</th>
+                                            <th style="width: 10%">Mainlink/Backuplink</th>
+                                            <th style="width: 10%">Panjang</th>
+                                            <th style="width: 10%">Panjang Drawing</th>
+                                            <th style="width: 10%">Jumlah Core</th>
+                                            <th style="width: 10%">Jenis Kabel</th>
+                                            <th style="width: 10%">Tipe Kabel</th>
+                                            <th style="width: 10%">Tanggal</th>
+                                            <th class="text-center" style="width: 15%">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${tableRows}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                }
             } else {
                 console.error('Failed to fetch history data:', response.message);
                 detailData.innerHTML = '<div class="alert alert-danger">Gagal memuat data history</div>';

@@ -17,6 +17,7 @@ use App\Http\Controllers\DataController;
 use App\Http\Controllers\MenuController;
 use App\Models\DataPerangkat;
 use App\Models\DataFasilitas;
+use App\Http\Controllers\JaringanController;
 
 
 Route::get('/', function () {
@@ -98,6 +99,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/delete-jaringan/{id_jaringan}', [AsetController::class, 'deleteJaringan'])->name('jaringan.delete');
     Route::get('/edit-jaringan/{id_jaringan}', [AsetController::class, 'editJaringan'])->name('jaringan.edit');
     Route::post('/update-jaringan/{id_jaringan}', [AsetController::class, 'updateJaringan'])->name('jaringan.update');
+    Route::get('/jaringan/{id_jaringan}/detail', [JaringanController::class, 'getDetail'])->name('jaringan.detail');
 
 
     // ALAT UKUR
@@ -159,5 +161,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/fasilitas', [MenuController::class, 'historiFasilitas'])->name('histori.fasilitas');
         Route::get('/jaringan', [MenuController::class, 'historiJaringan'])->name('histori.jaringan');
     });
-
+    Route::get('/histori/jaringan', [MenuController::class, 'getHistoryJaringan'])->name('histori.jaringan');
+    Route::get('/histori/jaringan/{id_jaringan}', [MenuController::class, 'getHistoriJaringan']);
 });
