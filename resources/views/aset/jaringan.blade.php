@@ -776,51 +776,54 @@
     function updateJaringan() {
         var id_jaringan = $('#editJaringanForm').data('id_jaringan'); // Ambil ID jaringan
         var formData = $('#editJaringanForm').serialize();
-
-        $.ajax({
-            url: '{{ url('/update-jaringan') }}/' + id_jaringan,
-            method: 'POST',
-            data: formData,
-            success: function(response) {
-                if (response.success) {
-                    closeEditJaringanModal(); // Tutup modal setelah berhasil
-                    Swal.fire({
-                        title: "Berhasil!",
-                        text: "Data jaringan berhasil diupdate.",
-                        icon: "success",
-                        confirmButtonText: "OK",
-                        buttonsStyling: false,
-                        customClass: {
-                            confirmButton: 'swal2-confirm2'
-                        },
-                        position: 'center'
-                    }).then(() => {
-                        location.reload(); // Muat ulang halaman untuk melihat perubahan
-                    });
-                } else {
-                    closeEditJaringanModal(); // Tutup modal setelah berhasil
-                    Swal.fire({
-                        title: "Gagal!",
-                        text: response.message || "Gagal mengupdate data jaringan.",
-                        icon: "error",
-                        confirmButtonText: "OK",
-                        buttonsStyling: false,
-                        customClass: {
-                            confirmButton: 'swal2-confirm2'
+        closeEditJaringanModal();
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: "Apakah Anda yakin ingin mengupdate data ini?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#4f52ba',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, update!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '{{ url('/update-jaringan') }}/' + id_jaringan,
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            closeEditJaringanModal(); // Tutup modal setelah berhasil
+                            Swal.fire({
+                                title: "Berhasil!",
+                                text: "Data jaringan berhasil diupdate.",
+                                icon: "success",
+                                confirmButtonColor: '#4f52ba',
+                                confirmButtonText: "OK"
+                            }).then(() => {
+                                location.reload(); // Muat ulang halaman untuk melihat perubahan
+                            });
+                        } else {
+                            closeEditJaringanModal(); // Tutup modal setelah berhasil
+                            Swal.fire({
+                                title: "Gagal!",
+                                text: response.message || "Gagal mengupdate data jaringan.",
+                                icon: "error",
+                                confirmButtonColor: '#4f52ba',
+                                confirmButtonText: "OK"
+                            });
                         }
-                    });
-                }
-            },
-            error: function(xhr, status, error) {
-                closeEditJaringanModal(); // Tutup modal setelah berhasil
-                Swal.fire({
-                    title: "Error!",
-                    text: "Terjadi kesalahan saat menghubungi server.",
-                    icon: "error",
-                    confirmButtonText: "OK",
-                    buttonsStyling: false,
-                    customClass: {
-                        confirmButton: 'swal2-confirm2'
+                    },
+                    error: function(xhr, status, error) {
+                        closeEditJaringanModal(); // Tutup modal setelah berhasil
+                        Swal.fire({
+                            title: "Error!",
+                            text: "Terjadi kesalahan saat menghubungi server.",
+                            icon: "error",
+                            confirmButtonColor: '#4f52ba',
+                            confirmButtonText: "OK"
+                        });
                     }
                 });
             }
@@ -914,57 +917,59 @@ $(document).ready(function() {
             update: $('#update').val(),
             route: $('#route').val()
         };
-
-        $.ajax({
-            url: '{{ route("jaringan.store") }}',
-            type: 'POST',
-            data: formData,
-            success: function(response) {
-                if (response.success) {
-                    closeAddJaringanModal();
-                    Swal.fire({
-                        title: "Berhasil!",
-                        text: "Data jaringan berhasil ditambahkan.",
-                        icon: "success",
-                        confirmButtonText: "OK",
-                        buttonsStyling: false,
-                        customClass: {
-                            confirmButton: 'swal2-confirm2'
-                        },
-                        position: 'center'
-                    }).then(() => {
-                        location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        title: "Gagal!",
-                        text: response.message,
-                        icon: "error",
-                        confirmButtonText: "OK",
-                        buttonsStyling: false,
-                        customClass: {
-                            confirmButton: 'swal2-confirm2'
+        closeAddJaringanModal();
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: "Apakah Anda yakin ingin menambahkan data ini?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#4f52ba',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, simpan!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '{{ route("jaringan.store") }}',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: "Berhasil!",
+                                text: "Data jaringan berhasil ditambahkan.",
+                                icon: "success",
+                                confirmButtonColor: '#4f52ba',
+                                confirmButtonText: "OK"
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Gagal!",
+                                text: response.message,
+                                icon: "error",
+                                confirmButtonColor: '#4f52ba',
+                                confirmButtonText: "OK"
+                            });
                         }
-                    });
-                }
-            },
-            error: function(xhr) {
-                var errors = xhr.responseJSON.errors;
-                var errorMessage = '';
-                
-                // Tampilkan semua pesan error
-                Object.keys(errors).forEach(function(key) {
-                    errorMessage += errors[key][0] + '\n';
-                });
-                
-                Swal.fire({
-                    title: "Gagal!",
-                    text: errorMessage,
-                    icon: "error",
-                    confirmButtonText: "OK",
-                    buttonsStyling: false,
-                    customClass: {
-                        confirmButton: 'swal2-confirm2'
+                    },
+                    error: function(xhr) {
+                        var errors = xhr.responseJSON.errors;
+                        var errorMessage = '';
+                        
+                        // Tampilkan semua pesan error
+                        Object.keys(errors).forEach(function(key) {
+                            errorMessage += errors[key][0] + '\n';
+                        });
+                        
+                        Swal.fire({
+                            title: "Gagal!",
+                            text: errorMessage,
+                            icon: "error",
+                            confirmButtonColor: '#4f52ba',
+                            confirmButtonText: "OK"
+                        });
                     }
                 });
             }
