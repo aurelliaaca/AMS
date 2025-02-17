@@ -11,12 +11,11 @@ class ListJaringan extends Model
 
     protected $table = 'list_jaringan';
     protected $primaryKey = 'id_jaringan';
-    public $incrementing = true; // Pastikan jika ID bertipe auto-increment
-    protected $keyType = 'int'; // Sesuaikan tipe data
-    public $timestamps = false; // Sesuaikan jika tabel tidak menggunakan timestamps
+    public $incrementing = true;
+    protected $keyType = 'int';
+    public $timestamps = false;
 
     protected $fillable = [
-        'id_jaringan',
         'RO',
         'kode_site_insan',
         'tipe_jaringan',

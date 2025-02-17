@@ -4,9 +4,17 @@
     <!-- Pastikan jQuery dan SweetAlert2 dimuat -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- Kemudian impor Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     
     <!-- Meta tag CSRF -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -63,7 +71,6 @@
         .table-container {
             width: 100%;
             max-width: 100%;
-            overflow-x: auto;
             border-radius: 8px;
             position: relative;
         }
@@ -73,15 +80,13 @@
             max-width: 100%;
             border-collapse: collapse;
             background-color: #fff;
-            table-layout: fixed;
+            table-layout: auto;
         }
         
         th, td {
             padding: 12px !important;
             text-align: center !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-            white-space: nowrap !important;
+            white-space: normal !important;
             border-bottom: 1px solid #ddd !important;
         }
         
@@ -106,14 +111,6 @@
             background-color: rgba(79, 82, 186, 0.2);
         }
 
-        /* Atur lebar maksimum dan izinkan pembungkusan teks untuk kolom Segmen */
-        td.segmen {
-            width: 200px; /* Atur lebar kolom sesuai kebutuhan */
-            white-space: normal; /* Izinkan pembungkusan teks */
-            word-wrap: break-word; /* Membungkus kata jika terlalu panjang */
-            word-break: break-word; /* Memastikan pembungkusan kata */
-            overflow: visible; /* Pastikan tidak ada pemotongan teks */
-        }
 
         .modal-overlay {
             position: fixed;
@@ -254,25 +251,48 @@
             margin: 0;
         }
 
-        .add-button {
-            background-color: #4f52ba;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
+        .swal2-cancel {
+            background-color: #4f52ba !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 4px !important;
+            padding: 10px 10px !important;
+            font-size: 14px !important;
+            cursor: pointer !important;
+            margin-left: 10px;
         }
 
-        .add-button:hover {
-            background-color: #3e41a1;
+        .swal2-confirm {
+            background-color: #dc3545 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 4px !important;
+            padding: 10px 10px !important;
+            font-size: 14px !important;
+            cursor: pointer !important;
+            margin-right: 10px;
+        }
+
+        .swal2-confirm2 {
+            background-color:  #4f52ba !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 4px !important;
+            padding: 10px 10px !important;
+            font-size: 14px !important;
+            cursor: pointer !important;
+            margin-right: 10px;
+        }
+
+        .swal2-cancel:hover {
+            background-color: rgb(46, 50, 158) !important;
         }
     </style>
 
 <div class="main">
     <div class="container">
         <div class="text-right">
-            <button class="add-button" onclick="openAddJaringanModal()">Tambah Jaringan</button>
+            <button class="add-button" onclick="storeJaringan()">Tambah Jaringan</button>
         </div>
         
         <div class="dropdown-container">
@@ -284,9 +304,9 @@
                 @endforeach
             </select>
             <!-- Dropdown Tipe Jaringan -->
-            <select id="tipeJaringanFilter" onchange="filterByTipeJaringan()">
+            <select id="tipeJaringanFilter" onchange="filterTable()">
                 <option value="">Pilih Tipe Jaringan</option>
-                @foreach ($tipeJaringanList as $tipe)
+                @foreach ($tipeJaringan as $tipe)
                     <option value="{{ $tipe->kode_tipe }}">{{ $tipe->nama_tipe }}</option>
                 @endforeach
             </select>
@@ -306,7 +326,7 @@
                         <th style="width: 100px;">RO</th>
                         <th style="width: 100px;">Kode Site Insan</th>
                         <th style="width: 100px;">Tipe Jaringan</th>
-                        <th style="width: 250px;">Segmen</th>
+                        <th style="width: 150px;">Segmen</th>
                         <th style="width: 100px;">Panjang</th>
                         <th style="width: 120px;">Panjang Drawing</th>
                         <th style="width: 100px;">Jumlah Core</th>
@@ -321,8 +341,8 @@
                         <td>{{ $loop->iteration }}</td>
                         <td class="ro">{{ $data->RO }}</td>
                         <td>{{ $data->kode_site_insan }}</td>
-                        <td>{{ $data->tipe_jaringan }}</td>
-                        <td class="segmen">{{ $data->segmen }}</td>
+                        <td>{{ $data->tipe ? $data->tipe->nama_tipe : 'Tipe tidak ditemukan' }}</td>
+                        <td>{{ $data->segmen }}</td>
                         <td>{{ $data->panjang }}</td>
                         <td>{{ $data->panjang_drawing }}</td>
                         <td>{{ $data->jumlah_core }}</td>
@@ -349,8 +369,8 @@
             <div class="form-container">
                 <div class="left-column">
                     <div class="form-group">
-                        <label for="roAdd">RO</label>
-                        <select id="roAdd" name="ro" required>
+                        <label for="RO">RO</label>
+                        <select id="RO" name="RO" required>
                             <option value="">Pilih RO</option>
                             @foreach($regions as $region)
                                 <option value="{{ $region->nama_region }}">{{ $region->nama_region }}</option>
@@ -360,14 +380,14 @@
 
                     <div class="form-group">
                         <label for="kode_site_insan">Kode Site Insan</label>
-                        <input type="text" id="kode_site_insan" name="kode_site_insan" required>
+                        <input type="text" id="kode_site_insan" name="kode_site_insan" placeholder="Kode Site Insan" required>
                     </div>
 
                     <div class="form-group">
                         <label for="tipeJaringanAdd">Tipe Jaringan</label>
                         <select id="tipeJaringanAdd" name="tipe_jaringan" required>
                             <option value="">Pilih Tipe Jaringan</option>
-                            @foreach($tipeJaringanList as $tipe)
+                            @foreach($tipeJaringan as $tipe)
                                 <option value="{{ $tipe->kode_tipe }}">{{ $tipe->nama_tipe }}</option>
                             @endforeach
                         </select>
@@ -443,42 +463,133 @@
     </div>
 </div>
 
+<div id="editJaringanModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <button class="modal-close-btn" onclick="closeEditJaringanModal()">×</button>
+        <h2>Edit Jaringan</h2>
+        <form id="editJaringanForm">
+            <div class="form-container">
+                <div class="left-column">
+                    <div class="form-group">
+                        <label for="editRO">RO</label>
+                        <select id="editRO" name="RO" required>
+                            <option value="">Pilih RO</option>
+                            @foreach($regions as $region)
+                                <option value="{{ $region->nama_region }}">{{ $region->nama_region }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editKodeSiteInsan">Kode Site Insan</label>
+                        <input type="text" id="editKodeSiteInsan" name="kode_site_insan" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editTipeJaringan">Tipe Jaringan</label>
+                        <select id="editTipeJaringan" name="tipe_jaringan" required>
+                            <option value="">Pilih Tipe Jaringan</option>
+                            @foreach($tipeJaringan as $tipe)
+                                <option value="{{ $tipe->kode_tipe }}">{{ $tipe->nama_tipe }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editSegmen">Segmen</label>
+                        <input type="text" id="editSegmen" name="segmen" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editJartatupJartaplok">Jartatup/Jartaplok</label>
+                        <select id="editJartatupJartaplok" name="jartatup_jartaplok" required>
+                            <option value="">Pilih Jartatup/Jartaplok</option>
+                            <option value="Jartatup">Jartatup</option>
+                            <option value="Jartaplok">Jartaplok</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editMainlinkBackuplink">Mainlink/Backuplink</label>
+                        <input type="text" id="editMainlinkBackuplink" name="mainlink_backuplink" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPanjang">Panjang</label>
+                        <input type="text" id="editPanjang" name="panjang" required>
+                    </div>
+                </div>
+
+                        <div class="right-column">
+                            <div class="form-group">
+                                <label for="editPanjangDrawing">Panjang Drawing</label>
+                                <input type="text" id="editPanjangDrawing" name="panjang_drawing" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editJumlahCore">Jumlah Core</label>
+                                <input type="text" id="editJumlahCore" name="jumlah_core" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editJenisKabel">Jenis Kabel</label>
+                                <input type="text" id="editJenisKabel" name="jenis_kabel" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editTipeKabel">Tipe Kabel</label>
+                                <input type="text" id="editTipeKabel" name="tipe_kabel" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editTravellingTime">Travelling Time</label>
+                                <input type="text" id="editTravellingTime" name="travelling_time" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editRestorationTime">Restoration Time</label>
+                                <input type="text" id="editRestorationTime" name="restoration_time" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editTotalCorrectiveTime">Total Corrective Time</label>
+                                <input type="text" id="editTotalCorrectiveTime" name="total_corrective_time" required>
+                            </div>
+                        </div>
+                    </div>
+
+            <div class="button-container">
+                <button type="button" class="add-button" onclick="updateJaringan()">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
     function filterTable() {
         const roFilter = document.getElementById("roFilter").value.toLowerCase();
+        const tipeFilter = document.getElementById("tipeJaringanFilter").value.toLowerCase();
         const rows = document.querySelectorAll("#jaringanTable tbody tr");
 
         rows.forEach(row => {
             const roCell = row.querySelector(".ro").textContent.toLowerCase();
-            const matchesRO = roFilter === "" || roCell.includes(roFilter);
+            const tipeJaringanCell = row.cells[3].textContent.toLowerCase(); // Pastikan indeks sesuai dengan kolom "Tipe Jaringan"
 
-            if (matchesRO) {
+            const matchesRO = roFilter === "" || roCell.includes(roFilter);
+            const matchesTipe = tipeFilter === "" || tipeJaringanCell.includes(tipeFilter);
+
+            if (matchesRO && matchesTipe) {
                 row.style.display = ""; // Menampilkan baris
             } else {
                 row.style.display = "none"; // Menyembunyikan baris
             }
         });
     }
-
-    function filterByTipeJaringan() {
-    const tipeFilter = document.getElementById("tipeJaringanFilter").value.toLowerCase();
-    const rows = document.querySelectorAll("#jaringanTable tbody tr");
-
-    console.log("Tipe Filter yang dipilih:", tipeFilter); // Debugging log
-
-    rows.forEach(row => {
-        const tipeJaringanCell = row.cells[3].textContent.toLowerCase(); // Pastikan indeks sesuai dengan kolom "Tipe Jaringan"
-        console.log("Tipe Jaringan pada row:", tipeJaringanCell); // Debugging log
-
-        if (tipeFilter === "" || tipeJaringanCell.includes(tipeFilter)) {
-            row.style.display = "";
-        } else {
-            row.style.display = "none";
-        }
-    });
-}
-
-
 
     function searchTable() {
         const input = document.getElementById("searchInput");
@@ -550,70 +661,108 @@
 
     // Fungsi untuk edit jaringan
     function editJaringan(id_jaringan) {
-    $.get(`/jaringan/${id_jaringan}/edit`, function(response) {
-        if (response.success) {
-            const jaringan = response.jaringan;
-
-            // Reset form terlebih dahulu
-            $('#addJaringanForm')[0].reset();
-
-            // Isi form dengan data yang ada
-            $('#roAdd').val(jaringan.ro).trigger('change');
-            $('#kode_site_insan').val(jaringan.kode_site_insan);
-            $('#tipeJaringanAdd').val(jaringan.tipe_jaringan);
-            $('#segmen').val(jaringan.segmen);
-            $('#jartatup_jartaplok').val(jaringan.jartatup_jartaplok);
-            $('#mainlink_backuplink').val(jaringan.mainlink_backuplink);
-            $('#panjang').val(jaringan.panjang);
-            $('#panjang_drawing').val(jaringan.panjang_drawing);
-            $('#jumlah_core').val(jaringan.jumlah_core);
-            $('#jenis_kabel').val(jaringan.jenis_kabel);
-            $('#tipe_kabel').val(jaringan.tipe_kabel);
-            $('#travelling_time').val(jaringan.travelling_time);
-            $('#restoration_time').val(jaringan.restoration_time);
-            $('#total_corrective_time').val(jaringan.total_corrective_time);
-
-            // Hapus input hidden ID jika ada sebelumnya
-            $('#jaringan-id-input').remove();
-
-            // Tambahkan ID ke form untuk keperluan update
-            $('#addJaringanForm').append(`<input type="hidden" id="jaringan-id-input" name="id_jaringan" value="${jaringan.id_jaringan}">`);
-
-            // Ubah judul modal dan tombol
-            $('h2').text('Edit Jaringan');
-            $('.add-button[type="submit"]').text('Update');
-
-            // Tampilkan modal setelah data diisi
-            $('#addJaringanModal').modal('show');
-        } else {
-            swal({
-                title: "Error!",
-                text: response.message || "Gagal mengambil data jaringan.",
-                type: "error",
-                button: {
-                    text: "OK",
-                    value: true,
-                    visible: true,
-                    className: "btn btn-danger"
+        $.ajax({
+            url: '{{ url('/edit-jaringan') }}/' + id_jaringan,
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    // Isi form dengan data yang diterima
+                    $('#editRO').val(response.data.RO);
+                    $('#editKodeSiteInsan').val(response.data.kode_site_insan);
+                    $('#editTipeJaringan').val(response.data.tipe_jaringan);
+                    $('#editSegmen').val(response.data.segmen);
+                    $('#editJartatupJartaplok').val(response.data.jartatup_jartaplok);
+                    $('#editMainlinkBackuplink').val(response.data.mainlink_backuplink);
+                    $('#editPanjang').val(response.data.panjang);
+                    $('#editPanjangDrawing').val(response.data.panjang_drawing);
+                    $('#editJumlahCore').val(response.data.jumlah_core);
+                    $('#editJenisKabel').val(response.data.jenis_kabel);
+                    $('#editTipeKabel').val(response.data.tipe_kabel);
+                    $('#editTravellingTime').val(response.data.travelling_time);
+                    $('#editRestorationTime').val(response.data.restoration_time);
+                    $('#editTotalCorrectiveTime').val(response.data.total_corrective_time);
+                    $('#editJaringanForm').data('id_jaringan', id_jaringan); // Simpan ID jaringan
+                    // Tampilkan modal edit
+                    openEditJaringanModal();
+                } else {
+                    Swal.fire({
+                        title: "Gagal!",
+                        text: response.message || "Terjadi kesalahan saat mengambil data jaringan.",
+                        icon: "error",
+                        confirmButtonText: "OK",
+                        buttonsStyling: false,
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        }
+                    });
                 }
-            });
-        }
-    }).fail(function(xhr) {
-        console.error('Edit error details:', xhr.responseText);
-        swal({
-            title: "Error!",
-            text: "Terjadi kesalahan saat mengambil data jaringan.",
-            type: "error",
-            button: {
-                text: "OK",
-                value: true,
-                visible: true,
-                className: "btn btn-danger"
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Terjadi kesalahan saat menghubungi server.",
+                    icon: "error",
+                    confirmButtonText: "OK",
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    }
+                });
             }
         });
-    });
-}
+    }
 
+    function updateJaringan() {
+        var id_jaringan = $('#editJaringanForm').data('id_jaringan'); // Ambil ID jaringan
+        var formData = $('#editJaringanForm').serialize();
+
+        $.ajax({
+            url: '{{ url('/update-jaringan') }}/' + id_jaringan,
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                if (response.success) {
+                    closeEditJaringanModal(); // Tutup modal setelah berhasil
+                    Swal.fire({
+                        title: "Berhasil!",
+                        text: "Data jaringan berhasil diupdate.",
+                        icon: "success",
+                        confirmButtonText: "OK",
+                        buttonsStyling: false,
+                        customClass: {
+                            confirmButton: 'swal2-confirm2'
+                        },
+                        position: 'center'
+                    }).then(() => {
+                        location.reload(); // Muat ulang halaman untuk melihat perubahan
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Gagal!",
+                        text: response.message || "Gagal mengupdate data jaringan.",
+                        icon: "error",
+                        confirmButtonText: "OK",
+                        buttonsStyling: false,
+                        customClass: {
+                            confirmButton: 'swal2-confirm2'
+                        }
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Terjadi kesalahan saat menghubungi server.",
+                    icon: "error",
+                    confirmButtonText: "OK",
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: 'swal2-confirm2'
+                    }
+                });
+            }
+        });
+    }
 
 function deleteJaringan(id_jaringan) {
     Swal.fire({
@@ -621,10 +770,13 @@ function deleteJaringan(id_jaringan) {
         text: "Data yang dihapus tidak dapat dikembalikan!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Batal'
+        confirmButtonText: "Ya, hapus!",
+        cancelButtonText: "Batal",
+        buttonsStyling: false,
+        customClass: {
+            confirmButton: 'swal2-confirm', // Gunakan kelas CSS untuk tombol hapus
+            cancelButton: 'swal2-cancel' // Gunakan kelas CSS untuk tombol batal
+        }
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
@@ -635,11 +787,16 @@ function deleteJaringan(id_jaringan) {
                 },
                 success: function(response) {
                     if (response.success) {
-                        Swal.fire(
-                            'Terhapus!',
-                            'Data berhasil dihapus.',
-                            'success'
-                        ).then(() => {
+                        Swal.fire({
+                            title: 'Terhapus!',
+                            text: 'Data berhasil dihapus.',
+                            icon: 'success',
+                            confirmButtonText: 'OK',
+                            buttonsStyling: false,
+                            customClass: {
+                                confirmButton: 'swal2-confirm2' // Gunakan kelas CSS untuk tombol OK
+                            }
+                        }).then(() => {
                             location.reload();
                         });
                     } else {
@@ -661,6 +818,100 @@ function deleteJaringan(id_jaringan) {
             });
         }
     });
+}
+
+function storeJaringan() {
+    // Reset form
+    $('#addJaringanForm')[0].reset();
+    
+    // Tampilkan modal
+    document.getElementById("addJaringanModal").style.display = "flex";
+}
+
+$(document).ready(function() {
+    $('#addJaringanForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var formData = {
+            RO: $('#RO').val(),
+            kode_site_insan: $('#kode_site_insan').val(),
+            tipe_jaringan: $('#tipeJaringanAdd').val(),
+            segmen: $('#segmen').val(),
+            jartatup_jartaplok: $('#jartatup_jartaplok').val(),
+            mainlink_backuplink: $('#mainlink_backuplink').val(),
+            panjang: $('#panjang').val(),
+            panjang_drawing: $('#panjang_drawing').val(),
+            jumlah_core: $('#jumlah_core').val(),
+            jenis_kabel: $('#jenis_kabel').val(),
+            tipe_kabel: $('#tipe_kabel').val(),
+            travelling_time: $('#travelling_time').val(),
+            verification_time: $('#verification_time').val(),
+            restoration_time: $('#restoration_time').val(),
+            total_corrective_time: $('#total_corrective_time').val()
+        };
+
+        $.ajax({
+            url: '{{ route("jaringan.store") }}',
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        title: "Berhasil!",
+                        text: "Data jaringan berhasil ditambahkan.",
+                        icon: "success",
+                        confirmButtonText: "OK",
+                        buttonsStyling: false,
+                        customClass: {
+                            confirmButton: 'swal2-confirm2'
+                        },
+                        position: 'center'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Gagal!",
+                        text: response.message,
+                        icon: "error",
+                        confirmButtonText: "OK",
+                        buttonsStyling: false,
+                        customClass: {
+                            confirmButton: 'swal2-confirm2'
+                        }
+                    });
+                }
+            },
+            error: function(xhr) {
+                var errors = xhr.responseJSON.errors;
+                var errorMessage = '';
+                
+                // Tampilkan semua pesan error
+                Object.keys(errors).forEach(function(key) {
+                    errorMessage += errors[key][0] + '\n';
+                });
+                
+                Swal.fire({
+                    title: "Gagal!",
+                    text: errorMessage,
+                    icon: "error",
+                    confirmButtonText: "OK",
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: 'swal2-confirm2'
+                    }
+                });
+            }
+        });
+    });
+});
+
+function openEditJaringanModal() {
+    document.getElementById('editJaringanModal').style.display = 'flex';
+}
+
+function closeEditJaringanModal() {
+    document.getElementById('editJaringanModal').style.display = 'none';
 }
 
 </script>

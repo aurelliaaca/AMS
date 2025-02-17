@@ -63,7 +63,6 @@
         
         .table-container {
             width: 100%;
-            overflow-x: auto;
             border-radius: 8px;
             position: relative;
         }
@@ -75,28 +74,19 @@
             table-layout: fixed;
         }
         
-        th {
-            background-color: #4f52ba;
-            color: #fff;
+        th, td {
             padding: 12px;
             text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-        
-        td {
-            padding: 12px;
-            text-align: center;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            white-space: normal;
             border-bottom: 1px solid #ddd;
         }
         
         th {
             background-color: #4f52ba;
             color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
         
         .no-data {
@@ -275,19 +265,19 @@
         </div>
 
         <div class="table-container">
-            <table>
+            <table id="fasilitasTable">
                 <thead>
                     <tr>
                         <th style = "width : 60px;">Urutan</th>
-                        <th style = "width : 100px;">RO</th>
-                        <th style = "width : 180px;">Nama POP</th>
-                        <th class="perangkat">Perangkat</th>
-                        <th style = "width : 280px;">Hostname</th>
-                        <th style = "width : 150px;">Merk</th>
-                        <th style = "width : 250px;">Tipe</th>
-                        <th style = "width : 60px;">Jumlah</th>
-                        <th style = "width : 150px;">Status</th>
-                        <th style = "width : 150px;">Aksi</th>
+                        <th>RO</th>
+                        <th>Nama POP</th>
+                        <th>Perangkat</th>
+                        <th>Hostname</th>
+                        <th>Merk</th>
+                        <th>Tipe</th>
+                        <th>Jumlah</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="dataRows">
