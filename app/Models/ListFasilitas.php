@@ -22,7 +22,7 @@ class ListFasilitas extends Model
         'fasilitas_ke',
         'kode_brand',
         'type',
-        'serial_number',
+        'serialnumber',
         'jml_fasilitas',
         'status',
         'uawal',

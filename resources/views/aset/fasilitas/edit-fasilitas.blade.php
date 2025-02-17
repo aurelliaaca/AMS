@@ -51,7 +51,7 @@
 
                     <div class="form-group">
                         <label for="serialnumberEdit">Serial Number</label>
-                        <input type="text" id="serialnumberEdit" name="serial_number">
+                        <input type="text" id="serialnumberEdit" name="serialnumber">
                     </div>
                 </div>
 
@@ -223,7 +223,7 @@ function editFasilitas(id_fasilitas) {
             $('#fasilitasEdit').val(fasilitas.kode_fasilitas);
             $('#brandEdit').val(fasilitas.kode_brand);
             $('#typeEdit').val(fasilitas.type);
-            $('#serialnumberEdit').val(fasilitas.serial_number);
+            $('#serialnumberEdit').val(fasilitas.serialnumber);
             $('#jumlahFasilitasEdit').val(fasilitas.jml_fasilitas);
             $('#statusEdit').val(fasilitas.status);
             $('#uawalEdit').val(fasilitas.uawal);

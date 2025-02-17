@@ -174,7 +174,7 @@ class FasilitasController extends Controller
             'kode_brand' => 'nullable|exists:brandfasilitas,kode_brand',
             'no_rack' => 'nullable|string',
             'type' => 'nullable|string',
-            'serial_number' => 'nullable|string',
+            'serialnumber' => 'nullable|string',
             'jml_fasilitas' => 'nullable|integer|min:0',
             'status' => 'nullable|string',
             'uawal' => 'nullable|integer|required_with:no_rack',
@@ -252,7 +252,7 @@ class FasilitasController extends Controller
             'kode_brand' => $request->kode_brand,
             'no_rack' => $request->no_rack ?: null,
             'type' => $request->type,
-            'serial_number' => $request->serial_number,
+            'serialnumber' => $request->serialnumber,
             'jml_fasilitas' => $request->jml_fasilitas,
             'status' => $request->status,
             'uawal' => $request->uawal,
@@ -393,7 +393,7 @@ class FasilitasController extends Controller
             'kode_brand' => 'nullable|exists:brandfasilitas,kode_brand',
             'no_rack' => 'nullable|string',
             'type' => 'nullable|string',
-            'serial_number' => 'nullable|string',
+            'serialnumber' => 'nullable|string',
             'jml_fasilitas' => 'nullable|integer|min:0',
             'status' => 'nullable|string',
             'uawal' => 'nullable|integer|required_with:no_rack',
@@ -437,6 +437,19 @@ class FasilitasController extends Controller
             }
         }
 
+        // Misal $fasilitas merupakan data fasilitas yang sedang diupdate
+        if ($fasilitas->kode_region !== $request->kode_region || $fasilitas->kode_site !== $request->kode_site) {
+            // Jika salah satu atau kedua nilai kode_region dan kode_site berubah,
+            // hitung jumlah data fasilitas di region & site baru, lalu tambah 1
+            $lastPktKe = ListFasilitas::where('kode_region', $request->kode_region)
+                            ->where('kode_site', $request->kode_site)
+                            ->count();
+            $pktKe = $lastPktKe + 1;
+        } else {
+            // Jika tidak berubah, pertahankan nilai fasilitas_ke yang lama
+            $pktKe = $fasilitas->fasilitas_ke;
+        }
+        
         // Update data
         $fasilitas->update([
             'kode_region' => $request->kode_region,
@@ -445,11 +458,12 @@ class FasilitasController extends Controller
             'kode_brand' => $request->kode_brand,
             'no_rack' => $request->no_rack ?: null,
             'type' => $request->type,
-            'serial_number' => $request->serial_number,
+            'serialnumber' => $request->serialnumber,
             'jml_fasilitas' => $request->jml_fasilitas,
             'status' => $request->status,
             'uawal' => $request->uawal,
             'uakhir' => $request->uakhir,
+            'fasilitas_ke'    => $pktKe,
         ]);
 
         // Debug: log data yang diupdate

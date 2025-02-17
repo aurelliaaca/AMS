@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AlatukurController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\UserController;
@@ -105,14 +106,13 @@ Route::middleware('auth')->group(function () {
 
 
     // ALAT UKUR
-    Route::prefix('alatukur')->group(function () {
-        Route::get('/', [AsetController::class, 'alatukur'])->name('alatukur');
-        Route::post('/', [AsetController::class, 'storeAlatUkur'])->name('alatukur.store');
-        Route::get('/{urutan}', [AsetController::class, 'getAlatUkurById'])->name('alatukur.show');
-        Route::put('/{urutan}', [AsetController::class, 'updateAlatUkur'])->name('alatukur.update');
-        Route::delete('/delete/{urutan}', [AsetController::class, 'destroyAlatUkur'])->name('alatukur.destroy');
-    });
-
+    Route::get('/alatukur', [AlatukurController::class, 'alatukur'])->name('alatukur');
+    Route::get('/get-alatukur', [AlatukurController::class, 'getAlatukur']);
+    Route::get('/get-alatukur/{id_alatukur}', [AlatukurController::class, 'getAlatukurById']);
+    Route::post('/store-alatukur', [AlatukurController::class, 'store']);
+    Route::put('/update-alatukur/{id_alatukur}', [AlatukurController::class, 'update']);
+    Route::delete('/delete-alatukur/{id_alatukur}', [AlatukurController::class, 'destroy']);
+    Route::get('/histori-alatukur/{id_alatukur}', [AlatukurController::class, 'showHistori']);
 
     // AKUN
     // PROFIL

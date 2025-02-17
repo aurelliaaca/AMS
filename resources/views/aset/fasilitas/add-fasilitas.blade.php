@@ -52,7 +52,7 @@
                     
                     <div class="form-group">
                         <label for="serialnumber">Serial Number</label>
-                        <input type="text" id="serialnumber" name="serial_number">
+                        <input type="text" id="serialnumber" name="serialnumber">
                     </div>
                 </div>
 

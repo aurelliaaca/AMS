@@ -1,7 +1,7 @@
-<div id="lihatFasilitasModal" class="modal-overlay" style="display: none;">
+<div id="lihatAlatukurModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
-        <button class="modal-close-btn" onclick="closeLihatFasilitasModal()">×</button>
-        <h2>Detail Fasilitas</h2>
+        <button class="modal-close-btn" onclick="closeLihatAlatukurModal()">×</button>
+        <h2>Detail Alatukur</h2>
         <div class="form-container">
             <div class="left-column">
                 <div class="form-group">
@@ -13,12 +13,8 @@
                     <p id="regionView"></p>
                 </div>
                 <div class="form-group">
-                    <label>Site</label>
-                    <p id="siteView"></p>
-                </div>
-                <div class="form-group">
-                    <label>Fasilitas</label>
-                    <p id="fasilitasView"></p>
+                    <label>Alatukur</label>
+                    <p id="alatukurView"></p>
                 </div>
                 <div class="form-group">
                     <label>Brand</label>
@@ -35,22 +31,16 @@
             </div>
             <div class="right-column">
                 <div class="form-group">
-                    <label>Status/Keterangan</label>
-                    <p id="statusView"></p>
-                </div><div class="form-group">
-                    <label>Jumlah Fasilitas</label>
-                    <p id="jmlfasilitasView"></p>
-                </div><div class="form-group">
-                    <label>No Rack</label>
-                    <p id="noRackView"></p>
+                    <label>Tahun perolehan</label>
+                    <p id="tahunperolehanView"></p>
                 </div>
                 <div class="form-group">
-                    <label>U Awal</label>
-                    <p id="uawalView"></p>
+                    <label>Kondisi</label>
+                    <p id="kondisiView"></p>
                 </div>
                 <div class="form-group">
-                    <label>U Akhir</label>
-                    <p id="uakhirView"></p>
+                    <label>Keterangan</label>
+                    <p id="keteranganView"></p>
                 </div>
             </div>
         </div>
@@ -68,40 +58,35 @@
 </div>
 
 <script>
-// Fungsi untuk menampilkan detail fasilitas
-function lihatFasilitas(id_fasilitas) {
-    $.get(`/get-fasilitas/${id_fasilitas}`, function(response) {
+// Fungsi untuk menampilkan detail alatukur
+function lihatAlatukur(id_alatukur) {
+    $.get(`/get-alatukur/${id_alatukur}`, function(response) {
         if (response.success) {
-            const fasilitas = response.fasilitas;
+            const alatukur = response.alatukur;
             const values = [
-                fasilitas.kode_region,
-                fasilitas.kode_site,
-                fasilitas.no_rack,
-                fasilitas.kode_fasilitas,
-                fasilitas.fasilitas_ke,
-                fasilitas.kode_brand,
-                fasilitas.type
+                alatukur.kode_region, 
+                alatukur.kode_alatukur, 
+                alatukur.alatukur_ke, 
+                alatukur.kode_brand, 
+                alatukur.type
             ];
 
             // Filter nilai yang bukan null atau undefined, lalu gabungkan dengan "-"
             $('#hostnameView').text(values.filter(val => val).join('-'));
-            $('#regionView').text(fasilitas.nama_region);
-            $('#siteView').text(fasilitas.nama_site);
-            $('#fasilitasView').text(fasilitas.nama_fasilitas);
-            $('#brandView').text(fasilitas.nama_brand || '-');
-            $('#typeView').text(fasilitas.type || '-');
-            $('#serialnumberView').text(fasilitas.serialnumber || '-');
-            $('#jmlfasilitasView').text(fasilitas.jml_fasilitas || '-');
-            $('#statusView').text(fasilitas.status || '-');
-            $('#noRackView').text(fasilitas.no_rack ? `Rack ${fasilitas.no_rack}` : '-');
-            $('#uawalView').text(fasilitas.uawal || '-');
-            $('#uakhirView').text(fasilitas.uakhir || '-');
+            $('#regionView').text(alatukur.nama_region);
+            $('#alatukurView').text(alatukur.nama_alatukur);
+            $('#brandView').text(alatukur.nama_brand || '-');
+            $('#typeView').text(alatukur.type || '-');
+            $('#serialnumberView').text(alatukur.serialnumber || '-');
+            $('#tahunperolehanView').text(alatukur.tahunperolehan || '-');
+            $('#kondisiView').text(alatukur.kondisi || '-');
+            $('#keteranganView').text(alatukur.keterangan || '-');
 
             // Tampilkan modal
-            document.getElementById("lihatFasilitasModal").style.display = "flex";
+            document.getElementById("lihatAlatukurModal").style.display = "flex";
 
-            // Ambil data histori fasilitas
-            $.get(`/histori-fasilitas/${id_fasilitas}`, function(response) {
+            // Ambil data histori alatukur
+            $.get(`/histori-alatukur/${id_alatukur}`, function(response) {
                 if (response.success) {
                     const histori = response.histori;
                     const tableBody = $('#historiTableBody');
@@ -136,7 +121,7 @@ function lihatFasilitas(id_fasilitas) {
         }
     });
 }
-function closeLihatFasilitasModal() {
-    document.getElementById("lihatFasilitasModal").style.display = "none";
+function closeLihatAlatukurModal() {
+    document.getElementById("lihatAlatukurModal").style.display = "none";
 }
 </script>

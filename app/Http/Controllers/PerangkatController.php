@@ -428,6 +428,17 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
             }
         }
 
+        // Misal $fasilitas merupakan data fasilitas yang sedang diupdate
+        if ($perangkat->kode_region !== $request->kode_region || $perangkat->kode_site !== $request->kode_site) {
+            $lastPktKe = ListPerangkat::where('kode_region', $request->kode_region)
+                            ->where('kode_site', $request->kode_site)
+                            ->count();
+            $pktKe = $lastPktKe + 1;
+        } else {
+            // Jika tidak berubah, pertahankan nilai fasilitas_ke yang lama
+            $pktKe = $perangkat->fasilitas_ke;
+        }
+
         // Update data
         $perangkat->update([
             'kode_region' => $request->kode_region,
@@ -438,6 +449,7 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
             'type' => $request->type,
             'uawal' => $request->uawal,
             'uakhir' => $request->uakhir,
+            'perangkat_ke'=> $pktKe,
         ]);
 
         // Debug: log data yang diupdate

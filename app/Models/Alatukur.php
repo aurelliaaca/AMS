@@ -23,7 +23,7 @@ class AlatUkur extends Model
         'nama_alat',
         'merk',
         'type',
-        'serial_number',
+        'serialnumber',
         'tahun_perolehan',
         'kondisi_alat',
         'harga_pembelian',

@@ -5,7 +5,7 @@
         <div class="form-container">
             <div class="left-column">
                 <div class="form-group">
-                    <label>Kode</label>
+                    <label>Hostname</label>
                     <p id="hostnameView"></p>
                 </div>
                 <div class="form-group">
