@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\PerangkatController;
+use App\Http\Controllers\FasilitasController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -78,16 +79,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/delete-perangkat/{id_perangkat}', [PerangkatController::class, 'destroy']);
     Route::get('/get-sites', [PerangkatController::class, 'getSites']);
     Route::get('/histori-perangkat/{id_perangkat}', [PerangkatController::class, 'showHistori']);
-    // Route::get('/get-jml_rack', [PerangkatController::class, 'getJmlRack']);
     Route::get('/get-site-rack', [PerangkatController::class, 'getSiteRack']);
     
 
     // FASILITAS
-    Route::get('/fasilitas', [AsetController::class, 'fasilitas'])->name('fasilitas');
-    Route::post('/store-fasilitas', [AsetController::class, 'store'])->name('fasilitas.store');
-    Route::put('/update-fasilitas/{urutan}', [AsetController::class, 'update'])->name('fasilitas.update');
-    Route::delete('/delete-fasilitas/{urutan}', [AsetController::class, 'destroy'])->name('fasilitas.destroy');
-    Route::put('/update-fasilitas/{urutan}', [AsetController::class, 'editFasilitas'])->name('fasilitas.update');
+    Route::get('/fasilitas', [FasilitasController::class, 'fasilitas'])->name('fasilitas');
+    Route::get('/get-fasilitas', [FasilitasController::class, 'getFasilitas']);
+    Route::get('/get-fasilitas/{id_fasilitas}', [FasilitasController::class, 'getFasilitasById']);
+    Route::post('/store-fasilitas', [FasilitasController::class, 'store']);
+    Route::put('/update-fasilitas/{id_fasilitas}', [FasilitasController::class, 'update']);
+    Route::delete('/delete-fasilitas/{id_fasilitas}', [FasilitasController::class, 'destroy']);
+    Route::get('/get-sites', [FasilitasController::class, 'getSites']);
+    Route::get('/histori-fasilitas/{id_fasilitas}', [FasilitasController::class, 'showHistori']);
+    Route::get('/get-site-rack', [FasilitasController::class, 'getSiteRack']);
 
 
     // JARINGAN
