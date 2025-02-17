@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Models;
+// namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+// use Illuminate\Database\Eloquent\Model;
+// use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Perangkat extends Model
-{
-    use HasFactory;
-    protected $table = 'perangkat';
+// class Perangkat extends Model
+// {
+//     use HasFactory;
+//     protected $table = 'perangkat';
 
-    protected $fillable = [
-        'nama_pkt', 'kode_pkt',
-    ];
-}
+//     protected $fillable = [
+//         'nama_pkt', 'kode_pkt',
+//     ];
+// }

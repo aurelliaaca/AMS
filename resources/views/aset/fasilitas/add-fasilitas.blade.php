@@ -1,10 +1,10 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<div id="addPerangkatModal" class="modal-overlay" style="display: none;">
+<div id="addFasilitasModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
-        <button class="modal-close-btn" onclick="closeAddPerangkatModal()">×</button>
-        <h2>Tambah Perangkat Baru</h2>
-        <form id="addPerangkatForm" method="POST">
+        <button class="modal-close-btn" onclick="closeAddFasilitasModal()">×</button>
+        <h2>Tambah Fasilitas Baru</h2>
+        <form id="addFasilitasForm" method="POST">
             @csrf
             <div class="form-container">
                 <div class="left-column">
@@ -26,11 +26,11 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="perangkatAdd">Perangkat</label>
-                        <select id="perangkatAdd" name="kode_perangkat" required>
-                            <option value="">Pilih Perangkat</option>
+                        <label for="fasilitasAdd">Fasilitas</label>
+                        <select id="fasilitasAdd" name="kode_fasilitas" required>
+                            <option value="">Pilih Fasilitas</option>
                             @foreach($listpkt as $p)
-                                <option value="{{ $p->kode_perangkat }}">{{ $p->nama_perangkat }}</option>
+                                <option value="{{ $p->kode_fasilitas }}">{{ $p->nama_fasilitas }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -49,9 +49,24 @@
                         <label for="type">Type</label>
                         <input type="text" id="type" name="type">
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="serialnumber">Serial Number</label>
+                        <input type="text" id="serialnumber" name="serialnumber">
+                    </div>
                 </div>
 
                 <div class="right-column">
+                    <div class="form-group">
+                        <label for="status">Status/Keterangan</label>
+                        <input type="text" id="status" name="status">
+                    </div>
+                    <div class="form-group">
+                        <label for="jumlahFasilitas">Jumlah Fasilitas</label>
+                        <div class="input-group">
+                        <input type="number" id="jumlahFasilitas" name="jml_fasilitas" class="form-control" value="0" min="0">
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="no_rack">No Rack</label>
                         <select id="no_rack" name="no_rack" class="form-control">
@@ -149,10 +164,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Handle form submission for adding perangkat
-    $('#addPerangkatForm').on('submit', function(e) {
+    // Handle form submission for adding fasilitas
+    $('#addFasilitasForm').on('submit', function(e) {
     e.preventDefault();
-    closeAddPerangkatModal(); // Ini akan menutup modal sebelum SweetAlert muncul
+    closeAddFasilitasModal(); // Ini akan menutup modal sebelum SweetAlert muncul
 
     Swal.fire({
         title: 'Konfirmasi',
@@ -170,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.prop('disabled', true).text('Menyimpan...'); // Change button text
 
             $.ajax({
-                url: '/store-perangkat',
+                url: '/store-fasilitas',
                 type: 'POST',
                 data: $(this).serialize(),
                 headers: {
@@ -186,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             confirmButtonColor: '#4f52ba',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            closeAddPerangkatModal(); // Close the modal after the alert is confirmed
+                            closeAddFasilitasModal(); // Close the modal after the alert is confirmed
                             LoadData(); // Reload the data
                         });
                     } else {
@@ -204,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             confirmButtonColor: '#4f52ba',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            openAddPerangkatModal(); // Buka kembali modal setelah alert
+                            openAddFasilitasModal(); // Buka kembali modal setelah alert
                         });
                     } else {
                         Swal.fire('Error!', 'Terjadi kesalahan. Silakan coba lagi.', 'error');
@@ -220,20 +235,20 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 });
 
-function openAddPerangkatModal() {
+function openAddFasilitasModal() {
     // Reset form
-    $('#addPerangkatForm')[0].reset();
+    $('#addFasilitasForm')[0].reset();
     
     // Reset and disable dependent dropdowns
     $('#siteAdd').html('<option value="">Pilih Site</option>').prop('disabled', true);
     $('#no_rack').html('<option value="">Pilih No Rack</option>').prop('disabled', true);
     
     // Show modal
-    document.getElementById("addPerangkatModal").style.display = "flex";
+    document.getElementById("addFasilitasModal").style.display = "flex";
 }
 
-function closeAddPerangkatModal() {
-    document.getElementById("addPerangkatModal").style.display = "none";
+function closeAddFasilitasModal() {
+    document.getElementById("addFasilitasModal").style.display = "none";
 }
 
 function showSwal(type, message) {

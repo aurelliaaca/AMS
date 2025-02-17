@@ -12,15 +12,15 @@ class ListPerangkat extends Model
     protected $table = 'listperangkat';
     public $timestamps = false; // Disable automatic timestamps
 
-    protected $primaryKey = 'WDM'; // Tambahkan ini untuk memastikan primary key benar
+    protected $primaryKey = 'id_perangkat'; // Tambahkan ini untuk memastikan primary key benar
 
     protected $fillable = [
-        'WDM',
+        'id_perangkat',
         'kode_region',
         'kode_site',
         'no_rack',
-        'kode_pkt',
-        'pkt_ke',
+        'kode_perangkat',
+        'perangkat_ke',
         'kode_brand',
         'type',
         'uawal',
@@ -37,9 +37,9 @@ class ListPerangkat extends Model
         return $this->belongsTo(Site::class, 'kode_site', 'kode_site');
     }
 
-    public function perangkat()
+    public function jenisperangkat()
     {
-        return $this->belongsTo(Perangkat::class, 'kode_pkt', 'kode_pkt');
+        return $this->belongsTo(JenisPerangkat::class, 'kode_perangkat', 'kode_perangkat');
     }
 
     public function brand()
@@ -54,26 +54,26 @@ class ListPerangkat extends Model
         // Trigger untuk CREATE
         static::created(function ($perangkat) {
             try {
-                \Log::info('Creating history for new perangkat: ' . $perangkat->WDM);
+                \Log::info('Creating history for new perangkat: ' . $perangkat->id_perangkat);
                 
                 // Reload perangkat dengan relasi
                 $perangkat->load(['region', 'site', 'perangkat', 'brand']);
 
                 // Debug log
                 \Log::info('Data for history:', [
-                    'WDM' => $perangkat->WDM,
-                    'kode_pkt' => $perangkat->kode_pkt,
+                    'id_perangkat' => $perangkat->id_perangkat,
+                    'kode_perangkat' => $perangkat->kode_perangkat,
                     'perangkat_data' => $perangkat->toArray()
                 ]);
 
-                $maxWdm = ListPerangkat::max('WDM') ?? 0;
-                $newWdm = $maxWdm;
+                $maxid_perangkat = ListPerangkat::max('id_perangkat') ?? 0;
+                $newid_perangkat = $maxid_perangkat;
 
                 HistoriPerangkat::create([
-                    'idHiPe' => $newWdm,
+                    'idHiPe' => $newid_perangkat,
                     'region' => $perangkat->region ? $perangkat->region->nama_region : '-',
                     'site' => $perangkat->site ? $perangkat->site->nama_site : '-',
-                    'nama_perangkat' => $perangkat->perangkat ? $perangkat->perangkat->nama_pkt : '-',
+                    'nama_perangkat' => $perangkat->jenisperangkat ? $perangkat->jenisperangkat->nama_perangkat : '-',
                     'brand' => $perangkat->brand ? $perangkat->brand->nama_brand : '-',
                     'type' => $perangkat->type ?? '-',
                     'no_rack' => $perangkat->no_rack ?? '-',
@@ -97,10 +97,10 @@ class ListPerangkat extends Model
                 $perangkat->load(['region', 'site', 'perangkat', 'brand']);
 
                 HistoriPerangkat::create([
-                    'idHiPe' => $perangkat->WDM,
+                    'idHiPe' => $perangkat->id_perangkat,
                     'region' => $perangkat->region ? $perangkat->region->nama_region : '-',
                     'site' => $perangkat->site ? $perangkat->site->nama_site : '-',
-                    'nama_perangkat' => $perangkat->perangkat ? $perangkat->perangkat->nama_pkt : '-',
+                    'nama_perangkat' => $perangkat->jenisperangkat ? $perangkat->jenisperangkat->nama_perangkat : '-',
                     'brand' => $perangkat->brand ? $perangkat->brand->nama_brand : '-',
                     'type' => $perangkat->type ?? '-',
                     'no_rack' => $perangkat->no_rack ?? '-',
@@ -120,16 +120,16 @@ class ListPerangkat extends Model
         // Trigger untuk DELETE
         static::deleted(function ($perangkat) {
             try {
-                \Log::info('Creating history for deleted perangkat: ' . $perangkat->WDM);
+                \Log::info('Creating history for deleted perangkat: ' . $perangkat->id_perangkat);
                 
                 // Untuk delete, kita gunakan data yang sudah ada di model
                 $regionName = $perangkat->region ? $perangkat->region->nama_region : '-';
                 $siteName = $perangkat->site ? $perangkat->site->nama_site : '-';
-                $perangkatName = $perangkat->perangkat ? $perangkat->perangkat->nama_pkt : '-';
+                $perangkatName = $perangkat->jenisperangkat ? $perangkat->jenisperangkat->nama_perangkat : '-';
                 $brandName = $perangkat->brand ? $perangkat->brand->nama_brand : '-';
 
                 HistoriPerangkat::create([
-                    'idHiPe' => $perangkat->WDM,
+                    'idHiPe' => $perangkat->id_perangkat,
                     'region' => $regionName,
                     'site' => $siteName,
                     'nama_perangkat' => $perangkatName,

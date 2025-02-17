@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AlatukurController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\UserController;
@@ -7,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\PerangkatController;
+use App\Http\Controllers\FasilitasController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -73,22 +75,25 @@ Route::middleware('auth')->group(function () {
     // PERANGKAT
     Route::get('/perangkat', [PerangkatController::class, 'perangkat'])->name('perangkat');
     Route::get('/get-perangkat', [PerangkatController::class, 'getPerangkat']);
-    Route::get('/get-perangkat/{wdm}', [PerangkatController::class, 'getPerangkatById']);
+    Route::get('/get-perangkat/{id_perangkat}', [PerangkatController::class, 'getPerangkatById']);
     Route::post('/store-perangkat', [PerangkatController::class, 'store']);
-    Route::put('/update-perangkat/{wdm}', [PerangkatController::class, 'update']);
-    Route::delete('/delete-perangkat/{wdm}', [PerangkatController::class, 'destroy']);
+    Route::put('/update-perangkat/{id_perangkat}', [PerangkatController::class, 'update']);
+    Route::delete('/delete-perangkat/{id_perangkat}', [PerangkatController::class, 'destroy']);
     Route::get('/get-sites', [PerangkatController::class, 'getSites']);
-    Route::get('/histori-perangkat/{wdm}', [PerangkatController::class, 'showHistori']);
-    // Route::get('/get-jml_rack', [PerangkatController::class, 'getJmlRack']);
+    Route::get('/histori-perangkat/{id_perangkat}', [PerangkatController::class, 'showHistori']);
     Route::get('/get-site-rack', [PerangkatController::class, 'getSiteRack']);
     
 
     // FASILITAS
-    Route::get('/fasilitas', [AsetController::class, 'fasilitas'])->name('fasilitas');
-    Route::post('/store-fasilitas', [AsetController::class, 'store'])->name('fasilitas.store');
-    Route::put('/update-fasilitas/{urutan}', [AsetController::class, 'update'])->name('fasilitas.update');
-    Route::delete('/delete-fasilitas/{urutan}', [AsetController::class, 'destroy'])->name('fasilitas.destroy');
-    Route::put('/update-fasilitas/{urutan}', [AsetController::class, 'editFasilitas'])->name('fasilitas.update');
+    Route::get('/fasilitas', [FasilitasController::class, 'fasilitas'])->name('fasilitas');
+    Route::get('/get-fasilitas', [FasilitasController::class, 'getFasilitas']);
+    Route::get('/get-fasilitas/{id_fasilitas}', [FasilitasController::class, 'getFasilitasById']);
+    Route::post('/store-fasilitas', [FasilitasController::class, 'store']);
+    Route::put('/update-fasilitas/{id_fasilitas}', [FasilitasController::class, 'update']);
+    Route::delete('/delete-fasilitas/{id_fasilitas}', [FasilitasController::class, 'destroy']);
+    Route::get('/get-sites', [FasilitasController::class, 'getSites']);
+    Route::get('/histori-fasilitas/{id_fasilitas}', [FasilitasController::class, 'showHistori']);
+    Route::get('/get-site-rack', [FasilitasController::class, 'getSiteRack']);
 
 
     // JARINGAN
@@ -103,14 +108,13 @@ Route::middleware('auth')->group(function () {
 
 
     // ALAT UKUR
-    Route::prefix('alatukur')->group(function () {
-        Route::get('/', [AsetController::class, 'alatukur'])->name('alatukur');
-        Route::post('/', [AsetController::class, 'storeAlatUkur'])->name('alatukur.store');
-        Route::get('/{urutan}', [AsetController::class, 'getAlatUkurById'])->name('alatukur.show');
-        Route::put('/{urutan}', [AsetController::class, 'updateAlatUkur'])->name('alatukur.update');
-        Route::delete('/delete/{urutan}', [AsetController::class, 'destroyAlatUkur'])->name('alatukur.destroy');
-    });
-
+    Route::get('/alatukur', [AlatukurController::class, 'alatukur'])->name('alatukur');
+    Route::get('/get-alatukur', [AlatukurController::class, 'getAlatukur']);
+    Route::get('/get-alatukur/{id_alatukur}', [AlatukurController::class, 'getAlatukurById']);
+    Route::post('/store-alatukur', [AlatukurController::class, 'store']);
+    Route::put('/update-alatukur/{id_alatukur}', [AlatukurController::class, 'update']);
+    Route::delete('/delete-alatukur/{id_alatukur}', [AlatukurController::class, 'destroy']);
+    Route::get('/histori-alatukur/{id_alatukur}', [AlatukurController::class, 'showHistori']);
 
     // AKUN
     // PROFIL

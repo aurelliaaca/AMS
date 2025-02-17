@@ -12,8 +12,8 @@
         <div class="container">
             <div class="header">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Perangkat</h3>
-                    <button class="add-button" onclick="openAddPerangkatModal()">Tambah Perangkat</button>
+                    <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Alatukur</h3>
+                    <button class="add-button" onclick="openAddAlatukurModal()">Tambah Alatukur</button>
                 </div>
             </div>
             
@@ -28,16 +28,10 @@
                 </div>
 
                 <div>
-                    <select id="site" name="site[]" multiple data-placeholder="Pilih Site" disabled>
-                        <option value="" disabled>Pilih Site</option>
-                    </select>
-                </div>
-
-                <div>
-                    <select id="jenisperangkat" name="jenisperangkat[]" multiple data-placeholder="Pilih Jenis Perangkat">
-                        <option value="" disabled>Pilih Jenis Perangkat</option>
-                        @foreach ($listpkt as $perangkat)
-                            <option value="{{ $perangkat->kode_perangkat }}">{{ $perangkat->nama_perangkat }}</option>
+                    <select id="jenisalatukur" name="jenisalatukur[]" multiple data-placeholder="Pilih Jenis Alatukur">
+                        <option value="" disabled>Pilih Jenis Alatukur</option>
+                        @foreach ($listpkt as $alatukur)
+                            <option value="{{ $alatukur->kode_alatukur }}">{{ $alatukur->nama_alatukur }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -57,15 +51,13 @@
             </div>
 
             <div class="table-container">
-                <table id="tablePerangkat">
+                <table id="tableAlatukur">
                     <thead>
                         <tr>
                             <th>No</th>
                             <th>Hostname</th>
                             <th>Region</th>
-                            <th>POP</th>
-                            <th>No Rack</th>
-                            <th>Perangkat</th>
+                            <th>Alat ukur</th>
                             <th>Brand</th>
                             <th>Type</th>
                             <th>Aksi</th>
@@ -77,9 +69,9 @@
         </div>
     </div>
 
-    @include('aset.perangkat.add-perangkat')
-    @include('aset.perangkat.edit-perangkat')
-    @include('aset.perangkat.lihat-perangkat')
+    @include('aset.alatukur.add-alatukur')
+    @include('aset.alatukur.edit-alatukur')
+    @include('aset.alatukur.lihat-alatukur')
 
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
@@ -88,92 +80,63 @@
 
     <script>
     $(document).ready(function() {
-        // Update the Select2 initialization
-        $('#region, #site, #jenisperangkat, #brand').select2({
+        $('#region, #jenisalatukur, #brand').select2({
             placeholder: function() {
                 return $(this).data('placeholder');
             },
             allowClear: true
         });
 
-            // Event handlers untuk filter
-            $('#region').change(function() {
-                const selectedRegions = $(this).val();
-                $('#site').prop('disabled', true).empty().append('<option value="">Pilih Site</option>');
-
-                if (selectedRegions && selectedRegions.length > 0) {
-                    $.get('/get-sites', { regions: selectedRegions }, function(data) {
-                        $('#site').prop('disabled', false);
-                        $.each(data, function(key, value) {
-                            $('#site').append(new Option(value, key));
-                        });
-                    });
-                }
-
-                LoadData(selectedRegions);
-            });
-
-            ['#site', '#jenisperangkat', '#brand'].forEach(selector => {
+        ['#region', '#jenisalatukur', '#brand'].forEach(selector => {
             $(selector).change(function() {
                 LoadData(
                     $('#region').val(),
-                    $('#site').val(),
-                    $('#jenisperangkat').val(),
+                    $('#jenisalatukur').val(),
                     $('#brand').val()
                 );
             });
         });
 
-            // Inisialisasi awal
-            LoadData();
-        });
+        LoadData();
+    });
 
-        function LoadData(regions = [], sites = [], jenisperangkat = [], brands = []) {
-        $.get('/get-perangkat', { 
-            region: regions, 
-            site: sites, 
-            jenisperangkat: jenisperangkat,
-            brand: brands 
-        }, function(response) {
-            const tbody = $('#tablePerangkat tbody');
+    function LoadData(regions = [], jenisalatukur = [], brands = []) {
+        $.get('/get-alatukur', { region: regions, jenisalatukur: jenisalatukur, brand: brands }, function(response) {
+            const tbody = $('#tableAlatukur tbody');
             tbody.empty();
 
-            if (response.perangkat.length === 0) {
-                tbody.append('<tr><td colspan="8" class="text-center">Tidak ada data perangkat</td></tr>');
+            if (response.alatukur.length === 0) {
+                tbody.append('<tr><td colspan="8" class="text-center">Tidak ada data alatukur</td></tr>');
                 return;
             }
 
-            $.each(response.perangkat, function(index, perangkat) {
-                const kodePerangkat = [
-                    perangkat.kode_region, 
-                    perangkat.kode_site, 
-                    perangkat.no_rack, 
-                    perangkat.kode_perangkat, 
-                    perangkat.perangkat_ke, 
-                    perangkat.kode_brand, 
-                    perangkat.type
+            $.each(response.alatukur, function(index, alatukur) {
+                const kodeAlatukur = [
+                    alatukur.kode_region, 
+                    alatukur.kode_alatukur, 
+                    alatukur.alatukur_ke, 
+                    alatukur.kode_brand, 
+                    alatukur.type
                 ].filter(val => val !== null && val !== undefined && val !== '').join('-');
 
                 tbody.append(`
                     <tr>
                         <td>${index + 1}</td>
-                        <td>${kodePerangkat || '-'}</td>
-                        <td>${perangkat.nama_region}</td>
-                        <td>${perangkat.nama_site || '-'}</td>
-                        <td>${perangkat.no_rack || '-'}</td>
-                        <td>${perangkat.nama_perangkat || '-'}</td>
-                        <td>${perangkat.nama_brand || '-'}</td>
-                        <td>${perangkat.type || '-'}</td>
+                        <td>${kodeAlatukur || '-'}</td>
+                        <td>${alatukur.nama_region}</td>
+                        <td>${alatukur.nama_alatukur || '-'}</td>
+                        <td>${alatukur.nama_brand || '-'}</td>
+                        <td>${alatukur.type || '-'}</td>
                         <td>
-                            <button onclick="lihatPerangkat(${perangkat.id_perangkat})"
+                            <button onclick="lihatAlatukur(${alatukur.id_alatukur})"
                                 style="background-color: #9697D6; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
                                 Lihat detail
                             </button>
-                            <button onclick="editPerangkat(${perangkat.id_perangkat})" 
+                            <button onclick="editAlatukur(${alatukur.id_alatukur})" 
                                 style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
                                 Edit
                             </button>
-                            <button onclick="deletePerangkat(${perangkat.id_perangkat})"
+                            <button onclick="deleteAlatukur(${alatukur.id_alatukur})"
                                 style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
                                 Delete
                             </button>
@@ -182,13 +145,13 @@
                 `);
             });
         }).fail(function() {
-            const tbody = $('#tablePerangkat tbody');
+            const tbody = $('#tableAlatukur tbody');
             tbody.empty().append('<tr><td colspan="8" class="text-center">Terjadi kesalahan dalam memuat data</td></tr>');
         });
     }
 
-    function deletePerangkat(id_perangkat) {
-        console.log("Delete function called with id_perangkat:", id_perangkat); // Debugging line
+    function deleteAlatukur(id_alatukur) {
+        console.log("Delete function called with id_alatukur:", id_alatukur); // Debugging line
         Swal.fire({
             title: 'Apakah Anda yakin?',
             text: "Data yang dihapus tidak dapat dikembalikan!",
@@ -201,14 +164,14 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `/delete-perangkat/${id_perangkat}`,
+                    url: `/delete-alatukur/${id_alatukur}`,
                     type: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
                         if (response.success) {
-                            Swal.fire('Terhapus!', 'Perangkat berhasil dihapus.', 'success');
+                            Swal.fire('Terhapus!', 'Alatukur berhasil dihapus.', 'success');
                             LoadData();
                         } else {
                             Swal.fire('Error!', response.message || 'Terjadi kesalahan saat menghapus', 'error');
@@ -216,7 +179,7 @@
                     },
                     error: function(xhr) {
                         console.error('Error:', xhr);
-                        Swal.fire('Error!', 'Terjadi kesalahan saat menghapus perangkat', 'error');
+                        Swal.fire('Error!', 'Terjadi kesalahan saat menghapus alatukur', 'error');
                     }
                 });
             }
@@ -226,7 +189,7 @@
     function searchTable() {
         const input = document.getElementById('searchInput');
         const filter = input.value.toLowerCase();
-        const table = document.querySelector('#tablePerangkat');
+        const table = document.querySelector('#tableAlatukur');
         const rows = table.getElementsByTagName('tr');
 
         for (let i = 1; i < rows.length; i++) {
@@ -241,6 +204,5 @@
             rows[i].style.display = found ? '' : 'none';
         }
     }
-    
     </script>
 @endsection

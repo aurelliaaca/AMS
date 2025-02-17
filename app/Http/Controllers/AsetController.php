@@ -82,8 +82,8 @@ class AsetController extends Controller
         $perangkat->whereIn('listperangkat.kode_brand', $request->brand);
     }
 
-    // Urutkan perangkat berdasarkan WDM secara ascending
-    $perangkat->orderBy('listperangkat.WDM', 'asc');
+    // Urutkan perangkat berdasarkan id_perangkat secara ascending
+    $perangkat->orderBy('listperangkat.id_perangkat', 'asc');
 
     $listPerangkat = $perangkat->get();
 
@@ -133,13 +133,13 @@ public function store(Request $request)
         // Debug: lihat data yang diterima
         \Log::info('Received data:', $request->all());
 
-        // Mendapatkan nilai WDM tertinggi dan tambahkan 1
-        $maxWdm = ListPerangkat::max('WDM') ?? 0;
-        $newWdm = $maxWdm + 1;
+        // Mendapatkan nilai id_perangkat tertinggi dan tambahkan 1
+        $maxid_perangkat = ListPerangkat::max('id_perangkat') ?? 0;
+        $newid_perangkat = $maxid_perangkat + 1;
 
-        // Menyimpan perangkat dengan WDM baru
+        // Menyimpan perangkat dengan id_perangkat baru
         $perangkat = ListPerangkat::create([
-            'WDM' => $newWdm,
+            'id_perangkat' => $newid_perangkat,
             'kode_region' => $request->kode_region,
             'kode_site' => $request->kode_site,
             'kode_pkt' => $request->kode_pkt,
@@ -209,9 +209,9 @@ public function getPop(Request $request)
         return view('aset.alatukur', compact('alat_ukur', 'regions'));
     }
 
-    public function getPerangkatById($wdm)
+    public function getPerangkatById($id_perangkat)
     {
-        $perangkat = ListPerangkat::where('wdm', $wdm)->first();
+        $perangkat = ListPerangkat::where('id_perangkat', $id_perangkat)->first();
         
         if ($perangkat) {
             return response()->json([
@@ -226,15 +226,15 @@ public function getPop(Request $request)
         ], 404);
     }
 
-    public function destroy($wdm)
+    public function destroy($id_perangkat)
     {
         try {
-            \Log::info('Attempting to delete perangkat with WDM: ' . $wdm);
+            \Log::info('Attempting to delete perangkat with id_perangkat: ' . $id_perangkat);
             
-            $perangkat = ListPerangkat::where('WDM', $wdm)->first();
+            $perangkat = ListPerangkat::where('id_perangkat', $id_perangkat)->first();
             
             if (!$perangkat) {
-                \Log::warning('Perangkat not found with WDM: ' . $wdm);
+                \Log::warning('Perangkat not found with id_perangkat: ' . $id_perangkat);
                 return response()->json([
                     'success' => false,
                     'message' => 'Perangkat tidak ditemukan'
@@ -248,7 +248,7 @@ public function getPop(Request $request)
                 $perangkat->delete();
                 DB::commit();
                 
-                \Log::info('Successfully deleted perangkat with WDM: ' . $wdm);
+                \Log::info('Successfully deleted perangkat with id_perangkat: ' . $id_perangkat);
                 
                 return response()->json([
                     'success' => true,
@@ -270,7 +270,7 @@ public function getPop(Request $request)
         }
     }
 
-    public function update(Request $request, $wdm)
+    public function update(Request $request, $id_perangkat)
     {
         try {
             // Validasi input
@@ -289,7 +289,7 @@ public function getPop(Request $request)
             // Debug: lihat data yang diterima
             \Log::info('Update received data:', $request->all());
 
-            $perangkat = ListPerangkat::where('WDM', $wdm)->first();
+            $perangkat = ListPerangkat::where('id_perangkat', $id_perangkat)->first();
             
             if (!$perangkat) {
                 return response()->json([

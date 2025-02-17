@@ -252,10 +252,10 @@
                 <a href="{{ route('fasilitas') }}"><span class="material-symbols-outlined"> domain </span>Fasilitas</a>
             </li>
             <li>
-                <a href="{{ route('jaringan') }}"><span class="material-symbols-outlined"> hub </span>Jaringan</a>
+                <a href="{{ route('alatukur') }}"><span class="material-symbols-outlined"> square_foot </span>Alat Ukur</a>
             </li>
             <li>
-                <a href="{{ route('alatukur') }}"><span class="material-symbols-outlined"> square_foot </span>Alat Ukur</a>
+                <a href="{{ route('jaringan') }}"><span class="material-symbols-outlined"> hub </span>Jaringan</a>
             </li>
             <!-- <li>
                 <a href="#"><span class="material-symbols-outlined">notifications_active </span>Notifications</a>
