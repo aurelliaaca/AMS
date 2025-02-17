@@ -2,9 +2,20 @@
 
 @section('content')
 
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Pastikan jQuery dan SweetAlert2 dimuat -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- Kemudian impor Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- Meta tag CSRF -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -282,7 +293,7 @@
             <select id="roFilter" onchange="filterTable()">
                 <option value="">Pilih RO</option>
                 @foreach ($regions as $region)
-                    <option value="{{ $region->nama_region }}">{{ $region->nama_region }}</option>
+                    <option value="{{ strtolower($region->nama_region) }}">{{ $region->nama_region }}</option>
                 @endforeach
             </select>
 
@@ -298,7 +309,7 @@
                 <thead>
                     <tr>
                         <th class="no">No</th>
-                        <th>RO</th>
+                        <th>Region</th>
                         <th>Kode</th>
                         <th>Nama Alat</th>
                         <th>Merk</th>
@@ -312,7 +323,7 @@
                     @foreach($alat_ukur as $alat)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $alat->RO }}</td>
+                        <td class="ro">{{ $alat->RO }}</td>
                         <td>{{ $alat->kode }}</td>
                         <td class="nama-alat">{{ $alat->nama_alat }}</td>
                         <td>{{ $alat->merk }}</td>
@@ -417,9 +428,13 @@
         const roFilter = document.getElementById("roFilter").value.toLowerCase();
         const rows = document.querySelectorAll("#alatukurTable tbody tr");
 
+        console.log("Filter value:", roFilter); // Debugging log
+
         rows.forEach(row => {
             const roCell = row.querySelector(".ro").textContent.toLowerCase();
             const matchesRO = roFilter === "" || roCell.includes(roFilter);
+
+            console.log("RO Cell:", roCell, "Matches:", matchesRO); // Debugging log
 
             if (matchesRO) {
                 row.style.display = ""; // Menampilkan baris
@@ -520,6 +535,7 @@
             },
             success: function(response) {
                 if(response.success) {
+                    closeAddAlatUkurModal();
                     Swal.fire({
                         title: 'Berhasil!',
                         text: response.message,
@@ -527,10 +543,10 @@
                     }).then(() => {
                         location.reload();
                     });
-                    closeAddAlatUkurModal();
                 }
             },
             error: function(xhr) {
+                closeAddAlatUkurModal();
                 Swal.fire({
                     title: 'Error!',
                     text: 'Terjadi kesalahan saat menyimpan data',
