@@ -38,35 +38,88 @@
             gap: 15px;
         }
         
-        .dropdown-container {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            width: 100%;
-        }
-        
-        .dropdown-container > * {
-            flex: 1;
-        }
-        
-        select, .search-bar input {
-            width: 100%;
-            font-size: 12px;
-            padding: 12px 12px;
-            border: 1px solid #4f52ba;
-            border-radius: 5px;
-            background-color: #fff;
-            transition: border-color 0.3s;
-        }
-        
-        .search-bar input {
-            outline: none;
-        }
-        
-        select:focus, .search-bar input:focus {
-            border-color: #4f52ba;
-            box-shadow: 0 0 5px rgba(79, 82, 186, 0.5);
-        }
+/* -------------------------- FILTER -------------------------- */
+.dropdown-container {
+    display: flex;
+    gap: 15px; /* Jarak antar elemen tetap */
+    align-items: center;
+    width: 100%;
+}
+
+/* Menyamakan ukuran dropdown dan search bar */
+.dropdown-container select, 
+.dropdown-container .search-bar input {
+    flex: 1; /* Membuat elemen mengambil ruang yang tersedia secara proporsional */
+    font-size: 12px;
+    padding: 10px 12px; /* Padding lebih kecil agar lebih compact */
+    border: 1px solid #4f52ba;
+    border-radius: 5px;
+    max-width: 1500px; 
+    background-color: #fff;
+    height: 40px; /* Tinggi seragam */
+    appearance: none; /* Menghilangkan default styling bawaan browser */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
+    text-overflow: '';
+}
+
+/* Menghilangkan ikon dropdown (caret) di sebelah kanan */
+.dropdown-container select {
+    background-image: none !important;
+    cursor: pointer;
+    max-height: 300px; /* Menambahkan batas tinggi untuk memungkinkan scroll */
+    overflow-y: auto; /* Menambahkan scroll vertikal */
+}
+
+/* Styling khusus untuk search bar */
+.search-bar {
+    flex: 1; /* Memastikan search bar mengambil ruang yang tersedia */
+}
+
+.search-bar input {
+    outline: none;
+    width: 100%; /* Memastikan panjang search bar sama dengan dropdown */
+}
+
+/* Fokus pada input dan select */
+.dropdown-container select:focus, 
+.dropdown-container .search-bar input:focus {
+    border-color: #4f52ba;
+    box-shadow: 0 0 4px #4f52ba;
+}
+
+/* Mengubah warna dropdown saat dipilih */
+.dropdown-container select:focus {
+    background-color: #fff; /* Warna tetap putih saat fokus */
+}
+
+/* Menambahkan scrollbar pada dropdown */
+.dropdown-container select {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #4f52ba #f1f1f1;
+}
+
+.dropdown-container select::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dropdown-container select::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+/* Mengubah warna dropdown saat dipilih */
+.dropdown-container select option:checked,
+.dropdown-container select option:focus,
+.dropdown-container select option:hover {
+    background-color: #4f52ba !important;
+    color: white !important;
+}
+
+
+
+
         
         .table-container {
             width: 100%;
@@ -316,7 +369,7 @@
             <select id="roFilter" onchange="filterTable()">
                 <option value="">Pilih Region</option>
                 @foreach ($regions as $region)
-                    <option value="{{ $region->kode_region }}">{{ $region->nama_region }}</option>
+                <option value="{{ strtolower($region->nama_region) }}">{{ $region->nama_region }}</option>
                 @endforeach
             </select>
             <!-- Dropdown Tipe Jaringan -->
@@ -370,9 +423,15 @@
                 <td style="border-bottom: 1px solid #ddd; padding: 10px; text-align: center;">{{ $data->status }}</td>
                 <td style="border-bottom: 1px solid #ddd; padding: 10px;">
                     <div style="display: flex; gap: 8px; justify-content: flex-end; flex-wrap: nowrap;">
-                        <button class="detail-button" onclick="lihatDetail(this)" style="font-size: 0.8rem; padding: 6px 14px; background-color: #9697D6; color: white; border: none; border-radius: 5px; cursor: pointer; white-space: nowrap;">Lihat Detail</button>
-                        <button class="edit-btn" onclick="editJaringan('{{ $data->id_jaringan }}')" style="font-size: 0.8rem; padding: 6px 10px; background-color: #4f52ba; color: white; border: none; border-radius: 5px; cursor: pointer;">Edit</button>
-                        <button class="delete-btn" onclick="deleteJaringan('{{ $data->id_jaringan }}')" style="font-size: 0.8rem; padding: 6px 10px; background-color: #danger; color: white; border: none; border-radius: 5px; cursor: pointer;">Hapus</button>
+                        <button class="detail-button" onclick="lihatDetail(this)" style="background-color: #9697D6; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-right: 5px;">
+                            Lihat Detail
+                        </button>
+                        <button class="edit-btn" onclick="editJaringan('{{ $data->id_jaringan }}')" style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-right: 5px;">
+                            Edit
+                        </button>
+                        <button class="delete-btn" onclick="deleteJaringan('{{ $data->id_jaringan }}')" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                            Hapus
+                        </button>
                     </div>
                 </td>
             </tr>
