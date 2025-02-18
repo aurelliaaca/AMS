@@ -105,6 +105,7 @@ select:focus, .search-bar input:focus {
     color: #fff;
 }
 
+/* -------------------------- TABEL -------------------------- */
 .table-container {
     width: 100%;
     overflow-x: auto;
@@ -197,6 +198,7 @@ th:last-child, td:last-child {
     z-index: 9999;
 }
 
+
 .modal-content {
     background-color: #fff;
     padding: 30px;
@@ -204,6 +206,8 @@ th:last-child, td:last-child {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     width: 500px;
     position: relative;
+    max-height: 80vh; /* Tentukan tinggi maksimal */
+    overflow-y: auto; /* Aktifkan scroll jika konten melebihi tinggi */
 }
 
 .modal-content h2 {
@@ -325,7 +329,7 @@ th:last-child, td:last-child {
     gap: 10px;
     margin-top: 20px;
 }
-
+/* -------------------------- PAGINATION -------------------------- */
 .pagination-btn {
     background-color: #4f52ba;
     color: white;
@@ -340,6 +344,7 @@ th:last-child, td:last-child {
     background-color: #9697D6;
 }
 
+/* -------------------------- CARD -------------------------- */
 .card-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -414,14 +419,12 @@ th:last-child, td:last-child {
     border-radius: 4px;
 }
 
-/* Grid layout untuk cards dengan responsive columns */
 .cards-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 25px;
 }
 
-/* Styling untuk setiap card */
 .card {
     background: white;
     border-radius: 15px;
@@ -430,13 +433,11 @@ th:last-child, td:last-child {
     overflow: hidden;
 }
 
-/* Efek hover pada card */
 .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Header dari card */
 .card-header {
     padding: 20px;
     display: flex;
@@ -444,7 +445,6 @@ th:last-child, td:last-child {
     gap: 15px;
 }
 
-/* Wrapper untuk icon */
 .icon-wrapper {
     width: 50px;
     height: 50px;
@@ -454,24 +454,20 @@ th:last-child, td:last-child {
     justify-content: center;
 }
 
-/* Style untuk icon */
 .icon-wrapper i {
     font-size: 24px;
     color: white;
 }
 
-/* Gradient background untuk setiap icon */
 .pop-icon { background: linear-gradient(135deg, #4f52ba, #6366F1); }
 .facility-icon { background: linear-gradient(135deg, #2DD4BF, #14B8A6); }
 .device-icon { background: linear-gradient(135deg, #F59E0B, #D97706); }
 .rack-icon { background: linear-gradient(135deg, #EC4899, #DB2777); }
 
-/* Text container dalam header */
 .header-text {
     flex-grow: 1;
 }
 
-/* Judul dalam card */
 .header-text h3 {
     color: #2c3e50;
     font-size: 18px;
@@ -479,27 +475,23 @@ th:last-child, td:last-child {
     margin: 0 0 5px 0;
 }
 
-/* Angka count */
 .count {
     font-size: 24px;
     font-weight: 700;
     color: #4f52ba;
 }
 
-/* Body card */
 .card-body {
     padding: 20px;
     border-top: 1px solid #f0f0f0;
 }
 
-/* Teks dalam body */
 .card-body p {
     color: #64748b;
     font-size: 14px;
     margin-bottom: 15px;
 }
 
-/* Tombol view detail */
 .view-btn {
     width: 100%;
     background: #f8fafc;
@@ -517,25 +509,21 @@ th:last-child, td:last-child {
     transition: all 0.3s ease;
 }
 
-/* Efek hover pada tombol */
 .view-btn:hover {
     background: #4f52ba;
     color: white;
     border-color: #4f52ba;
 }
 
-/* Icon dalam tombol */
 .view-btn i {
     font-size: 12px;
     transition: transform 0.3s ease;
 }
 
-/* Animasi icon saat hover */
 .view-btn:hover i {
     transform: translateX(4px);
 }
 
-/* Responsive design untuk layar kecil */
 @media (max-width: 768px) {
     .container {
         padding: 20px;
@@ -548,7 +536,6 @@ th:last-child, td:last-child {
     }
 }
 
-/* Membuat background tetap gradient seperti sebelumnya */
 .icon-wrapper {
     width: 60px;
     height: 60px;
@@ -558,7 +545,6 @@ th:last-child, td:last-child {
     justify-content: center;
 }
 
-/* Membuat ikon menjadi lebih besar dan berwarna putih */
 .icon-wrapper .material-symbols-outlined {
     font-size: 36px;
     color: white;

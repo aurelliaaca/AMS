@@ -14,7 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Exception;
 use Illuminate\Support\Facades\Storage;
-use App\Imports\ImportPerangkat;
+// use App\Imports\ImportPerangkat;
 use Illuminate\Support\Facades\Log;
 
 class PerangkatController extends Controller
@@ -255,7 +255,7 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
             'errors' => $e->errors(),
         ], 422);
 
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         \Log::error('Unexpected Error in store method:', [
             'message' => $e->getMessage(),
             'trace' => $e->getTraceAsString(),
@@ -334,12 +334,12 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
                     'success' => true,
                     'message' => 'Perangkat berhasil dihapus'
                 ]);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 DB::rollback();
                 throw $e;
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \Log::error('Error deleting perangkat: ' . $e->getMessage());
             \Log::error($e->getTraceAsString());
             
@@ -403,15 +403,13 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
             }
         }
 
-        // Misal $fasilitas merupakan data fasilitas yang sedang diupdate
         if ($perangkat->kode_region !== $request->kode_region || $perangkat->kode_site !== $request->kode_site) {
             $lastPktKe = ListPerangkat::where('kode_region', $request->kode_region)
                             ->where('kode_site', $request->kode_site)
                             ->count();
             $pktKe = $lastPktKe + 1;
         } else {
-            // Jika tidak berubah, pertahankan nilai fasilitas_ke yang lama
-            $pktKe = $perangkat->fasilitas_ke;
+            $pktKe = $perangkat->perangkat_ke;
         }
 
         // Update data
@@ -444,7 +442,7 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
             'errors' => $e->errors(),
         ], 422);
 
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         // Debug: log error
         \Log::error('Error updating perangkat: ' . $e->getMessage());
         \Log::error($e->getTraceAsString());
@@ -471,7 +469,7 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
             return response()->json([
                 'jml_rack' => $site->jml_rack
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'jml_rack' => 0,
                 'error' => $e->getMessage()
@@ -482,8 +480,8 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
     public function showHistori($id_perangkat)
     {
         // Ambil data histori perangkat berdasarkan id_perangkat
-        $histori = HistoriPerangkat::where('idHiPe', $id_perangkat)
-            ->select('aksi', 'tanggal_perubahan')
+        $histori = HistoriPerangkat::where('id_perangkat', $id_perangkat)
+            ->select('keterangan', 'tanggal_perubahan')
             ->orderBy('tanggal_perubahan', 'desc')
             ->get();
 
@@ -494,50 +492,50 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
         ]);
     }
 
-    public function importPerangkat(Request $request)
-    {
-        try {
-            Log::info('Mulai proses import');
+//     public function importPerangkat(Request $request)
+//     {
+//         try {
+//             Log::info('Mulai proses import');
 
-            // Validasi file
-            $request->validate([
-                'file' => 'required|mimes:xlsx,xls,csv|max:2048'
-            ]);
+//             // Validasi file
+//             $request->validate([
+//                 'file' => 'required|mimes:xlsx,xls,csv|max:2048'
+//             ]);
 
-            if ($request->hasFile('file')) {
-                $file = $request->file('file');
-                $namafile = time() . '-' . $file->getClientOriginalName();
-                $filePath = 'ImportPerangkat/' . $namafile;
+//             if ($request->hasFile('file')) {
+//                 $file = $request->file('file');
+//                 $namafile = time() . '-' . $file->getClientOriginalName();
+//                 $filePath = 'ImportPerangkat/' . $namafile;
 
-                // Simpan file ke storage Laravel
-                Storage::put($filePath, file_get_contents($file));
+//                 // Simpan file ke storage Laravel
+//                 Storage::put($filePath, file_get_contents($file));
 
-                Log::info('File berhasil disimpan di storage: ' . $filePath);
+//                 Log::info('File berhasil disimpan di storage: ' . $filePath);
 
-}
+// }
 
-                // Debugging: Pastikan file ada
-                if (!Storage::exists($filePath)) {
-                    Log::error('File tidak ditemukan setelah disimpan!');
-                    return back()->with('error', 'Gagal menyimpan file.');
-                }
+//                 // Debugging: Pastikan file ada
+//                 if (!Storage::exists($filePath)) {
+//                     Log::error('File tidak ditemukan setelah disimpan!');
+//                     return back()->with('error', 'Gagal menyimpan file.');
+//                 }
 
-                // Debug: Cek path file
-                Log::info('Path file: ' . storage_path('app/' . $filePath));
+//                 // Debug: Cek path file
+//                 Log::info('Path file: ' . storage_path('app/' . $filePath));
 
-                // Import ke database
-                Excel::import(new ImportPerangkat, storage_path('app/' . $filePath));
+//                 // Import ke database
+//                 Excel::import(new ImportPerangkat, storage_path('app/' . $filePath));
 
-                Log::info('Import selesai tanpa error');
+//                 Log::info('Import selesai tanpa error');
 
-                return back()->with('success', 'Data perangkat berhasil diimpor.');
-            } else {
-                Log::warning('Tidak ada file yang diunggah');
-                return back()->with('error', 'Tidak ada file yang diunggah.');
-            }
-        } catch (Exception $e) {
-            Log::error('Error saat import: ' . $e->getMessage());
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
-        }
-    }
+//                 return back()->with('success', 'Data perangkat berhasil diimpor.');
+//             } else {
+//                 Log::warning('Tidak ada file yang diunggah');
+//                 return back()->with('error', 'Tidak ada file yang diunggah.');
+//             }
+//         } catch (Exception $e) {
+//             Log::error('Error saat import: ' . $e->getMessage());
+//             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+//         }
+//     }
 }

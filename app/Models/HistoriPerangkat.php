@@ -9,23 +9,24 @@ class HistoriPerangkat extends Model
 {
     use HasFactory;
 
-    protected $table = 'histori_perangkat';
+    protected $table = 'historiperangkat';
 
-    protected $primaryKey = 'idHiPe'; 
+    protected $primaryKey = 'id_perangkat'; 
     
     public $timestamps = false;
     
     protected $fillable = [
-        'idHiPe',
-        'region',
-        'site',
-        'nama_perangkat',
-        'brand',
-        'type',
+        'id_perangkat',
+        'kode_region',
+        'kode_site',
         'no_rack',
+        'kode_perangkat',
+        'perangkat_ke',
+        'kode_brand',
+        'type',
         'uawal',
         'uakhir',
-        'aksi',
+        'keterangan',
         'tanggal_perubahan'
     ];
 
@@ -37,7 +38,7 @@ class HistoriPerangkat extends Model
     // Relasi dengan model ListPerangkat
     public function perangkat()
     {
-        return $this->belongsTo(ListPerangkat::class, 'idHiPe', 'DWM');
+        return $this->belongsTo(ListPerangkat::class, 'id_perangkat', 'id_perangkat');
     }
 
 }

@@ -106,8 +106,8 @@ function lihatPerangkat(id_perangkat) {
 
                             tableBody.append(`
                                 <tr>
-                                    <td>${item.aksi}</td>
-                                    <td>${formattedTanggal}</td>
+                                    <td style="width: 50%; text-align: justify;">${item.keterangan}</td>
+                                    <td style="width: 50%;">${formattedTanggal}</td>
                                 </tr>
                             `);
                         });
@@ -125,5 +125,15 @@ function lihatPerangkat(id_perangkat) {
 }
 function closeLihatPerangkatModal() {
     document.getElementById("lihatPerangkatModal").style.display = "none";
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById("lihatPerangkatModal");
+    const modalContent = document.querySelector(".modal-content");
+
+    // Jika klik di luar modal-content, tutup modal
+    if (event.target === modal) {
+        closeLihatPerangkatModal();
+    }
 }
 </script>
