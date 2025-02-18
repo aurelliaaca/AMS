@@ -9,6 +9,13 @@ use App\Models\HistoriPerangkat;
 use Illuminate\Support\Facades\DB;
 use App\Models\Region;
 use App\Models\Site;
+use App\Models\ImportPerangkat;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Exception;
+use Illuminate\Support\Facades\Storage;
+use App\Imports\ImportPerangkat;
+use Illuminate\Support\Facades\Log;
 
 class PerangkatController extends Controller
 {
@@ -119,43 +126,11 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
     // site berdasarkan region
     public function getSites(Request $request)
     {
-        try {
-            // Debug log
-            \Log::info('getSites called with request:', $request->all());
-
-            // Ambil region dari request
-            $regionId = $request->input('regions');
-            
-            \Log::info('Region ID:', ['regionId' => $regionId]);
-
-            // Query untuk mendapatkan sites
-            $sites = DB::table('site')
-                ->where('kode_region', $regionId)
-                ->select('kode_site', 'nama_site')
-                ->get();
-
-            \Log::info('Found sites:', ['count' => $sites->count(), 'sites' => $sites->toArray()]);
-
-            // Format response
-            $formattedSites = [];
-            foreach ($sites as $site) {
-                $formattedSites[$site->kode_site] = $site->nama_site;
-            }
-
-            \Log::info('Formatted sites:', $formattedSites);
-
-            return response()->json($formattedSites);
-        } catch (\Exception $e) {
-            \Log::error('Error in getSites:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            
-            return response()->json([
-                'error' => 'Failed to fetch sites',
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        $sites = DB::table('site')
+            ->whereIn('kode_region', $request->kode_region)
+            ->get(['kode_site', 'nama_site']);
+        
+        return response()->json($sites);
     }
 
     // tambah
@@ -518,5 +493,51 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
             'histori' => $histori
         ]);
     }
+
+    public function importPerangkat(Request $request)
+    {
+        try {
+            Log::info('Mulai proses import');
+
+            // Validasi file
+            $request->validate([
+                'file' => 'required|mimes:xlsx,xls,csv|max:2048'
+            ]);
+
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                $namafile = time() . '-' . $file->getClientOriginalName();
+                $filePath = 'ImportPerangkat/' . $namafile;
+
+                // Simpan file ke storage Laravel
+                Storage::put($filePath, file_get_contents($file));
+
+                Log::info('File berhasil disimpan di storage: ' . $filePath);
+
 }
 
+                // Debugging: Pastikan file ada
+                if (!Storage::exists($filePath)) {
+                    Log::error('File tidak ditemukan setelah disimpan!');
+                    return back()->with('error', 'Gagal menyimpan file.');
+                }
+
+                // Debug: Cek path file
+                Log::info('Path file: ' . storage_path('app/' . $filePath));
+
+                // Import ke database
+                Excel::import(new ImportPerangkat, storage_path('app/' . $filePath));
+
+                Log::info('Import selesai tanpa error');
+
+                return back()->with('success', 'Data perangkat berhasil diimpor.');
+            } else {
+                Log::warning('Tidak ada file yang diunggah');
+                return back()->with('error', 'Tidak ada file yang diunggah.');
+            }
+        } catch (Exception $e) {
+            Log::error('Error saat import: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+}

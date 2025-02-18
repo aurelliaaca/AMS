@@ -96,10 +96,10 @@
                                     <td>{{ $item->kode_brand }}</td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="edit-btn" title="Edit" onclick="editInfoPerangkat({{ $item->id }})">
+                                            <button class="edit-btn" title="Edit" onclick="editBrandPerangkat({{ $item->id }})">
                                                 <span class="material-symbols-outlined">edit</span>
                                             </button>
-                                            <button class="delete-btn" title="Hapus" onclick="deleteInfoPerangkat({{ $item->id }})">
+                                            <button class="delete-btn" title="Hapus" onclick="deleteBrandPerangkat({{ $item->id }})">
                                                 <span class="material-symbols-outlined">delete</span>
                                             </button>
                                         </div>
@@ -351,7 +351,7 @@
                 <label for="kode_perangkat">Kode Perangkat</label>
                 <input type="text" id="kode_perangkat" name="kode_perangkat" required>
             </div>
-            <button type="submit" class="add-button">Simpan</button>
+            <button type="submit" class="submit-btn">Simpan</button>
         </form>
     </div>
 </div>
@@ -371,188 +371,205 @@
                 <label for="kode_brand">Kode Brand</label>
                 <input type="text" id="kode_brand" name="kode_brand" required>
             </div>
-            <button type="submit" class="add-button">Simpan</button>
+            <button type="submit" class="submit-btn">Simpan</button>
         </form>
     </div>
 </div>
 
+@push('scripts')
+<!-- Load jQuery first -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Load SweetAlert -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+<!-- Load Material Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+<!-- CSRF Token -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<!-- Your custom scripts -->
 <script>
 $(document).ready(function() {
+    // Debug
+    console.log('JavaScript loaded');
+
     // Setup AJAX CSRF
     $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
 
+
+
+    
     // ============== NAMA PERANGKAT OPERATIONS ==============
     // Open modal Nama Perangkat
-    window.openNamaPerangkatModal = function() {
+    function openNamaPerangkatModal() {
+        console.log('Opening Nama Perangkat Modal');
         $('#addNamaPerangkatModal').show();
-        $('#namaPerangkatForm')[0].reset();
-        $('#id-input-perangkat').remove();
     }
 
-    // Close modal Nama Perangkat
-    window.closeNamaPerangkatModal = function() {
+    function closeNamaPerangkatModal() {
         $('#addNamaPerangkatModal').hide();
     }
 
-    // Submit form Nama Perangkat
+    // Fungsi Modal Brand Perangkat
+    function openBrandPerangkatModal() {
+        console.log('Opening Brand Perangkat Modal');
+        $('#addBrandPerangkatModal').show();
+    }
+
+    function closeBrandPerangkatModal() {
+        $('#addBrandPerangkatModal').hide();
+    }
+
+    // Form Submit Nama Perangkat
     $('#namaPerangkatForm').submit(function(e) {
         e.preventDefault();
-        const id = $('#id-input-perangkat').val();
-        const url = id ? `/update-namaperangkat/${id}` : '/store-namaperangkat';
-        const method = id ? 'PUT' : 'POST';
-
+        console.log('Submitting Nama Perangkat Form');
+        
         $.ajax({
-            url: url,
-            type: method,
+            url: '/store-namaperangkat',
+            type: 'POST',
             data: $(this).serialize(),
             success: function(response) {
                 if (response.success) {
+                    swal("Berhasil!", "Data berhasil disimpan", "success");
                     closeNamaPerangkatModal();
-                    showSwal('success', id ? 'Perangkat berhasil diupdate!' : 'Perangkat berhasil ditambahkan!');
-                    window.location.reload();
+                    location.reload();
                 }
             },
             error: function(xhr) {
-                showSwal('error', 'Terjadi kesalahan');
+                swal("Error!", "Terjadi kesalahan", "error");
+                console.error(xhr.responseText);
             }
         });
     });
 
-    // Edit Nama Perangkat
-    window.editNamaPerangkat = function(id) {
-        $.get(`/get-namaperangkat/${id}`, function(response) {
-            if (response.success) {
-                const data = response.data;
-                $('#perangkat').val(data.perangkat);
-                $('#kode_perangkat').val(data.kode_perangkat);
-                $('#namaPerangkatForm').append(`<input type="hidden" id="id-input-perangkat" value="${data.id}">`);
-                openNamaPerangkatModal();
+    // Form Submit Brand Perangkat
+    $('#brandPerangkatForm').submit(function(e) {
+        e.preventDefault();
+        console.log('Submitting Brand Perangkat Form');
+        
+        $.ajax({
+            url: '/store-brandperangkat',
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.success) {
+                    swal("Berhasil!", "Data berhasil disimpan", "success");
+                    closeBrandPerangkatModal();
+                    location.reload();
+                }
+            },
+            error: function(xhr) {
+                swal("Error!", "Terjadi kesalahan", "error");
+                console.error(xhr.responseText);
             }
         });
-    }
+    });
+
+        // Edit Nama Perangkat
+        function editInfoPerangkat(id) {
+            console.log('Editing Nama Perangkat:', id);
+            $.get(`/get-namaperangkat/${id}`, function(response) {
+                if (response.success) {
+                    $('#perangkat').val(response.data.perangkat);
+                    $('#kode_perangkat').val(response.data.kode_perangkat);
+                    $('#namaPerangkatForm').append(`<input type="hidden" name="id" value="${id}">`);
+                    openNamaPerangkatModal();
+                }
+            });
+        }
 
     // Delete Nama Perangkat
-    window.deleteNamaPerangkat = function(id) {
+    function deleteInfoPerangkat(id) {
+        console.log('Deleting Nama Perangkat:', id);
         swal({
             title: "Apakah Anda yakin?",
             text: "Data yang dihapus tidak dapat dikembalikan!",
             type: "warning",
             showCancelButton: true,
-            confirmButtonColor: "#dc3545",
+            confirmButtonColor: "#DD6B55",
             confirmButtonText: "Ya, hapus!",
-            cancelButtonText: "Batal",
             closeOnConfirm: false
         }, function(isConfirm) {
             if (isConfirm) {
                 $.ajax({
                     url: `/delete-namaperangkat/${id}`,
                     type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                     success: function(response) {
                         if (response.success) {
-                            swal("Terhapus!", "Perangkat berhasil dihapus.", "success");
-                            window.location.reload();
+                            swal("Berhasil!", "Data berhasil dihapus", "success");
+                            location.reload();
                         }
+                    },
+                    error: function(xhr) {
+                        swal("Error!", "Terjadi kesalahan", "error");
+                        console.error(xhr.responseText);
                     }
                 });
             }
         });
     }
 
-    // ============== BRAND PERANGKAT OPERATIONS ==============
-    // Open modal Brand Perangkat
-    window.openBrandPerangkatModal = function() {
-        $('#addBrandPerangkatModal').show();
-        $('#brandPerangkatForm')[0].reset();
-        $('#id-input-brand').remove();
-    }
-
-    // Close modal Brand Perangkat
-    window.closeBrandPerangkatModal = function() {
-        $('#addBrandPerangkatModal').hide();
-    }
-
-    // Submit form Brand Perangkat
-    $('#brandPerangkatForm').submit(function(e) {
-        e.preventDefault();
-        const id = $('#id-input-brand').val();
-        const url = id ? `/update-brandperangkat/${id}` : '/store-brandperangkat';
-        const method = id ? 'PUT' : 'POST';
-
-        $.ajax({
-            url: url,
-            type: method,
-            data: $(this).serialize(),
-            success: function(response) {
-                if (response.success) {
-                    closeBrandPerangkatModal();
-                    showSwal('success', id ? 'Brand berhasil diupdate!' : 'Brand berhasil ditambahkan!');
-                    window.location.reload();
-                }
-            },
-            error: function(xhr) {
-                showSwal('error', 'Terjadi kesalahan');
-            }
-        });
-    });
-
     // Edit Brand Perangkat
-    window.editBrandPerangkat = function(id) {
+    function editBrandPerangkat(id) {
+        console.log('Editing Brand Perangkat:', id);
         $.get(`/get-brandperangkat/${id}`, function(response) {
             if (response.success) {
-                const data = response.data;
-                $('#nama_brand').val(data.nama_brand);
-                $('#kode_brand').val(data.kode_brand);
-                $('#brandPerangkatForm').append(`<input type="hidden" id="id-input-brand" value="${data.id}">`);
+                $('#nama_brand').val(response.data.nama_brand);
+                $('#kode_brand').val(response.data.kode_brand);
+                $('#brandPerangkatForm').append(`<input type="hidden" name="id" value="${id}">`);
                 openBrandPerangkatModal();
             }
         });
     }
 
     // Delete Brand Perangkat
-    window.deleteBrandPerangkat = function(id) {
+    function deleteBrandPerangkat(id) {
+        console.log('Deleting Brand Perangkat:', id);
         swal({
             title: "Apakah Anda yakin?",
             text: "Data yang dihapus tidak dapat dikembalikan!",
             type: "warning",
             showCancelButton: true,
-            confirmButtonColor: "#dc3545",
+            confirmButtonColor: "#DD6B55",
             confirmButtonText: "Ya, hapus!",
-            cancelButtonText: "Batal",
             closeOnConfirm: false
         }, function(isConfirm) {
             if (isConfirm) {
                 $.ajax({
                     url: `/delete-brandperangkat/${id}`,
                     type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                     success: function(response) {
                         if (response.success) {
-                            swal("Terhapus!", "Brand berhasil dihapus.", "success");
-                            window.location.reload();
+                            swal("Berhasil!", "Data berhasil dihapus", "success");
+                            location.reload();
                         }
+                    },
+                    error: function(xhr) {
+                        swal("Error!", "Terjadi kesalahan", "error");
+                        console.error(xhr.responseText);
                     }
                 });
             }
         });
     }
 });
-
-// Alert function
-function showSwal(type, message) {
-    swal({
-        title: type === 'success' ? "Berhasil!" : "Error!",
-        text: message,
-        type: type,
-        button: {
-            text: "OK",
-            value: true,
-            visible: true,
-            className: `btn btn-${type === 'success' ? 'primary' : 'danger'}`
-        }
-    });
-}
 </script>
+@endpush
+
+<!-- Pastikan jQuery dan SweetAlert sudah di-load -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection

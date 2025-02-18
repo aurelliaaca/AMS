@@ -6,6 +6,8 @@
 
     <head>
         <link rel="stylesheet" href="{{ asset('css/aset.css') }}">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     </head>
 
     <div class="main">
@@ -13,7 +15,10 @@
             <div class="header">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Perangkat</h3>
-                    <button class="add-button" onclick="openAddPerangkatModal()">Tambah Perangkat</button>
+                    <div class="button-group">
+                        <button class="add-button" onclick="openAddPerangkatModal()">Tambah Perangkat</button>
+                        <span class="material-icons upload-icon" data-bs-toggle="modal" data-bs-target="#importModal" style="cursor: pointer;">upload_file</span>
+                    </div>
                 </div>
             </div>
             
@@ -85,6 +90,116 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Modal Import -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Import Data Perangkat</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('import.perangkat') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3">
+                            <div class ="form-group">
+                            <input type="file" name="file" accept=".xlsx, .xls, .csv" required>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn-primary">Save changes</button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+    
+<!-- Di bagian bawah view, sebelum closing body -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const importModal = new bootstrap.Modal(document.getElementById('importModal'));
+        
+        // Untuk menampilkan modal
+        document.getElementById('btnImport').addEventListener('click', function() {
+            importModal.show();
+        });
+    });
+</script>
+
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-dialog {
+            margin-top: 20px;
+        }
+
+        .modal-content {
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            border-bottom: none;
+            padding: 20px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            border-top: none;
+            padding: 20px;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: #4f52ba;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+
+    
 
     <script>
     $(document).ready(function() {
