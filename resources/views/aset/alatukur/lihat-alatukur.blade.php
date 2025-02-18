@@ -1,7 +1,7 @@
-<div id="lihatPerangkatModal" class="modal-overlay" style="display: none;">
+<div id="lihatAlatukurModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
-        <button class="modal-close-btn" onclick="closeLihatPerangkatModal()">×</button>
-        <h2>Detail Perangkat</h2>
+        <button class="modal-close-btn" onclick="closeLihatAlatukurModal()">×</button>
+        <h2>Detail Alatukur</h2>
         <div class="form-container">
             <div class="left-column">
                 <div class="form-group">
@@ -13,34 +13,34 @@
                     <p id="regionView"></p>
                 </div>
                 <div class="form-group">
-                    <label>Site</label>
-                    <p id="siteView"></p>
-                </div>
-                <div class="form-group">
-                    <label>Perangkat</label>
-                    <p id="perangkatView"></p>
+                    <label>Alatukur</label>
+                    <p id="alatukurView"></p>
                 </div>
                 <div class="form-group">
                     <label>Brand</label>
                     <p id="brandView"></p>
                 </div>
-            </div>
-            <div class="right-column">
                 <div class="form-group">
                     <label>Type</label>
                     <p id="typeView"></p>
                 </div>
                 <div class="form-group">
-                    <label>No Rack</label>
-                    <p id="noRackView"></p>
+                    <label>Serial Number</label>
+                    <p id="serialnumberView"></p>
+                </div>
+            </div>
+            <div class="right-column">
+                <div class="form-group">
+                    <label>Tahun perolehan</label>
+                    <p id="tahunperolehanView"></p>
                 </div>
                 <div class="form-group">
-                    <label>U Awal</label>
-                    <p id="uawalView"></p>
+                    <label>Kondisi</label>
+                    <p id="kondisiView"></p>
                 </div>
                 <div class="form-group">
-                    <label>U Akhir</label>
-                    <p id="uakhirView"></p>
+                    <label>Keterangan</label>
+                    <p id="keteranganView"></p>
                 </div>
             </div>
         </div>
@@ -58,37 +58,35 @@
 </div>
 
 <script>
-// Fungsi untuk menampilkan detail perangkat
-function lihatPerangkat(id_perangkat) {
-    $.get(`/get-perangkat/${id_perangkat}`, function(response) {
+// Fungsi untuk menampilkan detail alatukur
+function lihatAlatukur(id_alatukur) {
+    $.get(`/get-alatukur/${id_alatukur}`, function(response) {
         if (response.success) {
-            const perangkat = response.perangkat;
+            const alatukur = response.alatukur;
             const values = [
-                perangkat.kode_region,
-                perangkat.kode_site,
-                perangkat.no_rack,
-                perangkat.kode_perangkat,
-                perangkat.perangkat_ke,
-                perangkat.kode_brand,
-                perangkat.type
+                alatukur.kode_region, 
+                alatukur.kode_alatukur, 
+                alatukur.alatukur_ke, 
+                alatukur.kode_brand, 
+                alatukur.type
             ];
 
             // Filter nilai yang bukan null atau undefined, lalu gabungkan dengan "-"
             $('#hostnameView').text(values.filter(val => val).join('-'));
-            $('#regionView').text(perangkat.nama_region);
-            $('#siteView').text(perangkat.nama_site);
-            $('#perangkatView').text(perangkat.nama_perangkat);
-            $('#brandView').text(perangkat.nama_brand || '-');
-            $('#typeView').text(perangkat.type || '-');
-            $('#noRackView').text(perangkat.no_rack ? `Rack ${perangkat.no_rack}` : '-');
-            $('#uawalView').text(perangkat.uawal || '-');
-            $('#uakhirView').text(perangkat.uakhir || '-');
+            $('#regionView').text(alatukur.nama_region);
+            $('#alatukurView').text(alatukur.nama_alatukur);
+            $('#brandView').text(alatukur.nama_brand || '-');
+            $('#typeView').text(alatukur.type || '-');
+            $('#serialnumberView').text(alatukur.serialnumber || '-');
+            $('#tahunperolehanView').text(alatukur.tahunperolehan || '-');
+            $('#kondisiView').text(alatukur.kondisi || '-');
+            $('#keteranganView').text(alatukur.keterangan || '-');
 
             // Tampilkan modal
-            document.getElementById("lihatPerangkatModal").style.display = "flex";
+            document.getElementById("lihatAlatukurModal").style.display = "flex";
 
-            // Ambil data histori perangkat
-            $.get(`/histori-perangkat/${id_perangkat}`, function(response) {
+            // Ambil data histori alatukur
+            $.get(`/histori-alatukur/${id_alatukur}`, function(response) {
                 if (response.success) {
                     const histori = response.histori;
                     const tableBody = $('#historiTableBody');
@@ -123,7 +121,7 @@ function lihatPerangkat(id_perangkat) {
         }
     });
 }
-function closeLihatPerangkatModal() {
-    document.getElementById("lihatPerangkatModal").style.display = "none";
+function closeLihatAlatukurModal() {
+    document.getElementById("lihatAlatukurModal").style.display = "none";
 }
 </script>

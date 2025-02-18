@@ -52,6 +52,7 @@
 
         .form-group {
             margin-bottom: 10px;
+            position: relative;
         }
 
         .form-control {
@@ -163,7 +164,15 @@
             font-size: 12px;
             color: #002855;
         }
-        
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px; /* Sesuaikan ukuran font jika diperlukan */
+        }
     </style>
 </head>
 <body>
@@ -209,7 +218,8 @@
                         name="password" 
                         required 
                         autocomplete="current-password" 
-                        placeholder="Password">                
+                        placeholder="Password">
+                    <i id="togglePassword" class="fas fa-eye toggle-password"></i>
                 </div>
                 @error('password')
                 <span class="invalid-feedback" role="alert">
@@ -241,5 +251,17 @@
             </div>
         </form>
     </div>
+
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const passwordInput = document.getElementById('password-field');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            // Ubah ikon mata sesuai dengan tipe input
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
 </body>
 </html>

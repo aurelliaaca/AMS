@@ -160,33 +160,27 @@ th:nth-child(2), td:nth-child(2) { /* Hostname */
     width: 20%;
     text-align: center;
 }
-
-th:nth-child(3), td:nth-child(3) { /* Region */
-    width: 7%;
-}
-
-th:nth-child(4), td:nth-child(4) { /* POP */
-    width: 7%;
-}
-
-th:nth-child(5), td:nth-child(5) { /* No Rack */
+th:nth-child(1), td:nth-child(1) {
     width: 2.5%;
 }
 
-th:nth-child(6), td:nth-child(6) { /* Perangkat */
-    width: 7%;
-}
-
-th:nth-child(7), td:nth-child(7) { /* Brand */
-    width: 7%;
-}
-
-th:nth-child(8), td:nth-child(8) { /* Type */
-    width: 7%;
-}
-
-th:nth-child(9), td:nth-child(9) { /* Aksi */
+th:nth-child(2), td:nth-child(2) {
     width: 20%;
+    text-align: center;
+}
+th:nth-child(3), td:nth-child(3) { 
+    width: 7%;
+    text-align: center;
+}
+
+th:nth-last-child(2), td:nth-last-child(2) {
+    width: 7%;
+    text-align: center;
+}
+
+th:last-child, td:last-child {
+    width: 20%;
+    text-align: center;
 }
 
 /* -------------------------- MODAL -------------------------- */

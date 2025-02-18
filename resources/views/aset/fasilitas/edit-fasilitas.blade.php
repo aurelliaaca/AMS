@@ -1,10 +1,10 @@
-<div id="editPerangkatModal" class="modal-overlay" style="display: none;">
+<div id="editFasilitasModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
-        <button class="modal-close-btn" onclick="closeEditPerangkatModal()">×</button>
-        <h2>Edit Perangkat</h2>
-        <form id="editPerangkatForm" method="POST">
+        <button class="modal-close-btn" onclick="closeEditFasilitasModal()">×</button>
+        <h2>Edit Fasilitas</h2>
+        <form id="editFasilitasForm" method="POST">
             @csrf
-            <input type="hidden" id="id_perangkat-input" name="id_perangkat">
+            <input type="hidden" id="id_fasilitas-input" name="id_fasilitas">
             <div class="form-container">
                 <div class="left-column">
                     <div class="form-group">
@@ -25,11 +25,11 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="perangkatEdit">Perangkat</label>
-                        <select id="perangkatEdit" name="kode_perangkat" required>
-                            <option value="">Pilih Perangkat</option>
+                        <label for="fasilitasEdit">Fasilitas</label>
+                        <select id="fasilitasEdit" name="kode_fasilitas" required>
+                            <option value="">Pilih Fasilitas</option>
                             @foreach($listpkt as $p)
-                                <option value="{{ $p->kode_perangkat }}">{{ $p->nama_perangkat }}</option>
+                                <option value="{{ $p->kode_fasilitas }}">{{ $p->nama_fasilitas }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -48,9 +48,24 @@
                         <label for="typeEdit">Type</label>
                         <input type="text" id="typeEdit" name="type">
                     </div>
+
+                    <div class="form-group">
+                        <label for="serialnumberEdit">Serial Number</label>
+                        <input type="text" id="serialnumberEdit" name="serialnumber">
+                    </div>
                 </div>
 
                 <div class="right-column">
+                <div class="form-group">
+                        <label for="statusEdit">Status/Keterangan</label>
+                        <input type="text" id="statusEdit" name="status">
+                    </div>
+                    <div class="form-group">
+                        <label for="jumlahFasilitasEdit">Jumlah Fasilitas</label>
+                        <div class="input-group">
+                        <input type="number" id="jumlahFasilitasEdit" name="jml_fasilitas" class="form-control" value="0" min="0">
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="no_rackEdit">No Rack</label>
                         <select id="no_rackEdit" name="no_rack" class="form-control">
@@ -145,11 +160,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Handle form submission for editing perangkat
-    $('#editPerangkatForm').on('submit', function(e) {
+    // Handle form submission for editing fasilitas
+    $('#editFasilitasForm').on('submit', function(e) {
         e.preventDefault();
-        const id_perangkat = $('#id_perangkat-input').val();
-        closeEditPerangkatModal(); // Ini akan menutup modal sebelum SweetAlert muncul
+        const id_fasilitas = $('#id_fasilitas-input').val();
+        closeEditFasilitasModal(); // Ini akan menutup modal sebelum SweetAlert muncul
         
         Swal.fire({
             title: 'Konfirmasi',
@@ -167,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitButton.prop('disabled', true).text('Mengupdate...'); // Change button text
 
                 $.ajax({
-                    url: `/update-perangkat/${id_perangkat}`,
+                    url: `/update-fasilitas/${id_fasilitas}`,
                     type: 'PUT',
                     data: $(this).serialize(),
                     headers: {
@@ -177,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (response.success) {
                             // Show success message before closing the modal
                             Swal.fire('Berhasil!', 'Data berhasil diupdate.', 'success').then(() => {
-                                closeEditPerangkatModal(); // Close the modal after the alert is confirmed
+                                closeEditFasilitasModal(); // Close the modal after the alert is confirmed
                                 LoadData(); // Reload the data
                             });
                         } else {
@@ -198,44 +213,47 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function editPerangkat(id_perangkat) {
-    $.get(`/get-perangkat/${id_perangkat}`, function(response) {
+function editFasilitas(id_fasilitas) {
+    $.get(`/get-fasilitas/${id_fasilitas}`, function(response) {
         if (response.success) {
-            const perangkat = response.perangkat;
+            const fasilitas = response.fasilitas;
             
             // Set initial form values
-            $('#id_perangkat-input').val(perangkat.id_perangkat);
-            $('#perangkatEdit').val(perangkat.kode_perangkat);
-            $('#brandEdit').val(perangkat.kode_brand);
-            $('#typeEdit').val(perangkat.type);
-            $('#uawalEdit').val(perangkat.uawal);
-            $('#uakhirEdit').val(perangkat.uakhir);
+            $('#id_fasilitas-input').val(fasilitas.id_fasilitas);
+            $('#fasilitasEdit').val(fasilitas.kode_fasilitas);
+            $('#brandEdit').val(fasilitas.kode_brand);
+            $('#typeEdit').val(fasilitas.type);
+            $('#serialnumberEdit').val(fasilitas.serialnumber);
+            $('#jumlahFasilitasEdit').val(fasilitas.jml_fasilitas);
+            $('#statusEdit').val(fasilitas.status);
+            $('#uawalEdit').val(fasilitas.uawal);
+            $('#uakhirEdit').val(fasilitas.uakhir);
             
             // Set region and load dependent data
-            $('#regionEdit').val(perangkat.kode_region);
+            $('#regionEdit').val(fasilitas.kode_region);
             
             // Load site data based on region
-            if (perangkat.kode_region) {
+            if (fasilitas.kode_region) {
                 $.ajax({
                     url: '/get-sites',
                     method: 'GET',
-                    data: { regions: perangkat.kode_region },
+                    data: { regions: fasilitas.kode_region },
                     success: function(sites) {
                         $('#siteEdit').empty().prop('disabled', false);
                         $('#siteEdit').append('<option value="">Pilih Site</option>');
                         $.each(sites, function(key, value) {
-                            $('#siteEdit').append(new Option(value, key, false, key == perangkat.kode_site));
+                            $('#siteEdit').append(new Option(value, key, false, key == fasilitas.kode_site));
                         });
                         
                         // Set the selected site
-                        $('#siteEdit').val(perangkat.kode_site);
+                        $('#siteEdit').val(fasilitas.kode_site);
                         
                         // Load rack data if site is selected
-                        if (perangkat.kode_site) {
+                        if (fasilitas.kode_site) {
                             $.ajax({
                                 url: '/get-site-rack',
                                 type: 'GET',
-                                data: { site: perangkat.kode_site },
+                                data: { site: fasilitas.kode_site },
                                 success: function(response) {
                                     $('#no_rackEdit').empty().prop('disabled', false);
                                     $('#no_rackEdit').append('<option value="">Pilih No Rack</option>');
@@ -244,7 +262,7 @@ function editPerangkat(id_perangkat) {
                                         for (let i = 1; i <= response.jml_rack; i++) {
                                             $('#no_rackEdit').append(`<option value="${i}">Rack ${i}</option>`);
                                         }
-                                        $('#no_rackEdit').val(perangkat.no_rack);
+                                        $('#no_rackEdit').val(fasilitas.no_rack);
                                     }
                                 }
                             });
@@ -254,12 +272,12 @@ function editPerangkat(id_perangkat) {
             }
             
             // Show modal
-            document.getElementById("editPerangkatModal").style.display = "flex";
+            document.getElementById("editFasilitasModal").style.display = "flex";
         }
     });
 }
 
-function closeEditPerangkatModal() {
-    document.getElementById("editPerangkatModal").style.display = "none";
+function closeEditFasilitasModal() {
+    document.getElementById("editFasilitasModal").style.display = "none";
 }
 </script>

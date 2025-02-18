@@ -2,110 +2,103 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use App\Models\ListPerangkat;
-use App\Models\JenisPerangkat;
-use App\Models\BrandPerangkat;
-use App\Models\HistoriPerangkat;
+use App\Models\ListFasilitas;
+use App\Models\JenisFasilitas;
+use App\Models\BrandFasilitas;
+use App\Models\HistoriFasilitas;
 use Illuminate\Support\Facades\DB;
 use App\Models\Region;
 use App\Models\Site;
-use App\Models\ImportPerangkat;
-use Maatwebsite\Excel\Facades\Excel;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use Exception;
-use Illuminate\Support\Facades\Storage;
-use App\Imports\ImportPerangkat;
-use Illuminate\Support\Facades\Log;
 
-class PerangkatController extends Controller
+class FasilitasController extends Controller
 {
     // 
-    public function perangkat()
+    public function fasilitas()
     {
         $regions = Region::orderBy('nama_region', 'asc')->get();
-        $listpkt = JenisPerangkat::orderBy('nama_perangkat', 'asc')->get();
-        $brands = BrandPerangkat::orderBy('nama_brand', 'asc')->get();
-        return view('aset.perangkat.perangkat', compact('listpkt', 'brands', 'regions'));
+        $listpkt = JenisFasilitas::orderBy('nama_fasilitas', 'asc')->get();
+        $brands = BrandFasilitas::orderBy('nama_brand', 'asc')->get();
+        return view('aset.fasilitas.fasilitas', compact('listpkt', 'brands', 'regions'));
     }
     
     // tabel
-    public function getPerangkat(Request $request)
+    public function getFasilitas(Request $request)
     {
-        // Log total data di tabel listperangkat
-        $totalRawData = \DB::table('listperangkat')->count();
-        \Log::info('Total data in listperangkat: ' . $totalRawData);
+        // Log total data di tabel listfasilitas
+        $totalRawData = \DB::table('listfasilitas')->count();
+        \Log::info('Total data in listfasilitas: ' . $totalRawData);
 
-        $perangkat = \DB::table('listperangkat')
-            ->leftJoin('site', 'listperangkat.kode_site', '=', 'site.kode_site')
-            ->leftJoin('region', 'listperangkat.kode_region', '=', 'region.kode_region')
-            ->leftJoin('jenisperangkat', 'listperangkat.kode_perangkat', '=', 'jenisperangkat.kode_perangkat')
-            ->leftJoin('brandperangkat', 'listperangkat.kode_brand', '=', 'brandperangkat.kode_brand')
+        $fasilitas = \DB::table('listfasilitas')
+            ->leftJoin('site', 'listfasilitas.kode_site', '=', 'site.kode_site')
+            ->leftJoin('region', 'listfasilitas.kode_region', '=', 'region.kode_region')
+            ->leftJoin('jenisfasilitas', 'listfasilitas.kode_fasilitas', '=', 'jenisfasilitas.kode_fasilitas')
+            ->leftJoin('brandfasilitas', 'listfasilitas.kode_brand', '=', 'brandfasilitas.kode_brand')
             ->select(
-                'listperangkat.*', 
+                'listfasilitas.*', 
                 'site.nama_site', 
                 'region.nama_region', 
-                'jenisperangkat.nama_perangkat', 
-                'brandperangkat.nama_brand'
+                'jenisfasilitas.nama_fasilitas', 
+                'brandfasilitas.nama_brand'
             );
 
         // Log total data setelah join
-        $totalAfterJoin = $perangkat->count();
+        $totalAfterJoin = $fasilitas->count();
         \Log::info('Total data after joins: ' . $totalAfterJoin);
 
-        // Filter perangkat berdasarkan region jika diberikan
+        // Filter fasilitas berdasarkan region jika diberikan
         if ($request->has('region') && !empty($request->region)) {
-            $perangkat->whereIn('listperangkat.kode_region', $request->region);
+            $fasilitas->whereIn('listfasilitas.kode_region', $request->region);
         }
 
-        // Filter perangkat berdasarkan site jika diberikan
+        // Filter fasilitas berdasarkan site jika diberikan
         if ($request->has('site') && !empty($request->site)) {
-            $perangkat->whereIn('listperangkat.kode_site', $request->site);
+            $fasilitas->whereIn('listfasilitas.kode_site', $request->site);
         }
 
-        // Filter perangkat berdasarkan jenis perangkat yang dipilih
-if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
-    $perangkat->whereIn('listperangkat.kode_perangkat', $request->jenisperangkat);
-}
+        // Filter fasilitas berdasarkan jenis fasilitas yang dipilih
+        if ($request->has('jenisfasilitas') && !empty($request->jenisfasilitas)) {
+            $fasilitas->whereIn('listfasilitas.kode_fasilitas', $request->jenisfasilitas);
+        }
 
-        // Filter perangkat berdasarkan brand yang dipilih
+        // Filter fasilitas berdasarkan brand yang dipilih
         if ($request->has('brand') && !empty($request->brand)) {
-            $perangkat->whereIn('listperangkat.kode_brand', $request->brand);
+            $fasilitas->whereIn('listfasilitas.kode_brand', $request->brand);
         }
 
         // Log total data setelah filter
-        $totalAfterFilter = $perangkat->count();
+        $totalAfterFilter = $fasilitas->count();
         \Log::info('Total data after filters: ' . $totalAfterFilter);
 
-        // Urutkan perangkat berdasarkan id_perangkat secara ascending
-        $perangkat->orderBy('listperangkat.id_perangkat', 'asc');
+        // Urutkan fasilitas berdasarkan id_fasilitas secara ascending
+        $fasilitas->orderBy('listfasilitas.id_fasilitas', 'asc');
 
-        $listPerangkat = $perangkat->get();
+        $listFasilitas = $fasilitas->get();
 
         // Log final result
-        \Log::info('Final result count: ' . $listPerangkat->count());
+        \Log::info('Final result count: ' . $listFasilitas->count());
 
         // Log detail data yang hilang jika ada
         if ($totalRawData != $totalAfterJoin) {
-            $missingData = \DB::table('listperangkat')
+            $missingData = \DB::table('listfasilitas')
                 ->whereNotExists(function($query) {
                     $query->select(\DB::raw(1))
                         ->from('site')
-                        ->whereRaw('listperangkat.kode_site = site.kode_site');
+                        ->whereRaw('listfasilitas.kode_site = site.kode_site');
                 })
                 ->orWhereNotExists(function($query) {
                     $query->select(\DB::raw(1))
                         ->from('region')
-                        ->whereRaw('listperangkat.kode_region = region.kode_region');
+                        ->whereRaw('listfasilitas.kode_region = region.kode_region');
                 })
                 ->orWhereNotExists(function($query) {
                     $query->select(\DB::raw(1))
-                        ->from('jenisperangkat')
-                        ->whereRaw('listperangkat.kode_perangkat = jenisperangkat.kode_perangkat');
+                        ->from('jenisfasilitas')
+                        ->whereRaw('listfasilitas.kode_fasilitas = jenisfasilitas.kode_fasilitas');
                 })
                 ->orWhereNotExists(function($query) {
                     $query->select(\DB::raw(1))
-                        ->from('brandperangkat')
-                        ->whereRaw('listperangkat.kode_brand = brandperangkat.kode_brand');
+                        ->from('brandfasilitas')
+                        ->whereRaw('listfasilitas.kode_brand = brandfasilitas.kode_brand');
                 })
                 ->get();
             
@@ -113,12 +106,12 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
         }
 
         return response()->json([
-            'perangkat' => $listPerangkat,
+            'fasilitas' => $listFasilitas,
             'total' => [
                 'raw' => $totalRawData,
                 'afterJoin' => $totalAfterJoin,
                 'afterFilter' => $totalAfterFilter,
-                'final' => $listPerangkat->count()
+                'final' => $listFasilitas->count()
             ]
         ]);
     }
@@ -126,11 +119,43 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
     // site berdasarkan region
     public function getSites(Request $request)
     {
-        $sites = DB::table('site')
-            ->whereIn('kode_region', $request->kode_region)
-            ->get(['kode_site', 'nama_site']);
-        
-        return response()->json($sites);
+        try {
+            // Debug log
+            \Log::info('getSites called with request:', $request->all());
+
+            // Ambil region dari request
+            $regionId = $request->input('regions');
+            
+            \Log::info('Region ID:', ['regionId' => $regionId]);
+
+            // Query untuk mendapatkan sites
+            $sites = DB::table('site')
+                ->where('kode_region', $regionId)
+                ->select('kode_site', 'nama_site')
+                ->get();
+
+            \Log::info('Found sites:', ['count' => $sites->count(), 'sites' => $sites->toArray()]);
+
+            // Format response
+            $formattedSites = [];
+            foreach ($sites as $site) {
+                $formattedSites[$site->kode_site] = $site->nama_site;
+            }
+
+            \Log::info('Formatted sites:', $formattedSites);
+
+            return response()->json($formattedSites);
+        } catch (\Exception $e) {
+            \Log::error('Error in getSites:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'error' => 'Failed to fetch sites',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     // tambah
@@ -145,10 +170,13 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
         $validated = $request->validate([
             'kode_region' => 'required|exists:region,kode_region',
             'kode_site' => 'required|exists:site,kode_site',
-            'kode_perangkat' => 'required|exists:jenisperangkat,kode_perangkat',
-            'kode_brand' => 'nullable|exists:brandperangkat,kode_brand',
+            'kode_fasilitas' => 'required|exists:jenisfasilitas,kode_fasilitas',
+            'kode_brand' => 'nullable|exists:brandfasilitas,kode_brand',
             'no_rack' => 'nullable|string',
             'type' => 'nullable|string',
+            'serialnumber' => 'nullable|string',
+            'jml_fasilitas' => 'nullable|integer|min:0',
+            'status' => 'nullable|string',
             'uawal' => 'nullable|integer|required_with:no_rack',
             'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal',
         ]);
@@ -165,7 +193,7 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
         ]);
 
         if ($request->has('no_rack') && $request->no_rack !== null) {
-            $overlapQuery = ListPerangkat::where('kode_region', $request->kode_region)
+            $overlapQuery = ListFasilitas::where('kode_region', $request->kode_region)
                 ->where('kode_site', $request->kode_site)
                 ->where('no_rack', $request->no_rack)
                 ->where(function ($query) use ($request) {
@@ -193,52 +221,55 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
             }
         }
 
-        // Logging sebelum mengambil max id_perangkat
-        \Log::info('Getting max id_perangkat value');
+        // Logging sebelum mengambil max id_fasilitas
+        \Log::info('Getting max id_fasilitas value');
         
-        $maxid_perangkat = ListPerangkat::max('id_perangkat') ?? 0;
-        $newid_perangkat = $maxid_perangkat + 1;
+        $maxid_fasilitas = ListFasilitas::max('id_fasilitas') ?? 0;
+        $newid_fasilitas = $maxid_fasilitas + 1;
 
-        \Log::info('Calculated new id_perangkat value:', ['maxid_perangkat' => $maxid_perangkat, 'newid_perangkat' => $newid_perangkat]);
+        \Log::info('Calculated new id_fasilitas value:', ['maxid_fasilitas' => $maxid_fasilitas, 'newid_fasilitas' => $newid_fasilitas]);
 
-        // Logging sebelum menghitung perangkat_ke
-        \Log::info('Calculating perangkat_ke for:', [
+        // Logging sebelum menghitung fasilitas_ke
+        \Log::info('Calculating fasilitas_ke for:', [
             'region' => $request->kode_region,
             'site' => $request->kode_site
         ]);
 
-        $lastPktKe = ListPerangkat::where('kode_region', $request->kode_region)
+        $lastPktKe = ListFasilitas::where('kode_region', $request->kode_region)
             ->where('kode_site', $request->kode_site)
             ->count();
 
         $pktKe = $lastPktKe + 1;
 
-        \Log::info('Calculated perangkat_ke:', ['lastPktKe' => $lastPktKe, 'newPktKe' => $pktKe]);
+        \Log::info('Calculated fasilitas_ke:', ['lastPktKe' => $lastPktKe, 'newPktKe' => $pktKe]);
 
         // Menyiapkan data untuk disimpan
         $dataToStore = [
-            'id_perangkat' => $newid_perangkat,
+            'id_fasilitas' => $newid_fasilitas,
             'kode_region' => $request->kode_region,
             'kode_site' => $request->kode_site,
-            'kode_perangkat' => $request->kode_perangkat,
+            'kode_fasilitas' => $request->kode_fasilitas,
             'kode_brand' => $request->kode_brand,
             'no_rack' => $request->no_rack ?: null,
             'type' => $request->type,
+            'serialnumber' => $request->serialnumber,
+            'jml_fasilitas' => $request->jml_fasilitas,
+            'status' => $request->status,
             'uawal' => $request->uawal,
             'uakhir' => $request->uakhir,
-            'perangkat_ke' => $pktKe,
+            'fasilitas_ke' => $pktKe,
         ];
 
         \Log::info('Attempting to store data:', $dataToStore);
 
-        $perangkat = ListPerangkat::create($dataToStore);
+        $fasilitas = ListFasilitas::create($dataToStore);
 
-        \Log::info('Successfully stored perangkat:', $perangkat->toArray());
+        \Log::info('Successfully stored fasilitas:', $fasilitas->toArray());
 
         return response()->json([
             'success' => true,
-            'message' => 'Perangkat berhasil ditambahkan!',
-            'data' => $perangkat,
+            'message' => 'Fasilitas berhasil ditambahkan!',
+            'data' => $fasilitas,
         ]);
 
     } catch (\Illuminate\Validation\ValidationException $e) {
@@ -274,65 +305,65 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
         ], 500);
     }
 }
-    // kebutuhan hapus dan edit (ngefetch id_perangkat)
-    public function getPerangkatById($id_perangkat)
+    // kebutuhan hapus dan edit (ngefetch id_fasilitas)
+    public function getFasilitasById($id_fasilitas)
     {
-        $perangkat = \DB::table('listperangkat')
-        ->leftJoin('site', 'listperangkat.kode_site', '=', 'site.kode_site')
-        ->leftJoin('region', 'listperangkat.kode_region', '=', 'region.kode_region')
-        ->leftJoin('jenisperangkat', 'listperangkat.kode_perangkat', '=', 'jenisperangkat.kode_perangkat')
-        ->leftJoin('brandperangkat', 'listperangkat.kode_brand', '=', 'brandperangkat.kode_brand')
+        $fasilitas = \DB::table('listfasilitas')
+        ->leftJoin('site', 'listfasilitas.kode_site', '=', 'site.kode_site')
+        ->leftJoin('region', 'listfasilitas.kode_region', '=', 'region.kode_region')
+        ->leftJoin('jenisfasilitas', 'listfasilitas.kode_fasilitas', '=', 'jenisfasilitas.kode_fasilitas')
+        ->leftJoin('brandfasilitas', 'listfasilitas.kode_brand', '=', 'brandfasilitas.kode_brand')
         ->select(
-            'listperangkat.*', 
+            'listfasilitas.*', 
             'site.nama_site', 
             'region.nama_region', 
-            'jenisperangkat.nama_perangkat', 
-            'brandperangkat.nama_brand'
+            'jenisfasilitas.nama_fasilitas', 
+            'brandfasilitas.nama_brand'
         )
-        ->where('listperangkat.id_perangkat', $id_perangkat) // Contoh: Filter berdasarkan id_perangkat
+        ->where('listfasilitas.id_fasilitas', $id_fasilitas) // Contoh: Filter berdasarkan id_fasilitas
         ->first(); // Ambil satu data
 
-        if ($perangkat) {
+        if ($fasilitas) {
             return response()->json([
                 'success' => true,
-                'perangkat' => $perangkat
+                'fasilitas' => $fasilitas
             ]);
         }
         
         return response()->json([
             'success' => false,
-            'message' => 'Perangkat tidak ditemukan'
+            'message' => 'Fasilitas tidak ditemukan'
         ], 404);
     }
 
     // hapus
-    public function destroy($id_perangkat)
+    public function destroy($id_fasilitas)
     {
         try {
-            \Log::info('Attempting to delete perangkat with id_perangkat: ' . $id_perangkat);
+            \Log::info('Attempting to delete fasilitas with id_fasilitas: ' . $id_fasilitas);
             
-            $perangkat = ListPerangkat::where('id_perangkat', $id_perangkat)->first();
+            $fasilitas = ListFasilitas::where('id_fasilitas', $id_fasilitas)->first();
             
-            if (!$perangkat) {
-                \Log::warning('Perangkat not found with id_perangkat: ' . $id_perangkat);
+            if (!$fasilitas) {
+                \Log::warning('Fasilitas not found with id_fasilitas: ' . $id_fasilitas);
                 return response()->json([
                     'success' => false,
-                    'message' => 'Perangkat tidak ditemukan'
+                    'message' => 'Fasilitas tidak ditemukan'
                 ], 404);
             }
 
-            \Log::info('Found perangkat:', $perangkat->toArray());
+            \Log::info('Found fasilitas:', $fasilitas->toArray());
             
             DB::beginTransaction();
             try {
-                $perangkat->delete();
+                $fasilitas->delete();
                 DB::commit();
                 
-                \Log::info('Successfully deleted perangkat with id_perangkat: ' . $id_perangkat);
+                \Log::info('Successfully deleted fasilitas with id_fasilitas: ' . $id_fasilitas);
                 
                 return response()->json([
                     'success' => true,
-                    'message' => 'Perangkat berhasil dihapus'
+                    'message' => 'Fasilitas berhasil dihapus'
                 ]);
             } catch (\Exception $e) {
                 DB::rollback();
@@ -340,51 +371,54 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
             }
 
         } catch (\Exception $e) {
-            \Log::error('Error deleting perangkat: ' . $e->getMessage());
+            \Log::error('Error deleting fasilitas: ' . $e->getMessage());
             \Log::error($e->getTraceAsString());
             
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghapus perangkat: ' . $e->getMessage()
+                'message' => 'Gagal menghapus fasilitas: ' . $e->getMessage()
             ], 500);
         }
     }
 
     // edit
-    public function update(Request $request, $id_perangkat)
+    public function update(Request $request, $id_fasilitas)
 {
     try {
         // Validasi input
         $validated = $request->validate([
             'kode_region' => 'required|exists:region,kode_region',
             'kode_site' => 'required|exists:site,kode_site',
-            'kode_perangkat' => 'required|exists:jenisperangkat,kode_perangkat',
-            'kode_brand' => 'nullable|exists:brandperangkat,kode_brand',
+            'kode_fasilitas' => 'required|exists:jenisfasilitas,kode_fasilitas',
+            'kode_brand' => 'nullable|exists:brandfasilitas,kode_brand',
             'no_rack' => 'nullable|string',
             'type' => 'nullable|string',
-            'uawal' => 'nullable|integer|required_with:no_rack', // Required if no_rack is present
-            'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal', // Required if no_rack is present and must be greater than or equal to uawal
+            'serialnumber' => 'nullable|string',
+            'jml_fasilitas' => 'nullable|integer|min:0',
+            'status' => 'nullable|string',
+            'uawal' => 'nullable|integer|required_with:no_rack',
+            'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal',
         ]);
 
         // Debug: log data yang diterima
         \Log::info('Update received data:', $request->all());
 
-        // Cari perangkat berdasarkan id_perangkat
-        $perangkat = ListPerangkat::where('id_perangkat', $id_perangkat)->first();
+        // Cari fasilitas berdasarkan id_fasilitas
+        $fasilitas = ListFasilitas::where('id_fasilitas', $id_fasilitas)->first();
 
-        if (!$perangkat) {
+        if (!$fasilitas) {
             return response()->json([
                 'success' => false,
-                'message' => 'Perangkat tidak ditemukan'
+                'message' => 'Fasilitas tidak ditemukan'
             ], 404);
         }
 
         // Jika no_rack ada, lakukan pengecekan overlap
         if ($request->has('no_rack') && $request->no_rack !== null) {
-            $overlapExists = ListPerangkat::where('kode_region', $request->kode_region)
+            $overlapExists = ListFasilitas::where('kode_region', $request->kode_region)
                 ->where('kode_site', $request->kode_site)
                 ->where('no_rack', $request->no_rack)
-                ->where('id_perangkat', '!=', $id_perangkat) // Exclude the current device being updated
+                ->where('id_fasilitas', '!=', $id_fasilitas) // Exclude the current device being updated
                 ->where(function ($query) use ($request) {
                     $query->whereBetween('uawal', [$request->uawal, $request->uakhir])
                         ->orWhereBetween('uakhir', [$request->uawal, $request->uakhir])
@@ -404,36 +438,41 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
         }
 
         // Misal $fasilitas merupakan data fasilitas yang sedang diupdate
-        if ($perangkat->kode_region !== $request->kode_region || $perangkat->kode_site !== $request->kode_site) {
-            $lastPktKe = ListPerangkat::where('kode_region', $request->kode_region)
+        if ($fasilitas->kode_region !== $request->kode_region || $fasilitas->kode_site !== $request->kode_site) {
+            // Jika salah satu atau kedua nilai kode_region dan kode_site berubah,
+            // hitung jumlah data fasilitas di region & site baru, lalu tambah 1
+            $lastPktKe = ListFasilitas::where('kode_region', $request->kode_region)
                             ->where('kode_site', $request->kode_site)
                             ->count();
             $pktKe = $lastPktKe + 1;
         } else {
             // Jika tidak berubah, pertahankan nilai fasilitas_ke yang lama
-            $pktKe = $perangkat->fasilitas_ke;
+            $pktKe = $fasilitas->fasilitas_ke;
         }
-
+        
         // Update data
-        $perangkat->update([
+        $fasilitas->update([
             'kode_region' => $request->kode_region,
             'kode_site' => $request->kode_site,
-            'kode_perangkat' => $request->kode_perangkat,
+            'kode_fasilitas' => $request->kode_fasilitas,
             'kode_brand' => $request->kode_brand,
             'no_rack' => $request->no_rack ?: null,
             'type' => $request->type,
+            'serialnumber' => $request->serialnumber,
+            'jml_fasilitas' => $request->jml_fasilitas,
+            'status' => $request->status,
             'uawal' => $request->uawal,
             'uakhir' => $request->uakhir,
-            'perangkat_ke'=> $pktKe,
+            'fasilitas_ke'    => $pktKe,
         ]);
 
         // Debug: log data yang diupdate
-        \Log::info('Updated data:', $perangkat->toArray());
+        \Log::info('Updated data:', $fasilitas->toArray());
 
         return response()->json([
             'success' => true,
-            'message' => 'Perangkat berhasil diupdate!',
-            'data' => $perangkat
+            'message' => 'Fasilitas berhasil diupdate!',
+            'data' => $fasilitas
         ]);
 
     } catch (\Illuminate\Validation\ValidationException $e) {
@@ -446,12 +485,12 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
 
     } catch (\Exception $e) {
         // Debug: log error
-        \Log::error('Error updating perangkat: ' . $e->getMessage());
+        \Log::error('Error updating fasilitas: ' . $e->getMessage());
         \Log::error($e->getTraceAsString());
 
         return response()->json([
             'success' => false,
-            'message' => 'Gagal mengupdate perangkat: ' . $e->getMessage()
+            'message' => 'Gagal mengupdate fasilitas: ' . $e->getMessage()
         ], 500);
     }
 }
@@ -479,10 +518,10 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
         }
     }
 
-    public function showHistori($id_perangkat)
+    public function showHistori($id_fasilitas)
     {
-        // Ambil data histori perangkat berdasarkan id_perangkat
-        $histori = HistoriPerangkat::where('idHiPe', $id_perangkat)
+        // Ambil data histori fasilitas berdasarkan id_fasilitas
+        $histori = HistoriFasilitas::where('idHiPe', $id_fasilitas)
             ->select('aksi', 'tanggal_perubahan')
             ->orderBy('tanggal_perubahan', 'desc')
             ->get();
@@ -493,51 +532,5 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
             'histori' => $histori
         ]);
     }
-
-    public function importPerangkat(Request $request)
-    {
-        try {
-            Log::info('Mulai proses import');
-
-            // Validasi file
-            $request->validate([
-                'file' => 'required|mimes:xlsx,xls,csv|max:2048'
-            ]);
-
-            if ($request->hasFile('file')) {
-                $file = $request->file('file');
-                $namafile = time() . '-' . $file->getClientOriginalName();
-                $filePath = 'ImportPerangkat/' . $namafile;
-
-                // Simpan file ke storage Laravel
-                Storage::put($filePath, file_get_contents($file));
-
-                Log::info('File berhasil disimpan di storage: ' . $filePath);
-
 }
 
-                // Debugging: Pastikan file ada
-                if (!Storage::exists($filePath)) {
-                    Log::error('File tidak ditemukan setelah disimpan!');
-                    return back()->with('error', 'Gagal menyimpan file.');
-                }
-
-                // Debug: Cek path file
-                Log::info('Path file: ' . storage_path('app/' . $filePath));
-
-                // Import ke database
-                Excel::import(new ImportPerangkat, storage_path('app/' . $filePath));
-
-                Log::info('Import selesai tanpa error');
-
-                return back()->with('success', 'Data perangkat berhasil diimpor.');
-            } else {
-                Log::warning('Tidak ada file yang diunggah');
-                return back()->with('error', 'Tidak ada file yang diunggah.');
-            }
-        } catch (Exception $e) {
-            Log::error('Error saat import: ' . $e->getMessage());
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
-        }
-    }
-}

@@ -39,7 +39,7 @@
                         <span class="count-numbers">Rack {{ $rack->no_rack }}</span>
                         <span class="count-name">{{ $rack->nama_region }}, {{ $rack->nama_site }}</span>
                     </div>
-                    <!-- Tabel dengan 2 kolom: kolom pertama berisi nomor urut (dari 42 ke 1) dan kolom kedua berisi kode_pkt (jika nomor slot ada di antara uawal dan uakhir perangkat) -->
+                    <!-- Tabel dengan 2 kolom: kolom pertama berisi nomor urut (dari 42 ke 1) dan kolom kedua berisi kode_perangkat (jika nomor slot ada di antara uawal dan uakhir perangkat) -->
                     <div class="toggle-table">
                         <table>
                             <tbody>
@@ -58,8 +58,8 @@
                                         ) {
                                             // Jika nomor slot termasuk dalam rentang perangkat (dari uawal ke uakhir)
                                             if ($slotNumber >= $device->uawal && $slotNumber <= $device->uakhir) {
-                                                // Gabungkan nama_pkt dan type perangkat
-                                                $deviceCode = $device->nama_pkt . ' ' . $device->type;
+                                                // Gabungkan nama_perangkat dan type perangkat
+                                                $deviceCode = $device->nama_perangkat . ' ' . $device->type;
                                                 break;
                                             }
                                         }

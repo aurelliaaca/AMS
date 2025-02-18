@@ -6,19 +6,14 @@
 
     <head>
         <link rel="stylesheet" href="{{ asset('css/aset.css') }}">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
     </head>
 
     <div class="main">
         <div class="container">
             <div class="header">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Perangkat</h3>
-                    <div class="button-group">
-                        <button class="add-button" onclick="openAddPerangkatModal()">Tambah Perangkat</button>
-                        <span class="material-icons upload-icon" data-bs-toggle="modal" data-bs-target="#importModal" style="cursor: pointer;">upload_file</span>
-                    </div>
+                    <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Fasilitas</h3>
+                    <button class="add-button" onclick="openAddFasilitasModal()">Tambah Fasilitas</button>
                 </div>
             </div>
             
@@ -39,10 +34,10 @@
                 </div>
 
                 <div>
-                    <select id="jenisperangkat" name="jenisperangkat[]" multiple data-placeholder="Pilih Jenis Perangkat">
-                        <option value="" disabled>Pilih Jenis Perangkat</option>
-                        @foreach ($listpkt as $perangkat)
-                            <option value="{{ $perangkat->kode_perangkat }}">{{ $perangkat->nama_perangkat }}</option>
+                    <select id="jenisfasilitas" name="jenisfasilitas[]" multiple data-placeholder="Pilih Jenis Fasilitas">
+                        <option value="" disabled>Pilih Jenis Fasilitas</option>
+                        @foreach ($listpkt as $fasilitas)
+                            <option value="{{ $fasilitas->kode_fasilitas }}">{{ $fasilitas->nama_fasilitas }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -62,15 +57,14 @@
             </div>
 
             <div class="table-container">
-                <table id="tablePerangkat">
+                <table id="tableFasilitas">
                     <thead>
                         <tr>
                             <th>No</th>
                             <th>Hostname</th>
                             <th>Region</th>
                             <th>POP</th>
-                            <th>No Rack</th>
-                            <th>Perangkat</th>
+                            <th>Fasilitas</th>
                             <th>Brand</th>
                             <th>Type</th>
                             <th>Aksi</th>
@@ -81,130 +75,20 @@
             </div>
         </div>
     </div>
-
-    @include('aset.perangkat.add-perangkat')
-    @include('aset.perangkat.edit-perangkat')
-    @include('aset.perangkat.lihat-perangkat')
+    
+    @include('aset.fasilitas.add-fasilitas')
+    @include('aset.fasilitas.edit-fasilitas')
+    @include('aset.fasilitas.lihat-fasilitas')
 
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Modal Import -->
-    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Import Data Perangkat</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('import.perangkat') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <div class="mb-3">
-                            <div class ="form-group">
-                            <input type="file" name="file" accept=".xlsx, .xls, .csv" required>
-                        </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn-primary">Save changes</button>
-                </div>
-            </div>
-            </form>
-        </div>
-    </div>
-    
-<!-- Di bagian bawah view, sebelum closing body -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const importModal = new bootstrap.Modal(document.getElementById('importModal'));
-        
-        // Untuk menampilkan modal
-        document.getElementById('btnImport').addEventListener('click', function() {
-            importModal.show();
-        });
-    });
-</script>
-
-    <style>
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .modal-dialog {
-            margin-top: 20px;
-        }
-
-        .modal-content {
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .modal-header {
-            border-bottom: none;
-            padding: 20px;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            padding: 0;
-            margin: 0;
-            line-height: 1;
-            cursor: pointer;
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .modal-footer {
-            border-top: none;
-            padding: 20px;
-        }
-
-        .btn-primary, .btn-secondary {
-            padding: 8px 16px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background-color: #4f52ba;
-            color: white;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-    </style>
-
-    
 
     <script>
     $(document).ready(function() {
         // Update the Select2 initialization
-        $('#region, #site, #jenisperangkat, #brand').select2({
+        $('#region, #site, #jenisfasilitas, #brand').select2({
             placeholder: function() {
                 return $(this).data('placeholder');
             },
@@ -228,12 +112,12 @@
                 LoadData(selectedRegions);
             });
 
-            ['#site', '#jenisperangkat', '#brand'].forEach(selector => {
+            ['#site', '#jenisfasilitas', '#brand'].forEach(selector => {
             $(selector).change(function() {
                 LoadData(
                     $('#region').val(),
                     $('#site').val(),
-                    $('#jenisperangkat').val(),
+                    $('#jenisfasilitas').val(),
                     $('#brand').val()
                 );
             });
@@ -243,52 +127,51 @@
             LoadData();
         });
 
-        function LoadData(regions = [], sites = [], jenisperangkat = [], brands = []) {
-        $.get('/get-perangkat', { 
+        function LoadData(regions = [], sites = [], jenisfasilitas = [], brands = []) {
+        $.get('/get-fasilitas', { 
             region: regions, 
             site: sites, 
-            jenisperangkat: jenisperangkat,
+            jenisfasilitas: jenisfasilitas,
             brand: brands 
         }, function(response) {
-            const tbody = $('#tablePerangkat tbody');
+            const tbody = $('#tableFasilitas tbody');
             tbody.empty();
 
-            if (response.perangkat.length === 0) {
-                tbody.append('<tr><td colspan="8" class="text-center">Tidak ada data perangkat</td></tr>');
+            if (response.fasilitas.length === 0) {
+                tbody.append('<tr><td colspan="8" class="text-center">Tidak ada data fasilitas</td></tr>');
                 return;
             }
 
-            $.each(response.perangkat, function(index, perangkat) {
-                const kodePerangkat = [
-                    perangkat.kode_region, 
-                    perangkat.kode_site, 
-                    perangkat.no_rack, 
-                    perangkat.kode_perangkat, 
-                    perangkat.perangkat_ke, 
-                    perangkat.kode_brand, 
-                    perangkat.type
+            $.each(response.fasilitas, function(index, fasilitas) {
+                const kodeFasilitas = [
+                    fasilitas.kode_region, 
+                    fasilitas.kode_site, 
+                    fasilitas.no_rack, 
+                    fasilitas.kode_fasilitas, 
+                    fasilitas.fasilitas_ke, 
+                    fasilitas.kode_brand, 
+                    fasilitas.type
                 ].filter(val => val !== null && val !== undefined && val !== '').join('-');
 
                 tbody.append(`
                     <tr>
                         <td>${index + 1}</td>
-                        <td>${kodePerangkat || '-'}</td>
-                        <td>${perangkat.nama_region}</td>
-                        <td>${perangkat.nama_site || '-'}</td>
-                        <td>${perangkat.no_rack || '-'}</td>
-                        <td>${perangkat.nama_perangkat || '-'}</td>
-                        <td>${perangkat.nama_brand || '-'}</td>
-                        <td>${perangkat.type || '-'}</td>
+                        <td>${kodeFasilitas || '-'}</td>
+                        <td>${fasilitas.nama_region}</td>
+                        <td>${fasilitas.nama_site || '-'}</td>
+                        <td>${fasilitas.nama_fasilitas || '-'}</td>
+                        <td>${fasilitas.nama_brand || '-'}</td>
+                        <td>${fasilitas.type || '-'}</td>
                         <td>
-                            <button onclick="lihatPerangkat(${perangkat.id_perangkat})"
+                            <button onclick="lihatFasilitas(${fasilitas.id_fasilitas})"
                                 style="background-color: #9697D6; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
                                 Lihat detail
                             </button>
-                            <button onclick="editPerangkat(${perangkat.id_perangkat})" 
+                            <button onclick="editFasilitas(${fasilitas.id_fasilitas})" 
                                 style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
                                 Edit
                             </button>
-                            <button onclick="deletePerangkat(${perangkat.id_perangkat})"
+                            <button onclick="deleteFasilitas(${fasilitas.id_fasilitas})"
                                 style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
                                 Delete
                             </button>
@@ -297,13 +180,13 @@
                 `);
             });
         }).fail(function() {
-            const tbody = $('#tablePerangkat tbody');
+            const tbody = $('#tableFasilitas tbody');
             tbody.empty().append('<tr><td colspan="8" class="text-center">Terjadi kesalahan dalam memuat data</td></tr>');
         });
     }
 
-    function deletePerangkat(id_perangkat) {
-        console.log("Delete function called with id_perangkat:", id_perangkat); // Debugging line
+    function deleteFasilitas(id_fasilitas) {
+        console.log("Delete function called with id_fasilitas:", id_fasilitas); // Debugging line
         Swal.fire({
             title: 'Apakah Anda yakin?',
             text: "Data yang dihapus tidak dapat dikembalikan!",
@@ -316,14 +199,14 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `/delete-perangkat/${id_perangkat}`,
+                    url: `/delete-fasilitas/${id_fasilitas}`,
                     type: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
                         if (response.success) {
-                            Swal.fire('Terhapus!', 'Perangkat berhasil dihapus.', 'success');
+                            Swal.fire('Terhapus!', 'Fasilitas berhasil dihapus.', 'success');
                             LoadData();
                         } else {
                             Swal.fire('Error!', response.message || 'Terjadi kesalahan saat menghapus', 'error');
@@ -331,7 +214,7 @@
                     },
                     error: function(xhr) {
                         console.error('Error:', xhr);
-                        Swal.fire('Error!', 'Terjadi kesalahan saat menghapus perangkat', 'error');
+                        Swal.fire('Error!', 'Terjadi kesalahan saat menghapus fasilitas', 'error');
                     }
                 });
             }
@@ -341,7 +224,7 @@
     function searchTable() {
         const input = document.getElementById('searchInput');
         const filter = input.value.toLowerCase();
-        const table = document.querySelector('#tablePerangkat');
+        const table = document.querySelector('#tableFasilitas');
         const rows = table.getElementsByTagName('tr');
 
         for (let i = 1; i < rows.length; i++) {
@@ -356,6 +239,5 @@
             rows[i].style.display = found ? '' : 'none';
         }
     }
-    
     </script>
 @endsection
