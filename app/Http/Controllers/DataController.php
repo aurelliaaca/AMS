@@ -153,9 +153,15 @@ class DataController extends Controller
 
     public function dataperangkat()
     {
-        $namaperangkat = NamaPerangkat::all();
-        $brandperangkat = BrandPerangkat::all();
-        return view('data.dataperangkat', compact('namaperangkat', 'brandperangkat'));
+        try {
+            $namaperangkat = NamaPerangkat::all();
+            $brandperangkat = BrandPerangkat::all();
+            
+            return view('data.dataperangkat', compact('namaperangkat', 'brandperangkat'));
+        } catch (\Exception $e) {
+            \Log::error('Error di dataperangkat: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat mengambil data');
+        }
     }
 
     // Tambah data perangkat
@@ -266,4 +272,15 @@ class DataController extends Controller
         $brandfasilitas = BrandFasilitas::all();
         return view('data.datafasilitas', compact('namafasilitas', 'brandfasilitas'));
     }
+
+    // ... existing code ...
+
+public function getSites(Request $request)
+{
+    $sites = DB::table('site')
+        ->whereIn('kode_region', $request->kode_region)
+        ->get(['kode_site', 'nama_site']);
+        
+    return response()->json($sites);
+}
 }

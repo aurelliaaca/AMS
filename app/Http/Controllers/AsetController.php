@@ -11,6 +11,8 @@ use App\Models\Fasilitas;
 use App\Models\Tipe;
 use Illuminate\Support\Facades\DB;
 use App\Models\Region;
+use App\Models\ImportPerangkat;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AsetController extends Controller
 {
