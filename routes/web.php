@@ -20,8 +20,6 @@ use App\Http\Controllers\MenuController;
 use App\Models\DataPerangkat;
 use App\Models\DataFasilitas;
 use App\Http\Controllers\JaringanController;
-use App\Models\ImportPerangkat;
-use Maatwebsite\Excel\Facades\Excel;
 
 
 Route::get('/', function () {
@@ -135,19 +133,6 @@ Route::middleware('auth')->group(function () {
     //DATA
     Route::get('/data', [DataController::class, 'index'])->name('data');
     Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
-    Route::post('/get-sites', function (Request $request) {
-        $regionCodes = $request->kode_region;
-    
-        // Ambil site berdasarkan region yang dipilih
-        $sites = DB::table('site')
-            ->whereIn('kode_region', $regionCodes)
-            ->select('kode_site', 'nama_site', 'kode_region')
-            ->get();
-    
-        return response()->json($sites);
-    });
-    
-
     Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
     Route::post('/store-pop', [DataController::class, 'storePOP'])->name('pop.store');
     Route::get('/get-pop', [DataController::class, 'getAllPOP'])->name('pop.all');
@@ -163,12 +148,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/delete-dataperangkat/{id}', [DataController::class, 'deleteDataPerangkat']);
 
     
-    // Routes untuk Nama Perangkat
-    Route::post('/store-namaperangkat', [DataController::class, 'storeNamaPerangkat']);
-    Route::get('/get-namaperangkat/{id}', [DataController::class, 'getNamaPerangkat']);
-    Route::put('/update-namaperangkat/{id}', [DataController::class, 'updateNamaPerangkat']);
-    Route::delete('/delete-namaperangkat/{id}', [DataController::class, 'deleteNamaPerangkat']);
-
     // Routes untuk Brand Perangkat
     Route::post('/store-brandperangkat', [DataController::class, 'storeBrandPerangkat']);
     Route::get('/get-brandperangkat/{id}', [DataController::class, 'getBrandPerangkat']);
@@ -188,6 +167,4 @@ Route::middleware('auth')->group(function () {
     });
     Route::get('/histori/jaringan', [MenuController::class, 'getHistoryJaringan'])->name('histori.jaringan');
     Route::get('/histori/jaringan/{id_jaringan}', [MenuController::class, 'getHistoriJaringan']);
-    // Route untuk import perangkat
-    Route::post('/import-perangkat', [PerangkatController::class, 'importPerangkat'])->name('import.perangkat');
 });

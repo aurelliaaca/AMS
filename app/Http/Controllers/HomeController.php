@@ -91,11 +91,18 @@ class HomeController extends Controller
     {
         // Query for distinct racks with an ordering by the 'id_perangkat' column in ascending order.
         $racks = ListPerangkat::join('site', 'listperangkat.kode_site', '=', 'site.kode_site')
-            ->join('region', 'listperangkat.kode_region', '=', 'region.kode_region')
-            ->select('listperangkat.kode_region', 'region.nama_region', 'listperangkat.kode_site', 'site.nama_site', 'listperangkat.no_rack')
-            ->distinct()
-            ->orderBy('listperangkat.id_perangkat', 'asc') // Change 'listperangkat.id_perangkat' to the appropriate column if needed.
-            ->get();
+        ->join('region', 'listperangkat.kode_region', '=', 'region.kode_region')
+        ->select(
+            'listperangkat.kode_region', 
+            'region.nama_region', 
+            'listperangkat.kode_site', 
+            'site.nama_site', 
+            'listperangkat.no_rack'
+        )
+        ->whereNotNull('listperangkat.no_rack') // Menyaring agar hanya mengambil data yang no_rack tidak null.
+        ->distinct()
+        ->orderBy('listperangkat.id_perangkat', 'asc')
+        ->get();
 
         $totalRacks = Site::sum('jml_rack');
 
@@ -117,7 +124,6 @@ class HomeController extends Controller
         return view('menu.rack', compact('totalRacks', 'racks', 'listPerangkat'));
     }
 
-
     public function getRacksByRegion($kode_region)
     {
         $totalRacks = ListPerangkat::where('kode_region', $kode_region)
@@ -125,7 +131,6 @@ class HomeController extends Controller
                         ->count('kode_site');
         return response()->json(['totalRacks' => $totalRacks]);
     }
-
 
     public function datapage()
     {
