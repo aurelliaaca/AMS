@@ -68,7 +68,7 @@ class ListPerangkat extends Model
                 'type'            => $perangkat->type,
                 'uawal'           => $perangkat->uawal,
                 'uakhir'          => $perangkat->uakhir,
-                'keterangan'      => 'Ditambahkan',
+                'histori'      => 'Ditambahkan',
                 'tanggal_perubahan' => now(),
             ]);
         });
@@ -102,7 +102,7 @@ class ListPerangkat extends Model
                 'type'            => $perangkat->type,
                 'uawal'           => $perangkat->uawal,
                 'uakhir'          => $perangkat->uakhir,
-                'keterangan'      => 'Perubahan ' . $changesText,
+                'histori'      => 'Perubahan ' . $changesText,
                 'tanggal_perubahan' => now(),
             ]);
         });
@@ -121,7 +121,7 @@ class ListPerangkat extends Model
                 'type'            => $perangkat->type,
                 'uawal'           => $perangkat->uawal,
                 'uakhir'          => $perangkat->uakhir,
-                'keterangan'      => 'Data perangkat dihapus',
+                'histori'      => 'Data perangkat dihapus',
                 'tanggal_perubahan' => now(),
             ]);
         });

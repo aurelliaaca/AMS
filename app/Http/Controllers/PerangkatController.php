@@ -481,7 +481,7 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
     {
         // Ambil data histori perangkat berdasarkan id_perangkat
         $histori = HistoriPerangkat::where('id_perangkat', $id_perangkat)
-            ->select('keterangan', 'tanggal_perubahan')
+            ->select('histori', 'tanggal_perubahan')
             ->orderBy('tanggal_perubahan', 'desc')
             ->get();
 

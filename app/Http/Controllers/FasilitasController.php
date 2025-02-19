@@ -520,9 +520,9 @@ class FasilitasController extends Controller
 
     public function showHistori($id_fasilitas)
     {
-        // Ambil data histori fasilitas berdasarkan id_fasilitas
-        $histori = HistoriFasilitas::where('idHiPe', $id_fasilitas)
-            ->select('aksi', 'tanggal_perubahan')
+        // Ambil data histori perangkat berdasarkan id_perangkat
+        $histori = HistoriFasilitas::where('id_fasilitas', $id_fasilitas)
+            ->select('histori', 'tanggal_perubahan')
             ->orderBy('tanggal_perubahan', 'desc')
             ->get();
 

@@ -5,27 +5,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class HistoriPerangkat extends Model
+class HistoriAlatukur extends Model
 {
     use HasFactory;
 
-    protected $table = 'historiperangkat';
+    protected $table = 'historialatukur';
 
-    protected $primaryKey = 'id_perangkat'; 
+    protected $primaryKey = 'id_alatukur'; 
     
     public $timestamps = false;
     
     protected $fillable = [
-        'id_perangkat',
+        'id_alatukur',
         'kode_region',
-        'kode_site',
-        'no_rack',
-        'kode_perangkat',
-        'perangkat_ke',
+        'kode_alatukur',
         'kode_brand',
         'type',
-        'uawal',
-        'uakhir',
+        'serialnumber',
+        'alatukur_ke',
+        'tahunperolehan',
+        'kondisi',
+        'keterangan',
         'histori',
         'tanggal_perubahan'
     ];
@@ -35,10 +35,10 @@ class HistoriPerangkat extends Model
         'tanggal_perubahan' => 'datetime',
     ];
 
-    // Relasi dengan model ListPerangkat
-    public function perangkat()
+    // Relasi dengan model ListAlatukur
+    public function alatukur()
     {
-        return $this->belongsTo(ListPerangkat::class, 'id_perangkat', 'id_perangkat');
+        return $this->belongsTo(ListAlatukur::class, 'id_alatukur', 'id_alatukur');
     }
 
 }

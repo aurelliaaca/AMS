@@ -104,8 +104,8 @@ function lihatAlatukur(id_alatukur) {
 
                             tableBody.append(`
                                 <tr>
-                                    <td>${item.aksi}</td>
-                                    <td>${formattedTanggal}</td>
+                                    <td style="width: 50%; text-align: justify;">${item.histori}</td>
+                                    <td style="width: 50%;">${formattedTanggal}</td>
                                 </tr>
                             `);
                         });
@@ -123,5 +123,15 @@ function lihatAlatukur(id_alatukur) {
 }
 function closeLihatAlatukurModal() {
     document.getElementById("lihatAlatukurModal").style.display = "none";
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById("closeLihatAlatukurModal");
+    const modalContent = document.querySelector(".modal-content");
+
+    // Jika klik di luar modal-content, tutup modal
+    if (event.target === modal) {
+        closeLihatAlatukurModal();
+    }
 }
 </script>

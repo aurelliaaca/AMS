@@ -106,7 +106,7 @@ function lihatPerangkat(id_perangkat) {
 
                             tableBody.append(`
                                 <tr>
-                                    <td style="width: 50%; text-align: justify;">${item.keterangan}</td>
+                                    <td style="width: 50%; text-align: justify;">${item.histori}</td>
                                     <td style="width: 50%;">${formattedTanggal}</td>
                                 </tr>
                             `);

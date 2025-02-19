@@ -119,8 +119,8 @@ function lihatFasilitas(id_fasilitas) {
 
                             tableBody.append(`
                                 <tr>
-                                    <td>${item.aksi}</td>
-                                    <td>${formattedTanggal}</td>
+                                    <td style="width: 50%; text-align: justify;">${item.histori}</td>
+                                    <td style="width: 50%;">${formattedTanggal}</td>
                                 </tr>
                             `);
                         });
@@ -138,5 +138,15 @@ function lihatFasilitas(id_fasilitas) {
 }
 function closeLihatFasilitasModal() {
     document.getElementById("lihatFasilitasModal").style.display = "none";
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById("lihatFasilitasModal");
+    const modalContent = document.querySelector(".modal-content");
+
+    // Jika klik di luar modal-content, tutup modal
+    if (event.target === modal) {
+        closeLihatFasilitasModal();
+    }
 }
 </script>
