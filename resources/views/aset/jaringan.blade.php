@@ -5,6 +5,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <!-- Kemudian impor Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     
@@ -38,89 +40,110 @@
             gap: 15px;
         }
         
-/* -------------------------- FILTER -------------------------- */
-.dropdown-container {
+    /* -------------------------- FILTER -------------------------- */
+.filter-container {
     display: flex;
-    gap: 15px; /* Jarak antar elemen tetap */
+    gap: 20px;
     align-items: center;
     width: 100%;
 }
 
-/* Menyamakan ukuran dropdown dan search bar */
-.dropdown-container select, 
-.dropdown-container .search-bar input {
-    flex: 1; /* Membuat elemen mengambil ruang yang tersedia secara proporsional */
+/* Memastikan setiap elemen dalam filter-container memiliki ukuran yang sama */
+.filter-container > * {
+    flex: 1;
+    min-width: 150px; /* Menentukan lebar minimum agar tetap responsif */
+}
+
+/* Styling umum untuk dropdown dan search bar */
+.filter-container select, 
+.filter-container .search-bar input {
+    width: 100%;
     font-size: 12px;
-    padding: 10px 12px; /* Padding lebih kecil agar lebih compact */
+    padding: 12px; /* Padding seragam */
     border: 1px solid #4f52ba;
     border-radius: 5px;
-    max-width: 1500px; 
     background-color: #fff;
-    height: 40px; /* Tinggi seragam */
+    transition: border-color 0.3s;
+    height: 42px; /* Menyamakan tinggi semua elemen */
+}
+
+/* Menghilangkan gaya default pada dropdown */
+.filter-container select {
     appearance: none; /* Menghilangkan default styling bawaan browser */
     -webkit-appearance: none;
     -moz-appearance: none;
-    text-indent: 1px;
-    text-overflow: '';
-}
-
-/* Menghilangkan ikon dropdown (caret) di sebelah kanan */
-.dropdown-container select {
-    background-image: none !important;
     cursor: pointer;
-    max-height: 300px; /* Menambahkan batas tinggi untuk memungkinkan scroll */
-    overflow-y: auto; /* Menambahkan scroll vertikal */
 }
 
 /* Styling khusus untuk search bar */
-.search-bar {
-    flex: 1; /* Memastikan search bar mengambil ruang yang tersedia */
+.filter-container .search-bar {
+    flex: 1; /* Search bar memiliki ukuran yang sama dengan dropdown */
 }
 
-.search-bar input {
+/* Menyesuaikan ukuran dropdown "Region" */
+#roFilter {
+    max-width: 250px; /* Atur lebar maksimum untuk dropdown Region */
+}
+
+.filter-container .search-bar input {
     outline: none;
-    width: 100%; /* Memastikan panjang search bar sama dengan dropdown */
 }
 
-/* Fokus pada input dan select */
-.dropdown-container select:focus, 
-.dropdown-container .search-bar input:focus {
+/* Efek saat fokus */
+.filter-container select:focus, 
+.filter-container .search-bar input:focus {
     border-color: #4f52ba;
-    box-shadow: 0 0 4px #4f52ba;
+    box-shadow: 0 0 5px rgba(79, 82, 186, 0.5);
 }
 
-/* Mengubah warna dropdown saat dipilih */
-.dropdown-container select:focus {
-    background-color: #fff; /* Warna tetap putih saat fokus */
+/* Styling untuk Select2 */
+.select2-container {
+    width: 100% !important;
 }
 
-/* Menambahkan scrollbar pada dropdown */
-.dropdown-container select {
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #4f52ba #f1f1f1;
+.select2-container--default .select2-selection--multiple {
+    font-size: 12px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: border-color 0.3s;
+    border: 1px solid #4f52ba !important;
+    height: 42px; /* Samakan tinggi Select2 dengan elemen lain */
+    display: flex;
+    align-items: center;
 }
 
-.dropdown-container select::-webkit-scrollbar {
-    width: 8px;
+/* Fokus pada Select2 */
+.select2-container--default .select2-selection--multiple:focus {
+    border-color: #4f52ba !important;
+    box-shadow: 0 0 5px rgba(79, 82, 186, 0.5) !important;
 }
 
-.dropdown-container select::-webkit-scrollbar-track {
-    background-color: #f1f1f1;
+/* Placeholder Select2 */
+.select2-container--default .select2-selection--multiple .select2-selection__placeholder {
+    color: #4f52ba;
+    font-size: 12px;
 }
 
-/* Mengubah warna dropdown saat dipilih */
-.dropdown-container select option:checked,
-.dropdown-container select option:focus,
-.dropdown-container select option:hover {
+/* Warna border saat dropdown Select2 terbuka */
+.select2-container--open .select2-selection {
+    border-color: #4f52ba;
+    box-shadow: 0 0 5px rgba(79, 82, 186, 0.5);
+}
+
+/* Styling hasil dropdown Select2 */
+.select2-results__option {
+    font-size: 12px;
+    padding: 10px;
+}
+
+/* Warna opsi yang disorot di Select2 */
+.select2-results__option--highlighted {
     background-color: #4f52ba !important;
-    color: white !important;
+    color: #fff;
 }
-
-
-
-
-        
+    
+    /* -------------------------- TABLE -------------------------- */
         .table-container {
             width: 100%;
             max-width: 100%;
@@ -164,6 +187,7 @@
             background-color: rgba(79, 82, 186, 0.2);
         }
 
+    /* -------------------------- MODAL -------------------------- */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -239,6 +263,8 @@
             box-shadow: 0 0 5px rgba(79, 82, 186, 0.3);
             outline: none;
         }
+
+    /* -------------------------- BUTTON -------------------------- */
 
         .add-button {
             background-color: #4f52ba;
@@ -345,16 +371,115 @@
             margin-right: 10px;
         }
 
-        .swal2-cancel:hover {
-            background-color: rgb(46, 50, 158) !important;
-        }
-
         .modal-title {
             font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 15px;
             text-align: center;
         }
+
+/* -------------------------- FILTER -------------------------- */
+.filter-container {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    width: 100%;
+}
+
+/* Memastikan setiap elemen dalam filter-container memiliki ukuran yang sama */
+.filter-container > * {
+    flex: 1;
+    min-width: 150px; /* Menentukan lebar minimum agar tetap responsif */
+}
+
+/* Styling umum untuk dropdown dan search bar */
+.filter-container select, 
+.filter-container .search-bar input {
+    width: 100%;
+    font-size: 12px;
+    padding: 12px; /* Padding seragam */
+    border: 1px solid #4f52ba;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: border-color 0.3s;
+    height: 42px; /* Menyamakan tinggi semua elemen */
+}
+
+/* Menghilangkan gaya default pada dropdown */
+.filter-container select {
+    appearance: none; /* Menghilangkan default styling bawaan browser */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+/* Styling khusus untuk search bar */
+.filter-container .search-bar {
+    flex: 1; /* Search bar memiliki ukuran yang sama dengan dropdown */
+}
+
+/* Menyesuaikan ukuran dropdown "Region" */
+#roFilter {
+    max-width: 250px; /* Atur lebar maksimum untuk dropdown Region */
+}
+
+.filter-container .search-bar input {
+    outline: none;
+}
+
+/* Efek saat fokus */
+.filter-container select:focus, 
+.filter-container .search-bar input:focus {
+    border-color: #4f52ba;
+    box-shadow: 0 0 5px rgba(79, 82, 186, 0.5);
+}
+
+/* Styling untuk Select2 */
+.select2-container {
+    width: 100% !important;
+}
+
+.select2-container--default .select2-selection--multiple {
+    font-size: 12px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: border-color 0.3s;
+    border: 1px solid #4f52ba !important;
+    height: 42px; /* Samakan tinggi Select2 dengan elemen lain */
+    display: flex;
+    align-items: center;
+}
+
+/* Fokus pada Select2 */
+.select2-container--default .select2-selection--multiple:focus {
+    border-color: #4f52ba !important;
+    box-shadow: 0 0 5px rgba(79, 82, 186, 0.5) !important;
+}
+
+/* Placeholder Select2 */
+.select2-container--default .select2-selection--multiple .select2-selection__placeholder {
+    color: #4f52ba;
+    font-size: 12px;
+}
+
+/* Warna border saat dropdown Select2 terbuka */
+.select2-container--open .select2-selection {
+    border-color: #4f52ba;
+    box-shadow: 0 0 5px rgba(79, 82, 186, 0.5);
+}
+
+/* Styling hasil dropdown Select2 */
+.select2-results__option {
+    font-size: 12px;
+    padding: 10px;
+}
+
+/* Warna opsi yang disorot di Select2 */
+.select2-results__option--highlighted {
+    background-color: #4f52ba !important;
+    color: #fff;
+}
     </style>
 
 <div class="main">
@@ -364,23 +489,25 @@
             <button class="add-button" onclick="storeJaringan()">Tambah Jaringan</button>
         </div>
         
-        <div class="dropdown-container">
-            <!-- Dropdown RO -->
-            <select id="roFilter" onchange="filterTable()">
-                <option value="">Pilih Region</option>
-                @foreach ($regions as $region)
-                <option value="{{ strtolower($region->nama_region) }}">{{ $region->nama_region }}</option>
-                @endforeach
-            </select>
-            <!-- Dropdown Tipe Jaringan -->
-            <select id="tipeJaringanFilter" onchange="filterTable()">
-                <option value="">Pilih Tipe Jaringan</option>
-                @foreach ($tipeJaringan as $tipe)
-                    <option value="{{ $tipe->kode_tipe }}">{{ $tipe->nama_tipe }}</option>
-                @endforeach
-            </select>
+        <div class="filter-container">
+            <div>
+                <select id="roFilter" name="region[]" multiple data-placeholder="Pilih Region">
+                    <option value="" disabled>Pilih Region</option>
+                    @foreach ($regions as $region)
+                        <option value="{{ strtolower($region->nama_region) }}">{{ $region->nama_region }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-            <!-- Search Bar -->
+            <div>
+                <select id="tipeJaringanFilter" name="tipe[]" multiple data-placeholder="Pilih Tipe Jaringan">
+                    <option value="" disabled>Pilih Tipe Jaringan</option>
+                    @foreach ($tipeJaringan as $tipe)
+                    <option value="{{ strtolower($tipe->nama_tipe) }}">{{ $tipe->nama_tipe }}</option>
+                    @endforeach
+                </select>
+            </div>
+
             <div class="search-bar">
                 <input type="text" id="searchInput" class="custom-select" placeholder="Cari" onkeyup="searchTable()" />
             </div>
@@ -681,32 +808,47 @@
         }
     });
 
+    $(document).ready(function() {
+    $('#roFilter, #tipeJaringanFilter').select2({
+        placeholder: function() {
+            return $(this).data('placeholder');
+        },
+        allowClear: true
+    });
+
+    $('#roFilter, #tipeJaringanFilter').on('change select2:select select2:unselect', function() {
+        filterTable();
+    });
+
     function filterTable() {
-        const roFilter = document.getElementById("roFilter").value.toLowerCase();
-        const tipeFilter = document.getElementById("tipeJaringanFilter").value.toLowerCase();
-        const rows = document.querySelectorAll("#jaringanTable tbody tr");
+        const roFilter = $('#roFilter').val() || [];
+        const tipeFilter = $('#tipeJaringanFilter').val() || [];
+        const rows = $("#jaringanTable tbody tr");
         let hasVisibleRow = false;
 
-        rows.forEach(row => {
-            if (row.id === "noDataMessage") return; // Skip the no data message row
+        rows.each(function() {
+            const row = $(this);
+            const roCell = row.find('td').eq(1).text().toLowerCase();
+            const tipeJaringanCell = row.find('td').eq(2).text().toLowerCase();
 
-            const roCell = row.cells[1].textContent.toLowerCase();
-            const tipeJaringanCell = row.cells[2].textContent.toLowerCase();
-
-            const matchesRO = roFilter === "" || roCell.includes(roFilter);
-            const matchesTipe = tipeFilter === "" || tipeJaringanCell.includes(tipeFilter);
+            const matchesRO = roFilter.length === 0 || roFilter.includes(roCell);
+            const matchesTipe = tipeFilter.length === 0 || tipeFilter.includes(tipeJaringanCell);
 
             if (matchesRO && matchesTipe) {
-                row.style.display = "";
+                row.show();
                 hasVisibleRow = true;
             } else {
-                row.style.display = "none";
+                row.hide();
             }
         });
 
-        // Show or hide the no data message
-        document.getElementById("noDataMessage").style.display = hasVisibleRow ? "none" : "";
+        $('#noDataMessage').toggle(!hasVisibleRow);
+
+        console.log('RO Filter:', roFilter);
+        console.log('Tipe Filter:', tipeFilter);
+        console.log('Row Tipe Jaringan Cell:', tipeJaringanCell);
     }
+});
 
     function searchTable() {
         const input = document.getElementById("searchInput");
@@ -841,10 +983,12 @@
             text: "Apakah Anda yakin ingin mengupdate data ini?",
             icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#4f52ba',
-            cancelButtonColor: '#d33',
             confirmButtonText: 'Ya, update!',
-            cancelButtonText: 'Batal'
+            cancelButtonText: 'Batal',
+            customClass: {
+                confirmButton: 'swal2-confirm2', // Kelas untuk tombol konfirmasi
+                cancelButton: 'swal2-confirm' // Kelas untuk tombol batal
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
@@ -859,7 +1003,10 @@
                                 text: "Data jaringan berhasil diupdate.",
                                 icon: "success",
                                 confirmButtonColor: '#4f52ba',
-                                confirmButtonText: "OK"
+                                confirmButtonText: "OK",
+                                customClass: {
+                                    confirmButton: 'swal2-confirm2'
+                                }
                             }).then(() => {
                                 location.reload(); // Muat ulang halaman untuk melihat perubahan
                             });
@@ -982,10 +1129,12 @@ $(document).ready(function() {
             text: "Apakah Anda yakin ingin menambahkan data ini?",
             icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#4f52ba',
-            cancelButtonColor: '#d33',
             confirmButtonText: 'Ya, simpan!',
-            cancelButtonText: 'Batal'
+            cancelButtonText: 'Batal',
+            customClass: {
+                confirmButton: 'swal2-confirm2', // Kelas untuk tombol konfirmasi
+                cancelButton: 'swal2-confirm' // Kelas untuk tombol batal
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
@@ -998,8 +1147,10 @@ $(document).ready(function() {
                                 title: "Berhasil!",
                                 text: "Data jaringan berhasil ditambahkan.",
                                 icon: "success",
-                                confirmButtonColor: '#4f52ba',
-                                confirmButtonText: "OK"
+                                confirmButtonText: "OK",
+                                customClass: {
+                                confirmButton: 'swal2-confirm2' // Gunakan kelas CSS untuk tombol OK
+                            }
                             }).then(() => {
                                 location.reload();
                             });
@@ -1097,8 +1248,8 @@ function lihatDetail(button) {
                                         ${generateInputField('Jenis Kabel', jaringan.jenis_kabel)}
                                         ${generateInputField('Tipe Kabel', jaringan.tipe_kabel)}
                                         ${generateInputField('Status', jaringan.status)}
-                                        ${generateInputField('Keterangan', jaringan.keterangan)}
-                                        ${generateInputField('Keterangan 2', jaringan.keterangan_2)}
+                                        ${generateInputField('Keterangan', jaringan.ket)}
+                                        ${generateInputField('Keterangan 2', jaringan.ket2)}
                                         ${generateInputField('Kode Site Insan', jaringan.kode_site_insan)}
                                         ${generateInputField('DCI-EQX', jaringan.dci_eqx)}
                                         ${generateInputField('Update', jaringan.update)}

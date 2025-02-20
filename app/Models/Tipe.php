@@ -17,5 +17,6 @@ class Tipe extends Model
     protected $fillable = [
         'kode_tipe',
         'nama_tipe',
+        'kode_insan',
     ];
 }
