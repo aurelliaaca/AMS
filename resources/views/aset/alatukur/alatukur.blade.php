@@ -5,7 +5,10 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <head>
-        <link rel="stylesheet" href="{{ asset('css/aset.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/general.css') }}">        
+        <link rel="stylesheet" href="{{ asset(path: 'css/tabel.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
     </head>
 
     <div class="main">
@@ -54,6 +57,7 @@
                 <table id="tableAlatukur">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>No</th>
                             <th>Hostname</th>
                             <th>Region</th>
@@ -96,7 +100,6 @@
                 );
             });
         });
-
         LoadData();
     });
 
@@ -121,6 +124,7 @@
 
                 tbody.append(`
                     <tr>
+                        <td></td>
                         <td>${index + 1}</td>
                         <td>${kodeAlatukur || '-'}</td>
                         <td>${alatukur.nama_region}</td>

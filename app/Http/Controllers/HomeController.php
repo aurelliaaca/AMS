@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\ListPerangkat;
+use App\Models\ListFasilitas;
 use App\Models\Region;
 use App\Models\Site;
 use App\Models\Fasilitas;
@@ -37,7 +39,8 @@ class HomeController extends Controller
     public function data(Request $request)
     {
         $regionCount = Region::count();
-        $siteCount = Site::count();
+        $popCount = Site::where('jenis_site', 'POP')->count();     
+        $pocCount = Site::where('jenis_site', 'POC')->count();     
         $perangkatCount = ListPerangkat::count();
         $fasilitasCount = Fasilitas::count();
         $jaringanCount = ListJaringan::count();
@@ -77,7 +80,8 @@ class HomeController extends Controller
         // Jika diperlukan, pastikan untuk meneruskan $listPerangkat ke view
         return view('menu.dashboard', compact(
             'regionCount', 
-            'siteCount', 
+            'popCount', 
+            'pocCount', 
             'perangkatCount', 
             'fasilitasCount', 
             'jaringanCount', 
@@ -88,41 +92,96 @@ class HomeController extends Controller
     }
 
     public function rack()
-    {
-        // Query for distinct racks with an ordering by the 'id_perangkat' column in ascending order.
-        $racks = ListPerangkat::join('site', 'listperangkat.kode_site', '=', 'site.kode_site')
-        ->join('region', 'listperangkat.kode_region', '=', 'region.kode_region')
+{
+    // Query for distinct racks that already have device/facility data
+    $racks = DB::query()
         ->select(
-            'listperangkat.kode_region', 
-            'region.nama_region', 
-            'listperangkat.kode_site', 
-            'site.nama_site', 
+            'listperangkat.kode_region',
+            'region.nama_region',
+            'listperangkat.kode_site',
+            'site.nama_site',
             'listperangkat.no_rack'
         )
-        ->whereNotNull('listperangkat.no_rack') // Menyaring agar hanya mengambil data yang no_rack tidak null.
+        ->from('listperangkat')
+        ->join('site', 'listperangkat.kode_site', '=', 'site.kode_site')
+        ->join('region', 'listperangkat.kode_region', '=', 'region.kode_region')
+        ->whereNotNull('listperangkat.no_rack')
+        ->union(
+            DB::query()
+                ->select(
+                    'listfasilitas.kode_region',
+                    'region.nama_region',
+                    'listfasilitas.kode_site',
+                    'site.nama_site',
+                    'listfasilitas.no_rack'
+                )
+                ->from('listfasilitas')
+                ->join('site', 'listfasilitas.kode_site', '=', 'site.kode_site')
+                ->join('region', 'listfasilitas.kode_region', '=', 'region.kode_region')
+                ->whereNotNull('listfasilitas.no_rack')
+        )
         ->distinct()
-        ->orderBy('listperangkat.id_perangkat', 'asc')
+        ->orderBy('kode_region')
+        ->orderBy('kode_site')
+        ->orderBy('no_rack')
         ->get();
 
-        $totalRacks = Site::sum('jml_rack');
+    // Get the total number of racks across all sites (if needed)
+    $totalRacks = Site::sum('jml_rack');
 
-        // Query for listPerangkat with the order.
-        $listPerangkat = ListPerangkat::select(
-                'kode_region',
-                'kode_site',
-                'no_rack',
-                'uawal',
-                'uakhir',
-                'listperangkat.kode_perangkat',
-                'jenisperangkat.nama_perangkat',
-                'type'
-            )
-            ->join('jenisperangkat', 'listperangkat.kode_perangkat', '=', 'jenisperangkat.kode_perangkat')
-            ->orderBy('listPerangkat.id_perangkat', 'asc') // Use the proper table/column name; if 'id_perangkat' is in the 'perangkat' table, change accordingly.
-            ->get();
+    // Query for list perangkat (devices)
+    $listPerangkat = ListPerangkat::select(
+            'kode_region',
+            'kode_site',
+            'no_rack',
+            'kode_brand',
+            'perangkat_ke',
+            'uawal',
+            'uakhir',
+            'listperangkat.kode_perangkat',
+            'jenisperangkat.nama_perangkat',
+            'type'
+        )
+        ->join('jenisperangkat', 'listperangkat.kode_perangkat', '=', 'jenisperangkat.kode_perangkat')
+        ->orderBy('listPerangkat.id_perangkat', 'asc')
+        ->get();
 
-        return view('menu.rack', compact('totalRacks', 'racks', 'listPerangkat'));
-    }
+    // Query for list fasilitas (facilities)
+    $listFasilitas = ListFasilitas::select(
+            'kode_region',
+            'kode_site',
+            'no_rack',
+            'kode_brand',
+            'fasilitas_ke',
+            'uawal',
+            'uakhir',
+            'listfasilitas.kode_fasilitas',
+            'jenisfasilitas.nama_fasilitas',
+            'type'
+        )
+        ->join('jenisfasilitas', 'listfasilitas.kode_fasilitas', '=', 'jenisfasilitas.kode_fasilitas')
+        ->orderBy('listFasilitas.id_fasilitas', 'asc')
+        ->get();
+
+    // Combine both lists of devices and facilities
+    $combinedList = $listPerangkat->concat($listFasilitas);
+
+    // Fetch all sites with their rack counts and region information
+    $sites = DB::table('site')
+         ->join('region', 'site.kode_region', '=', 'region.kode_region')
+         ->select(
+             'site.kode_site',
+             'site.nama_site',
+             'site.jml_rack',
+             'site.kode_region',
+             'region.nama_region'
+         )
+         ->orderBy('nama_region')
+         ->orderBy('nama_site')
+         ->get();
+
+    return view('menu.rack', compact('totalRacks', 'racks', 'combinedList', 'sites'));
+}
 
     public function getRacksByRegion($kode_region)
     {

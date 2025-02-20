@@ -1,11 +1,12 @@
 @extends('layouts.sidebar')
 @section('content')
 <style>
-    /* Tambahkan style custom jika diperlukan */
 </style>
 
-<!-- Jangan lupa untuk memindahkan elemen <head> ke layout utama jika memungkinkan -->
-<link rel="stylesheet" href="{{ asset('css/aset.css') }}">
+<link rel="stylesheet" href="{{ asset('css/general.css') }}">
+<link rel="stylesheet" href="{{ asset('css/filter.css') }}">
+<link rel="stylesheet" href="{{ asset('css/card.css') }}">
+<link rel="stylesheet" href="{{ asset('css/tabel.css') }}">
 
 <div class="main">
     <div class="container">
@@ -34,67 +35,94 @@
         </div>
 
         <div class="card-grid">
-        @foreach ($racks as $rack)
-                @php
-                    $filledU = 0;
-                    foreach($listPerangkat as $device) {
-                        if ($device->kode_region == $rack->kode_region &&
-                            $device->kode_site == $rack->kode_site &&
-                            $device->no_rack == $rack->no_rack) {
-                            $filledU += ($device->uakhir - $device->uawal + 1);
+            @foreach ($sites as $site)
+                @for ($rackNo = 1; $rackNo <= $site->jml_rack; $rackNo++)
+                    @php
+                        $rackData = $racks->first(function($item) use ($site, $rackNo) {
+                            return $item->kode_site == $site->kode_site && $item->no_rack == $rackNo;
+                        });
+                        
+                        if (!$rackData) {
+                            $rackData = (object)[
+                                'kode_region' => $site->kode_region,
+                                'nama_region' => $site->nama_region,
+                                'kode_site'   => $site->kode_site,
+                                'nama_site'   => $site->nama_site,
+                                'no_rack'     => $rackNo,
+                            ];
                         }
-                    }
-                    $emptyU = 42 - $filledU;
-                @endphp
-                <div class="card-wrapper">
-                    <div class="card-counter primary" data-region="{{ $rack->kode_region }}" data-site="{{ $rack->kode_site }}">
-                        <canvas id="rackChart{{ $rack->no_rack }}" width="100" height="100"></canvas>
-                        <span class="count-numbers">Rack {{ $rack->no_rack }}</span>
-                        <span class="count-name">{{ $rack->nama_site }}, {{ $rack->nama_region }}</span>
-                        <span class="count-details">Terisi: {{ $filledU }}U, Kosong: {{ $emptyU }}U</span>
-                    </div>
-                    <!-- Tabel dengan 2 kolom: nomor slot dan kode perangkat -->
-                    <div class="toggle-table">
-                        <table>
-                            <tbody>
-                            @for ($i = 1; $i <= 42; $i++)
-                                @php
-                                    // Nomor slot dari 42 ke 1
-                                    $slotNumber = 43 - $i;
-                                    $deviceCode = 'IDLE'; // Nilai default jika tidak ada perangkat
-                                    
-                                    // Cek setiap perangkat yang sesuai dengan region, site, dan rack
-                                    foreach($listPerangkat as $device) {
-                                        if (
-                                            $device->kode_region == $rack->kode_region &&
-                                            $device->kode_site == $rack->kode_site &&
-                                            $device->no_rack == $rack->no_rack
-                                        ) {
-                                            // Jika slot berada dalam rentang perangkat
-                                            if ($slotNumber >= $device->uawal && $slotNumber <= $device->uakhir) {
-                                                $deviceCode = $device->nama_perangkat . ' ' . $device->type;
-                                                break;
+                        
+                        $filledU = 0;
+                        foreach ($combinedList as $device) {
+                            if (
+                                $device->kode_region == $rackData->kode_region &&
+                                $device->kode_site == $rackData->kode_site &&
+                                $device->no_rack == $rackData->no_rack
+                            ) {
+                                $filledU += ($device->uakhir - $device->uawal + 1);
+                            }
+                        }
+                        $emptyU = 42 - $filledU;
+                    @endphp
+
+                    <div class="card-wrapper">
+                        <div class="card-counter primary" data-region="{{ $rackData->kode_region }}" data-site="{{ $rackData->kode_site }}">
+                            <canvas id="rackChart{{ $rackData->no_rack }}" width="100" height="100"></canvas>
+                            <span class="count-numbers">Rack {{ $rackData->no_rack }}</span>
+                            <span class="count-name">{{ $rackData->nama_site }}, {{ $rackData->nama_region }}</span>
+                            <span class="count-details">Terisi: {{ $filledU }}U, Kosong: {{ $emptyU }}U</span>
+                        </div>
+                        <div class="toggle-table">
+                            <table>
+                                <tbody>
+                                    @for ($i = 1; $i <= 42; $i++)
+                                        @php
+                                            $slotNumber = 43 - $i;
+                                            $deviceCode = 'IDLE';
+                                            $deviceHostnameParts = [];
+
+                                            foreach ($combinedList as $device) {
+                                                if (
+                                                    $device->kode_region == $rackData->kode_region &&
+                                                    $device->kode_site == $rackData->kode_site &&
+                                                    $device->no_rack == $rackData->no_rack
+                                                ) {
+                                                    if ($slotNumber >= $device->uawal && $slotNumber <= $device->uakhir) {
+                                                        $deviceCode = $device->nama_fasilitas ?? ($device->nama_perangkat . ' ' . $device->type);
+
+                                                        if ($device->kode_region)       $deviceHostnameParts[] = $device->kode_region;
+                                                        if ($device->kode_site)         $deviceHostnameParts[] = $device->kode_site;
+                                                        if ($device->no_rack)           $deviceHostnameParts[] = $device->no_rack;
+                                                        if (isset($device->kode_perangkat)) $deviceHostnameParts[] = $device->kode_perangkat;
+                                                        if (isset($device->kode_fasilitas)) $deviceHostnameParts[] = $device->kode_fasilitas;
+                                                        if (isset($device->fasilitas_ke))   $deviceHostnameParts[] = $device->fasilitas_ke;
+                                                        if (isset($device->perangkat_ke))   $deviceHostnameParts[] = $device->perangkat_ke;
+                                                        if (isset($device->kode_brand))     $deviceHostnameParts[] = $device->kode_brand;
+                                                        if ($device->type)            $deviceHostnameParts[] = $device->type;
+                                                        break; 
+                                                    }
+                                                }
                                             }
-                                        }
-                                    }
-                                    // Style khusus jika slot terisi
-                                    $style = ($deviceCode !== 'IDLE') ? 'background-color: #DCDCF2; font-weight: bold;' : '';
-                                @endphp
-                                <tr style="{{ $style }}">
-                                    <td style="width:20%; vertical-align: bottom;">{{ $slotNumber }}</td>
-                                    <td>{{ $deviceCode }}</td>
-                                </tr>
-                            @endfor
-                            </tbody>
-                        </table>
+
+                                            $deviceHostname = implode('-', array_filter($deviceHostnameParts));
+                                            $style = ($deviceCode !== 'IDLE') ? 'background-color: #DCDCF2; font-weight: bold;' : '';
+                                        @endphp
+                                        <tr style="{{ $style }}">
+                                            <td style="width:10%;">{{ $slotNumber }}</td>
+                                            <td style="width:50%;">{{ $deviceHostname }}</td>
+                                            <td style="width:30%;">{{ $deviceCode }}</td>
+                                        </tr>
+                                    @endfor
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                @endfor
             @endforeach
         </div>
     </div>
 </div>
 
-<!-- Library CSS & JS -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
@@ -102,7 +130,6 @@
 
 <script>
     $(document).ready(function() {
-        // Inisialisasi Select2 untuk dropdown Region dan Site
         $('#region').select2({
             placeholder: "Pilih Region",
             allowClear: true
@@ -113,7 +140,6 @@
             allowClear: true
         });
 
-        // Saat dropdown Region berubah, ambil data Site via AJAX
         $('#region').change(function(){
             const selectedRegions = $(this).val();
             $('#site').prop('disabled', true).empty().append('<option value="">Pilih Site</option>');
@@ -129,23 +155,19 @@
             filterRacks();
         });
 
-        // Saat dropdown Site berubah, lakukan filter
         $('#site').change(function(){
             filterRacks();
         });
 
-        // Saat mengetik pada search input, lakukan filter
         $('#searchInput').on('keyup', function(){
             filterRacks();
         });
 
-        // Toggle tampilan tabel pada tiap card saat diklik
         $('.card-counter').on('click', function() {
             $(this).closest('.card-wrapper').find('.toggle-table').slideToggle();
         });
     });
 
-    // Fungsi filter untuk menampilkan rak sesuai pilihan region, site, dan kata kunci
     function filterRacks() {
         var selectedRegions = $('#region').val() || [];
         var selectedSites = $('#site').val() || [];
@@ -171,7 +193,7 @@
 
     document.addEventListener("DOMContentLoaded", function () {
     const totalU = 42;
-    const listPerangkat = @json($listPerangkat);
+    const combinedList = @json($combinedList);
 
     document.querySelectorAll('canvas[id^="rackChart"]').forEach(canvas => {
         const rackNo = canvas.id.replace('rackChart', '');
@@ -182,13 +204,13 @@
 
         let filledU = 0;
 
-        listPerangkat.forEach(perangkat => {
+        combinedList.forEach(device => {
             if (
-                parseInt(perangkat.no_rack) === parseInt(rackNo) &&
-                perangkat.kode_region === rackRegion &&
-                perangkat.kode_site === rackSite
+                parseInt(device.no_rack) === parseInt(rackNo) &&
+                device.kode_region === rackRegion &&
+                device.kode_site === rackSite
             ) {
-                filledU += perangkat.uakhir - perangkat.uawal + 1;
+                filledU += device.uakhir - device.uawal + 1;
             }
         });
 

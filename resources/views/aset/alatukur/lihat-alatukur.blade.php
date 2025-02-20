@@ -24,12 +24,12 @@
                     <label>Type</label>
                     <p id="typeView"></p>
                 </div>
-                <div class="form-group">
+            </div>
+            <div class="right-column">
+                    <div class="form-group">
                     <label>Serial Number</label>
                     <p id="serialnumberView"></p>
                 </div>
-            </div>
-            <div class="right-column">
                 <div class="form-group">
                     <label>Tahun perolehan</label>
                     <p id="tahunperolehanView"></p>
