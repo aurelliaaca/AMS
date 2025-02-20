@@ -6,7 +6,6 @@
 <head>
     <link rel="stylesheet" href="{{ asset('css/general.css') }}">
     <link rel="stylesheet" href="{{ asset('css/card.css') }}">
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> -->
     <script src="https://kit.fontawesome.com/bdb0f9e3e2.js" crossorigin="anonymous"></script>
 </head>
 
@@ -36,8 +35,14 @@
 
             <div class="card-counter rack-icon">
                 <i class="fas fa-server"></i>
-                <div class="count-numbers">{{ $totalRacks }}</div>
-                <div class="count-name">Rack</div>
+                <div class="count-numbers">{{ $totalRacksPOP }}</div>
+                <div class="count-name">Rack POP</div>
+            </div>
+
+            <div class="card-counter rack-icon">
+                <i class="fas fa-server"></i>
+                <div class="count-numbers">{{ $totalRacksPOC }}</div>
+                <div class="count-name">Rack POC</div>
             </div>
 
             <div class="card-counter device-icon">

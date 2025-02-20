@@ -151,73 +151,81 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle form submission for adding perangkat
     $('#addPerangkatForm').on('submit', function(e) {
-    e.preventDefault();
-    closeAddPerangkatModal(); // Ini akan menutup modal sebelum SweetAlert muncul
+        e.preventDefault();
+        closeAddPerangkatModal(); // Ini akan menutup modal sebelum SweetAlert muncul
 
-    Swal.fire({
-        title: 'Konfirmasi',
-        text: "Apakah Anda yakin ingin menambahkan data ini?",
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#4f52ba',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya, simpan!',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Disable the submit button to prevent multiple submissions
-            const submitButton = $(this).find('button[type="submit"]');
-            submitButton.prop('disabled', true).text('Menyimpan...'); // Change button text
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: "Apakah Anda yakin ingin menambahkan data ini?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#4f52ba',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, simpan!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Disable the submit button to prevent multiple submissions
+                const submitButton = $(this).find('button[type="submit"]');
+                submitButton.prop('disabled', true).text('Menyimpan...'); // Change button text
 
-            $.ajax({
-                url: '/store-perangkat',
-                type: 'POST',
-                data: $(this).serialize(),
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Show success message before closing the modal
-                        Swal.fire({
-                            title: 'Berhasil!',
-                            text: 'Data berhasil disimpan.',
-                            icon: 'success',
-                            confirmButtonColor: '#4f52ba',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            closeAddPerangkatModal(); // Close the modal after the alert is confirmed
-                            LoadData(); // Reload the data
-                        });
-                    } else {
-                        Swal.fire('Error!', response.message || 'Terjadi kesalahan', 'error');
+                $.ajax({
+                    url: '/store-perangkat',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Show success message before closing the modal
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: 'Data berhasil disimpan.',
+                                icon: 'success',
+                                confirmButtonColor: '#4f52ba',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                closeAddPerangkatModal(); // Close the modal after the alert is confirmed
+                                LoadData(); // Reload the data
+                            });
+                        } else {
+                            Swal.fire('Error!', response.message || 'Terjadi kesalahan', 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error:', xhr);
+                        if (xhr.status === 400) {
+                            // Jika terjadi overlap, tampilkan pesan error dengan teks baru
+                            Swal.fire({
+                                title: 'Error!',
+                                text: `Di antara U${$('#uawal').val()}-U${$('#uakhir').val()} di Rack ${$('#no_rack').val()} ${$('#siteAdd option:selected').text()}, ${$('#regionAdd option:selected').text()} sudah terisi.`,
+                                icon: 'error',
+                                confirmButtonColor: '#4f52ba',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                openAddPerangkatModal(); // Buka kembali modal setelah alert
+                            });
+                        } else {
+                            Swal.fire('Error!', 'Terjadi kesalahan. Silakan coba lagi.', 'error');
+                        }
+                    },
+                    complete: function() {
+                        // Re-enable the submit button and reset text
+                        submitButton.prop('disabled', false).text('Simpan');
                     }
-                },
-                error: function(xhr) {
-                    console.error('Error:', xhr);
-                    if (xhr.status === 400) {
-                        // Jika terjadi overlap, tampilkan pesan error dengan teks baru
-                        Swal.fire({
-                            title: 'Error!',
-                            text: `Di antara U${$('#uawal').val()}-U${$('#uakhir').val()} di Rack ${$('#no_rack').val()} ${$('#siteAdd option:selected').text()}, ${$('#regionAdd option:selected').text()} sudah terisi.`,
-                            icon: 'error',
-                            confirmButtonColor: '#4f52ba',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            openAddPerangkatModal(); // Buka kembali modal setelah alert
-                        });
-                    } else {
-                        Swal.fire('Error!', 'Terjadi kesalahan. Silakan coba lagi.', 'error');
-                    }
-                },
-                complete: function() {
-                    // Re-enable the submit button and reset text
-                    submitButton.prop('disabled', false).text('Simpan');
-                }
-            });
+                });
+            }
+        });
+    });
+
+    const modalOverlay = document.getElementById('addPerangkatModal');
+
+    modalOverlay.addEventListener('click', function(event) {
+        if (event.target === modalOverlay) {
+            closeAddPerangkatModal(); // Menutup modal
         }
     });
-});
 });
 
 function openAddPerangkatModal() {

@@ -78,6 +78,15 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const modals = document.querySelectorAll('.modal-overlay');
+
+    modals.forEach(modal => {
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeEditPerangkatModal(); // Fungsi untuk menutup modal
+            }
+        });
+    });
     // Handle region change for edit
     $('#regionEdit').on('change', function() {
         var regionId = $(this).val();
