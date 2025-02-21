@@ -46,7 +46,8 @@ class HomeController extends Controller
         $jaringanCount = ListJaringan::count();
         $alatukurCount = AlatUkur::count();
 
-        $totalRacks = Site::sum('jml_rack');
+        $totalRacksPOP = Site::where('jenis_site', 'POP')->sum('jml_rack');
+        $totalRacksPOC = Site::where('jenis_site', 'POC')->sum('jml_rack');
 
         $perangkatQuery = \DB::table('listperangkat')
             ->join('site', 'listperangkat.kode_site', '=', 'site.kode_site')
@@ -86,7 +87,8 @@ class HomeController extends Controller
             'fasilitasCount', 
             'jaringanCount', 
             'alatukurCount',
-            'totalRacks',
+            'totalRacksPOP',
+            'totalRacksPOC',
             'listPerangkat'
         ));
     }

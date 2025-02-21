@@ -177,8 +177,8 @@ class FasilitasController extends Controller
             'serialnumber' => 'nullable|string',
             'jml_fasilitas' => 'nullable|integer|min:0',
             'status' => 'nullable|string',
-            'uawal' => 'nullable|integer|required_with:no_rack',
-            'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal',
+            'uawal' => 'nullable|integer|min:1|required_with:no_rack',
+            'uakhir' => 'nullable|integer|min:1|required_with:no_rack|gte:uawal',
         ]);
 
         \Log::info('Validation passed, validated data:', $validated);
@@ -396,8 +396,8 @@ class FasilitasController extends Controller
             'serialnumber' => 'nullable|string',
             'jml_fasilitas' => 'nullable|integer|min:0',
             'status' => 'nullable|string',
-            'uawal' => 'nullable|integer|required_with:no_rack',
-            'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal',
+            'uawal' => 'nullable|integer|min:1|required_with:no_rack',
+            'uakhir' => 'nullable|integer|min:1|required_with:no_rack|gte:uawal',
         ]);
 
         // Debug: log data yang diterima

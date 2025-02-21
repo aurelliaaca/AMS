@@ -152,8 +152,8 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
             'kode_brand' => 'nullable|exists:brandperangkat,kode_brand',
             'no_rack' => 'nullable|string',
             'type' => 'nullable|string',
-            'uawal' => 'nullable|integer|required_with:no_rack',
-            'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal',
+            'uawal' => 'nullable|integer|min:1|required_with:no_rack',
+            'uakhir' => 'nullable|integer|min:1|required_with:no_rack|gte:uawal',
         ]);
 
         \Log::info('Validation passed, validated data:', $validated);
@@ -365,8 +365,8 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
             'kode_brand' => 'nullable|exists:brandperangkat,kode_brand',
             'no_rack' => 'nullable|string',
             'type' => 'nullable|string',
-            'uawal' => 'nullable|integer|required_with:no_rack', // Required if no_rack is present
-            'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal', // Required if no_rack is present and must be greater than or equal to uawal
+            'uawal' => 'nullable|integer|min:1|required_with:no_rack', // Required if no_rack is present
+            'uakhir' => 'nullable|integer|min:1|required_with:no_rack|gte:uawal', // Required if no_rack is present and must be greater than or equal to uawal
         ]);
 
         // Debug: log data yang diterima

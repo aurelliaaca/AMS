@@ -3,284 +3,158 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Region;
-use App\Models\Pop;
-use App\Models\DataPerangkat;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Models\NamaPerangkat;
-use App\Models\Site;
-use App\Models\BrandPerangkat;
+use App\Models\JenisFasilitas;
 use App\Models\BrandFasilitas;
-use App\Models\DataFasilitas;
-use App\Models\NamaFasilitas;
-
-
-
+use Illuminate\Support\Facades\Validator;
 
 class DataController extends Controller
 {
     public function index()
     {
         $popCount = DB::table('pop')->count();
-        $fasilitasCount = DB::table('list_fasilitas')->count();
-        $perangkatCount = DB::table('perangkat')->count();
+        $fasilitasCount = DB::table('listfasilitas')->count();
+        $perangkatCount = DB::table('listperangkat')->count();
         $regionCount = DB::table('region')->count();
-        // $rackCount = DB::table('rack')->count();
-
         return view('data.datapage', compact('popCount', 'fasilitasCount', 'perangkatCount', 'regionCount'));
     }
 
-    public function region()
+    public function fasilitas()
     {
-        return view('data.region');
+        return view('data.datafasilitas');
     }
 
-    public function pop()
+    public function getData()
     {
-        $site = Site::all();
-        $region = Region::all();
-        return view('data.pop', compact('site', 'region'));
-    }
-
-    public function getAllPOP()
-    {
-        try {
-            $pop = Pop::all();
-            return response()->json([
-                'success' => true,
-                'pop' => $pop
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal memuat data POP'
-            ], 500);
-        }
-    }
-
-    public function getPOP($no_site)
-    {
-        try {
-            $pop = Pop::where('no_site', $no_site)->firstOrFail();
-            return response()->json([
-                'success' => true,
-                'pop' => $pop
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'POP tidak ditemukan'
-            ], 404);
-        }
-    }
-
-    public function storePOP(Request $request)
-    {
-        try {
-            $validated = $request->validate([
-                'regional' => 'required|string',
-                'kode_regional' => 'required|string',
-                'jenis_site' => 'required|string',
-                'site' => 'required|string',
-                'kode' => 'required|string',
-                'keterangan' => 'nullable|string',
-                'wajib_inspeksi' => 'required|boolean'
-            ]);
-
-            $pop = Pop::create($validated);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'POP berhasil ditambahkan',
-                'data' => $pop
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menambahkan POP: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function updatePOP(Request $request, $no_site)
-    {
-        try {
-            $validated = $request->validate([
-                'regional' => 'required|string',
-                'kode_regional' => 'required|string',
-                'jenis_site' => 'required|string',
-                'site' => 'required|string',
-                'kode' => 'required|string',
-                'keterangan' => 'nullable|string',
-                'wajib_inspeksi' => 'required|boolean'
-            ]);
-
-            $pop = Pop::where('no_site', $no_site)->firstOrFail();
-            $pop->update($validated);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'POP berhasil diupdate',
-                'data' => $pop
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengupdate POP: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function deletePOP($no_site)
-    {
-        try {
-            $pop = Pop::where('no_site', $no_site)->firstOrFail();
-            $pop->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'POP berhasil dihapus'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menghapus POP: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-
-    public function dataperangkat()
-    {
-        try {
-            $namaperangkat = NamaPerangkat::all();
-            $brandperangkat = BrandPerangkat::all();
-            
-            return view('data.dataperangkat', compact('namaperangkat', 'brandperangkat'));
-        } catch (\Exception $e) {
-            \Log::error('Error di dataperangkat: ' . $e->getMessage());
-            return back()->with('error', 'Terjadi kesalahan saat mengambil data');
-        }
-    }
-
-    // Tambah data perangkat
-    public function storeDataPerangkat(Request $request)
-    {
-        try {
-            $perangkat = new NamaPerangkat();
-            $perangkat->perangkat = $request->perangkat;
-            $perangkat->kode_perangkat = $request->kode_perangkat;
-            $perangkat->save();
-
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    // Get data untuk edit
-    public function getDataPerangkat($id)
-    {
-        try {
-            $namaperangkat = NamaPerangkat::find($id);
-            return response()->json(['success' => true, 'namaperangkat' => $namaperangkat]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    // Update data perangkat
-    public function updateDataPerangkat(Request $request, $id)
-    {
-        try {
-            $perangkat = NamaPerangkat::find($id);
-            $perangkat->perangkat = $request->perangkat;
-            $perangkat->kode_perangkat = $request->kode_perangkat;
-            $perangkat->save();
-
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    // Delete data perangkat
-    public function deleteDataPerangkat($id)
-    {
-        try {
-            NamaPerangkat::find($id)->delete();
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    // Tambahkan fungsi CRUD untuk brand
-    public function storeBrandPerangkat(Request $request)
-    {
-        try {
-            $brand = new BrandPerangkat();
-            $brand->nama_brand = $request->nama_brand;
-            $brand->kode_brand = $request->kode_brand;
-            $brand->save();
-
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    public function getBrandPerangkat($id)
-    {
-        try {
-            $brandperangkat = BrandPerangkat::find($id);
-            return response()->json(['success' => true, 'brandperangkat' => $brandperangkat]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    public function updateBrandPerangkat(Request $request, $id)
-    {
-        try {
-            $brand = BrandPerangkat::find($id);
-            $brand->nama_brand = $request->nama_brand;
-            $brand->kode_brand = $request->kode_brand;
-            $brand->save();
-
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    public function deleteBrandPerangkat($id)
-    {
-        try {
-            BrandPerangkat::find($id)->delete();
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-
-    public function datafasilitas()
-    {
-        $namafasilitas = NamaFasilitas::all();
-        $brandfasilitas = BrandFasilitas::all();
-        return view('data.datafasilitas', compact('namafasilitas', 'brandfasilitas'));
-    }
-
-    // ... existing code ...
-
-public function getSites(Request $request)
-{
-    $sites = DB::table('site')
-        ->whereIn('kode_region', $request->kode_region)
-        ->get(['kode_site', 'nama_site']);
+        $brandFasilitas = BrandFasilitas::orderBy('nama_brand', 'asc')->get();
+        $jenisFasilitas = JenisFasilitas::orderBy('nama_fasilitas', 'asc')->get();
         
-    return response()->json($sites);
-}
+
+        return response()->json([
+            'brandFasilitas' => $brandFasilitas,
+            'jenisFasilitas' => $jenisFasilitas,
+        ]);
+    }
+    public function storeBrandFasilitas(Request $request)
+    {
+        $validated = $request->validate([
+            'kode_brand' => 'required|string|unique:brandfasilitas,kode_brand',
+            'nama_brand' => 'required|string',
+        ]);
+
+        $exist = BrandFasilitas::where('kode_brand', $request->kode_brand)
+            ->orWhere('nama_brand', $request->nama_brand)
+            ->exists();
+
+        if ($exist) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode brand atau nama brand sudah ada dalam database.',
+            ], 400);
+        }
+
+        try {
+            $brandfasilitas = BrandFasilitas::create([
+                'kode_brand' => $request->kode_brand,
+                'nama_brand' => $request->nama_brand,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data brand berhasil disimpan.',
+                'data' => $brandfasilitas,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving brand fasilitas: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function storeJenisFasilitas(Request $request)
+    {
+        $validated = $request->validate([
+            'kode_fasilitas' => 'required|string|unique:jenisfasilitas,kode_fasilitas',
+            'nama_fasilitas' => 'required|string',
+        ]);
+
+        $exist = JenisFasilitas::where('kode_fasilitas', $request->kode_fasilitas)
+            ->orWhere('nama_fasilitas', $request->nama_fasilitas)
+            ->exists();
+
+        if ($exist) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode fasilitas atau nama fasilitas sudah ada dalam database.',
+            ], 400);
+        }
+
+        try {
+            $jenisfasilitas = JenisFasilitas::create([
+                'kode_fasilitas' => $request->kode_fasilitas,
+                'nama_fasilitas' => $request->nama_fasilitas,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data jenis berhasil disimpan.',
+                'data' => $jenisfasilitas,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving jenis fasilitas: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getBrandFasilitasById($kode_brand)
+    {
+        $brand = \DB::table('brandfasilitas')
+        ->select(
+            'brandfasilitas.nama_brand', 
+            'brandfasilitas.kode_brand'
+        )
+        ->where('brandfasilitas.kode_brand', $kode_brand) // Contoh: Filter berdasarkan id_perangkat
+        ->first(); // Ambil satu data
+
+        if ($brand) {
+            return response()->json([
+                'success' => true,
+                'brand' => $brand
+            ]);
+        }
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Brand tidak ditemukan'
+        ], 404);
+    }
+      
+    public function updateBrand(Request $request, $kode_brand)
+    {
+        // Validate incoming request data
+        $request->validate([
+            'nama_brand' => 'required|string|max:255',
+            'kode_brand' => 'required|string|max:255',
+        ]);
+
+        // Update the brand
+        $updated = DB::table('brandfasilitas')
+            ->where('kode_brand', $kode_brand)
+            ->update([
+                'nama_brand' => $request->nama_brand,
+                'kode_brand' => $request->kode_brand,
+            ]);
+
+        if ($updated) {
+            return response()->json(['success' => true, 'message' => 'Brand berhasil diperbarui']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Terjadi kesalahan, silakan coba lagi.'], 500);
+    }
 }
