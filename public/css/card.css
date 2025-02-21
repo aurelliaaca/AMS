@@ -1,0 +1,92 @@
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.card-counter {
+    background: linear-gradient(50deg, #4f52ba 0%, #6f86e0 100%);
+    color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    transition: transform 0.2s;
+    position: relative;
+    overflow: hidden;
+    min-height: 140px;
+    cursor: pointer;
+}
+
+.icon-wrapper {
+    position: absolute; /* Menjadikan posisi ikon absolut */
+    top: 50%; /* Posisikan di tengah */
+    left: 10px; /* Sesuaikan jarak dari kiri */
+    transform: translateY(-50%); /* Untuk memposisikan ikon di tengah vertikal */
+    width: 60px; /* Sesuaikan ukuran */
+    height: 60px; /* Sesuaikan ukuran */
+    border-radius: 12px; /* Sesuaikan dengan styling yang ada */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1; /* Pastikan di atas */
+}
+
+.card-counter canvas{
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    font-size: 125px;
+    z-index: 1;
+}
+
+.card-counter i {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    font-size: 100px;
+    z-index: 1;
+    color: #4f52ba;
+}
+
+.count-numbers {
+    font-size: 35px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 2;
+    text-align: right;
+}
+
+.count-name, .count-details {
+    font-size: 16px;
+    position: relative;
+    z-index: 2;
+    text-align: right;
+    font-style: italic;
+    opacity: 0.8;
+    bottom: 15px;
+}
+
+.toggle-table {
+    display: none;
+}
+
+.toggle-table table {
+    width: 100%;
+    border-collapse: separate;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.toggle-table tr td {
+    border: 1px solid #ddd;
+    padding: 5px;
+    text-align: center;
+    border-radius: 4px;
+}

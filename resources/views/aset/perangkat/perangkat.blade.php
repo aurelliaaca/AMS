@@ -5,7 +5,10 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <head>
-        <link rel="stylesheet" href="{{ asset('css/aset.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/general.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/tabel.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
     </head>
 
     <div class="main">
@@ -60,6 +63,7 @@
                 <table id="tablePerangkat">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>No</th>
                             <th>Hostname</th>
                             <th>Region</th>
@@ -130,63 +134,70 @@
         });
 
         function LoadData(regions = [], sites = [], jenisperangkat = [], brands = []) {
-        $.get('/get-perangkat', { 
-            region: regions, 
-            site: sites, 
-            jenisperangkat: jenisperangkat,
-            brand: brands 
-        }, function(response) {
-            const tbody = $('#tablePerangkat tbody');
-            tbody.empty();
+    $.get('/get-perangkat', { 
+        region: regions, 
+        site: sites, 
+        jenisperangkat: jenisperangkat,
+        brand: brands 
+    }, function(response) {
+        const tbody = $('#tablePerangkat tbody');
+        tbody.empty();
 
-            if (response.perangkat.length === 0) {
-                tbody.append('<tr><td colspan="8" class="text-center">Tidak ada data perangkat</td></tr>');
-                return;
-            }
+        if (response.perangkat.length === 0) {
+            tbody.append('<tr><td colspan="9" class="text-center">Tidak ada data perangkat</td></tr>');
+            return;
+        }
 
-            $.each(response.perangkat, function(index, perangkat) {
-                const kodePerangkat = [
-                    perangkat.kode_region, 
-                    perangkat.kode_site, 
-                    perangkat.no_rack, 
-                    perangkat.kode_perangkat, 
-                    perangkat.perangkat_ke, 
-                    perangkat.kode_brand, 
-                    perangkat.type
-                ].filter(val => val !== null && val !== undefined && val !== '').join('-');
+        $.each(response.perangkat, function(index, perangkat) {
+            const kodePerangkat = [
+                perangkat.kode_region, 
+                perangkat.kode_site, 
+                perangkat.no_rack, 
+                perangkat.kode_perangkat, 
+                perangkat.perangkat_ke, 
+                perangkat.kode_brand, 
+                perangkat.type
+            ].filter(val => val !== null && val !== undefined && val !== '').join('-');
 
-                tbody.append(`
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${kodePerangkat || '-'}</td>
-                        <td>${perangkat.nama_region}</td>
-                        <td>${perangkat.nama_site || '-'}</td>
-                        <td>${perangkat.no_rack || '-'}</td>
-                        <td>${perangkat.nama_perangkat || '-'}</td>
-                        <td>${perangkat.nama_brand || '-'}</td>
-                        <td>${perangkat.type || '-'}</td>
-                        <td>
-                            <button onclick="lihatPerangkat(${perangkat.id_perangkat})"
-                                style="background-color: #9697D6; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
-                                Lihat detail
-                            </button>
-                            <button onclick="editPerangkat(${perangkat.id_perangkat})" 
-                                style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
-                                Edit
-                            </button>
-                            <button onclick="deletePerangkat(${perangkat.id_perangkat})"
-                                style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
-                `);
-            });
-        }).fail(function() {
-            const tbody = $('#tablePerangkat tbody');
-            tbody.empty().append('<tr><td colspan="8" class="text-center">Terjadi kesalahan dalam memuat data</td></tr>');
+            const statusColor = perangkat.no_rack ? "green" : "red";
+            const statusTd = `<td style="text-align: center;">
+                    <div style="background-color: ${statusColor}; width: 15px; height: 15px; border-radius: 3px; display: inline-block;"></div>
+                  </td>`;
+
+            tbody.append(`
+                <tr>
+                    ${statusTd}
+                    <td>${index + 1}</td>
+                    <td>${kodePerangkat || '-'}</td>
+                    <td>${perangkat.nama_region}</td>
+                    <td>${perangkat.nama_site || '-'}</td>
+                    <td>${perangkat.no_rack || '-'}</td>
+                    <td>${perangkat.nama_perangkat || '-'}</td>
+                    <td>${perangkat.nama_brand || '-'}</td>
+                    <td>${perangkat.type || '-'}</td>
+                    <td>
+                        <button onclick="lihatPerangkat(${perangkat.id_perangkat})"
+                            style="background-color: #9697D6; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
+                            Lihat detail
+                        </button>
+                        <button onclick="editPerangkat(${perangkat.id_perangkat})" 
+                            style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
+                            Edit
+                        </button>
+                        <button onclick="deletePerangkat(${perangkat.id_perangkat})"
+                            style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `);
         });
-    }
+    }).fail(function() {
+        const tbody = $('#tablePerangkat tbody');
+        tbody.empty().append('<tr><td colspan="9" class="text-center">Terjadi kesalahan dalam memuat data</td></tr>');
+    });
+}
+
 
     function deletePerangkat(id_perangkat) {
         console.log("Delete function called with id_perangkat:", id_perangkat); // Debugging line

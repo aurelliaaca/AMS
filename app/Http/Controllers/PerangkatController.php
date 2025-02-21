@@ -46,7 +46,10 @@ class PerangkatController extends Controller
                 'region.nama_region', 
                 'jenisperangkat.nama_perangkat', 
                 'brandperangkat.nama_brand'
-            );
+            )
+            ->orderBy('nama_region')
+            ->orderBy('nama_site')
+            ->orderBy('no_rack');
 
         // Log total data setelah join
         $totalAfterJoin = $perangkat->count();

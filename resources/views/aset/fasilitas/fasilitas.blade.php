@@ -5,7 +5,10 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <head>
-        <link rel="stylesheet" href="{{ asset('css/aset.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/general.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/tabel.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
     </head>
 
     <div class="main">
@@ -60,6 +63,7 @@
                 <table id="tableFasilitas">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>No</th>
                             <th>Hostname</th>
                             <th>Region</th>
@@ -122,8 +126,6 @@
                 );
             });
         });
-
-            // Inisialisasi awal
             LoadData();
         });
 
@@ -153,8 +155,14 @@
                     fasilitas.type
                 ].filter(val => val !== null && val !== undefined && val !== '').join('-');
 
+                const statusColor = fasilitas.no_rack ? "green" : "red";
+                const statusTd = `<td style="text-align: center;">
+                        <div style="background-color: ${statusColor}; width: 15px; height: 15px; border-radius: 3px; display: inline-block;"></div>
+                </td>`;
+
                 tbody.append(`
                     <tr>
+                        ${statusTd}
                         <td>${index + 1}</td>
                         <td>${kodeFasilitas || '-'}</td>
                         <td>${fasilitas.nama_region}</td>
