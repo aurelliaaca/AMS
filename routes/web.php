@@ -111,7 +111,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/edit-jaringan/{id_jaringan}', [AsetController::class, 'editJaringan'])->name('jaringan.edit');
     Route::post('/update-jaringan/{id_jaringan}', [AsetController::class, 'updateJaringan'])->name('jaringan.update');
     Route::get('/jaringan/{id_jaringan}/detail', [JaringanController::class, 'getDetail'])->name('jaringan.detail');
-
+    Route::get('/get-last-kode-site-insan', [JaringanController::class, 'getLastKodeSiteInsan']);
+    Route::post('/jaringan/import', [JaringanController::class, 'import'])->name('jaringan.import');
+    
 
     // ALAT UKUR
     Route::get('/alatukur', [AlatukurController::class, 'alatukur'])->name('alatukur');
