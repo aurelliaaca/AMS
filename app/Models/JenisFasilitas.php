@@ -14,6 +14,8 @@ class JenisFasilitas extends Model
         'nama_fasilitas', 'kode_fasilitas',
     ];
 
+    public $timestamps = false;
+
     public function jenisfasilitas()
     {
         return $this->hasMany(ListFasilitas::class, 'kode_fasilitas', 'kode_fasilitas');

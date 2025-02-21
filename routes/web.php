@@ -58,6 +58,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/data', [DataController::class, 'index'])->name('data.index');
     Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
     Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
+    Route::get('/data/fasilitas', [DataController::class, 'fasilitas'])->name('data.fasilitas');
+    Route::get('/data/get', [DataController::class, 'getData']);
+    Route::post('/store-brand', [DataController::class, 'storeBrandFasilitas'])->name('store.brand');
+    Route::post('/store-jenis', [DataController::class, 'storeJenisFasilitas'])->name('store.jenis');
+    Route::get('/get-brand/{kode_brand}', [DataController::class, 'getBrandFasilitasById']);
+    Route::post('/update-brand/{kode_brand}', [DataController::class, 'updateBrand']);
     
     // POP Routes
     Route::get('/get-pops', [DataController::class, 'getAllPOP'])->name('pop.all');

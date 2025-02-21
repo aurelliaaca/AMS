@@ -13,4 +13,6 @@ class BrandFasilitas extends Model
     protected $fillable = [
         'nama_brand', 'kode_brand',
     ];
+
+    public $timestamps = false;
 }

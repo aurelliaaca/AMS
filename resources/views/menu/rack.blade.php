@@ -127,6 +127,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 
 <script>
     $(document).ready(function() {
@@ -194,16 +195,14 @@
     document.addEventListener("DOMContentLoaded", function () {
     const totalU = 42;
     const combinedList = @json($combinedList);
-
+    
     document.querySelectorAll('canvas[id^="rackChart"]').forEach(canvas => {
         const rackNo = canvas.id.replace('rackChart', '');
-
         const parentCard = canvas.closest('.card-counter');
         const rackRegion = parentCard.getAttribute('data-region');
         const rackSite = parentCard.getAttribute('data-site');
-
+        
         let filledU = 0;
-
         combinedList.forEach(device => {
             if (
                 parseInt(device.no_rack) === parseInt(rackNo) &&
@@ -213,9 +212,13 @@
                 filledU += device.uakhir - device.uawal + 1;
             }
         });
-
+        
         const emptyU = totalU - filledU;
-
+        
+        // Calculate percentages
+        const filledPercentage = ((filledU / totalU) * 100).toFixed(1);
+        const emptyPercentage = ((emptyU / totalU) * 100).toFixed(1);
+        
         new Chart(canvas.getContext("2d"), {
             type: 'pie',
             data: {
@@ -230,9 +233,24 @@
                 plugins: {
                     legend: {
                         display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    },
+                    datalabels: {
+                        color: '#fff',
+                        font: {
+                            weight: 'bold',
+                            size: 12
+                        },
+                        formatter: (value, ctx) => {
+                            const percentage = ctx.dataIndex === 0 ? filledPercentage : emptyPercentage;
+                            return `${percentage}%`;
+                        }
                     }
                 }
-            }
+            },
+            plugins: [ChartDataLabels]
         });
     });
 });
