@@ -6,6 +6,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <!-- Kemudian impor Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -285,6 +286,10 @@
             margin-right: 10px;
         }
 
+        .add-button:hover {
+            background-color: #3e4a9a;
+        }
+
         .edit-btn {
             background-color: #4f52ba;
             color: white;
@@ -314,9 +319,23 @@
 
         .button-container {
             display: flex;
-            justify-content: right;
-            gap: 10px;
-            margin-top: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .export-button {
+            background-color: #4f52ba;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .export-button:hover {
+            background-color: #3e4a9a;
         }
 
         .header {
@@ -589,6 +608,7 @@ input[type="text"] {
             <div class="button-container">
                 <button class="add-button" style="width: 150px;" onclick="importData()">Import</button>
                 <button class="add-button" style="width: 150px;" onclick="storeJaringan()">Tambah Jaringan</button>
+                <button class="add-button" style="width: 150px;" onclick="showExportModal()">Export</button>
             </div>
         </div>
         
@@ -1009,8 +1029,13 @@ input[type="text"] {
         allowClear: true
     });
 
-    $('#roFilter, #tipeJaringanFilter').on('change select2:select select2:unselect', function() {
-        filterTable();
+    // Event listener untuk menutup dropdown setelah memilih
+    $('#roFilter, #tipeJaringanFilter').on('change', function() {
+        const selectedValues = $(this).val();
+        if (selectedValues.length > 0) {
+            $(this).select2('close'); // Menutup dropdown
+        }
+        filterTable(); // Panggil fungsi filter
     });
 
     function filterTable() {
