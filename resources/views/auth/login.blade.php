@@ -219,7 +219,6 @@
                         required 
                         autocomplete="current-password" 
                         placeholder="Password">
-                    <i id="togglePassword" class="fas fa-eye toggle-password"></i>
                 </div>
                 @error('password')
                 <span class="invalid-feedback" role="alert">
@@ -251,17 +250,5 @@
             </div>
         </form>
     </div>
-
-    <script>
-        document.getElementById('togglePassword').addEventListener('click', function () {
-            const passwordInput = document.getElementById('password-field');
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-
-            // Ubah ikon mata sesuai dengan tipe input
-            this.classList.toggle('fa-eye');
-            this.classList.toggle('fa-eye-slash');
-        });
-    </script>
 </body>
 </html>
