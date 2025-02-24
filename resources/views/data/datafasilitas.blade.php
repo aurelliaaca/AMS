@@ -1,16 +1,15 @@
 @extends('layouts.sidebar')
+
 @section('content')
 
-<head>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Data Fasilitas</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="{{ asset('css/data.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/general.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/tabel.css') }}">
-</head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="{{ asset('css/data.css') }}">
+<link rel="stylesheet" href="{{ asset('css/general.css') }}">
+<link rel="stylesheet" href="{{ asset('css/modal.css') }}">
+<link rel="stylesheet" href="{{ asset('css/tabel.css') }}">
 
 <div class="main">
     <div class="container">
@@ -85,7 +84,7 @@
 
     function loadData() {
         $.ajax({
-            url: '/data/get',
+            url: '/data/get-fasilitas',
             method: 'GET',
             success: function(data) {
                 // Bersihkan tabel terlebih dahulu
@@ -161,7 +160,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `/data/jenis/${kodeFasilitas}`,
+                    url: `/data/jenis-fasilitas/${kodeFasilitas}`,
                     type: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -205,7 +204,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `/data/brand/${kodeBrand}`,
+                    url: `/data/brand-fasilitas/${kodeBrand}`,
                     type: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -235,57 +234,5 @@
             }
         });
     }
-
-    // Handle form submission for editing jenis
-    $('#editJenisForm').on('submit', function(e) {
-        e.preventDefault();
-        const kode_fasilitas = $('#kode_fasilitas-input').val();
-        
-        Swal.fire({
-            title: 'Konfirmasi',
-            text: "Apakah Anda yakin ingin mengupdate data ini?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#4f52ba',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, update!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const submitButton = $(this).find('button[type="submit"]');
-                submitButton.prop('disabled', true).text('Mengupdate...');
-
-                const formData = {
-                    _token: $('meta[name="csrf-token"]').attr('content'),
-                    _method: 'PUT',
-                    nama_fasilitas: $('#namaJenisEdit').val(),
-                    kode_fasilitas: $('#kodeFasilitasEdit').val()
-                };
-
-                $.ajax({
-                    url: `/update-jenis/${kode_fasilitas}`,
-                    type: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        if (response.success) {
-                            Swal.fire('Berhasil!', 'Data berhasil diupdate.', 'success').then(() => {
-                                closeEditJenisModal();
-                                loadData();
-                            });
-                        } else {
-                            Swal.fire('Error!', response.message || 'Terjadi kesalahan', 'error');
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error('Error:', xhr);
-                        Swal.fire('Error!', xhr.responseJSON?.message || 'Terjadi kesalahan saat update data.', 'error');
-                    },
-                    complete: function() {
-                        submitButton.prop('disabled', false).text('Update');
-                    }
-                });
-            }
-        });
-    });
 </script>
 @endsection

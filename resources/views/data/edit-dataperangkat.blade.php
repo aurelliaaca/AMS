@@ -27,19 +27,19 @@
 <div id="editJenisModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
         <button class="modal-close-btn" onclick="closeEditJenisModal()">×</button>
-        <h2>Edit Jenis Fasilitas</h2>
+        <h2>Edit Jenis Perangkat</h2>
         <form id="editJenisForm" method="POST">
             @csrf
-            <input type="hidden" id="kode_fasilitas-input" name="kode_fasilitas">
+            <input type="hidden" id="kode_perangkat-input" name="kode_perangkat">
             <div class="form-container">
                 <div class="form-group">
-                    <label for="namaJenisEdit">Nama Fasilitas</label>
-                    <input type="text" id="namaJenisEdit" name="nama_fasilitas">
+                    <label for="namaJenisEdit">Nama Perangkat</label>
+                    <input type="text" id="namaJenisEdit" name="nama_perangkat">
                 </div>
 
                 <div class="form-group">
-                    <label for="kodeFasilitasEdit">Kode Fasilitas</label>
-                    <input type="text" id="kodeFasilitasEdit" name="kode_fasilitas">
+                    <label for="kodePerangkatEdit">Kode Perangkat</label>
+                    <input type="text" id="kodePerangkatEdit" name="kode_perangkat">
                 </div>
             </div>
 
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitButton.prop('disabled', true).text('Mengupdate...');
 
                 $.ajax({
-                    url: `/update-brand-fasilitas/${kode_brand}`,
+                    url: `/update-brand-perangkat/${kode_brand}`,
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function(response) {
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle form submission for editing jenis
     $('#editJenisForm').on('submit', function(e) {
         e.preventDefault();
-        const kode_fasilitas = $('#kode_fasilitas-input').val();
+        const kode_perangkat = $('#kode_perangkat-input').val();
         closeEditJenisModal();
         
         Swal.fire({
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitButton.prop('disabled', true).text('Mengupdate...');
 
                 $.ajax({
-                    url: `/update-jenis-fasilitas/${kode_fasilitas}`,
+                    url: `/update-jenis-perangkat/${kode_perangkat}`,
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function(response) {
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function editBrand(kode_brand) {
-    $.get(`/get-brand-fasilitas/${kode_brand}`)
+    $.get(`/get-brand-perangkat/${kode_brand}`)
         .done(function(response) {
             if (response.success) {
                 const brand = response.brand;
@@ -179,22 +179,22 @@ function editBrand(kode_brand) {
         });
 }
 
-function editJenis(kode_fasilitas) {
-    $.get(`/get-jenis-fasilitas/${kode_fasilitas}`)
+function editJenis(kode_perangkat) {
+    $.get(`/get-jenis-perangkat/${kode_perangkat}`)
         .done(function(response) {
             if (response.success) {
                 const jenis = response.jenis;
-                $('#kode_fasilitas-input').val(jenis.kode_fasilitas);
-                $('#namaJenisEdit').val(jenis.nama_fasilitas);
-                $('#kodeFasilitasEdit').val(jenis.kode_fasilitas);
+                $('#kode_perangkat-input').val(jenis.kode_perangkat);
+                $('#namaJenisEdit').val(jenis.nama_perangkat);
+                $('#kodePerangkatEdit').val(jenis.kode_perangkat);
                 document.getElementById("editJenisModal").style.display = "flex";
             } else {
-                Swal.fire('Error!', 'Gagal mengambil data fasilitas', 'error');
+                Swal.fire('Error!', 'Gagal mengambil data perangkat', 'error');
             }
         })
         .fail(function(xhr) {
             console.error('Error:', xhr);
-            Swal.fire('Error!', 'Gagal mengambil data fasilitas', 'error');
+            Swal.fire('Error!', 'Gagal mengambil data perangkat', 'error');
         });
 }
 

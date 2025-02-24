@@ -3,7 +3,7 @@
 <div id="addBrandModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
         <button class="modal-close-btn" onclick="closeAddBrandModal()">×</button>
-        <h2>Tambah Brand Fasilitas Baru</h2>
+        <h2>Tambah Brand Perangkat Baru</h2>
         <form id="addBrandForm" method="POST">
             @csrf
             <div class="form-container">
@@ -26,17 +26,17 @@
 <div id="addJenisModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
         <button class="modal-close-btn" onclick="closeAddJenisModal()">×</button>
-        <h2>Tambah Jenis Fasilitas Baru</h2>
+        <h2>Tambah Jenis Perangkat Baru</h2>
         <form id="addJenisForm" method="POST">
             @csrf
             <div class="form-container">
                 <div class="form-group">
-                    <label for="nama_fasilitas">Nama Fasilitas</label>
-                    <input type="text" id="nama_fasilitas" name="nama_fasilitas" required>
+                    <label for="nama_perangkat">Nama Perangkat</label>
+                    <input type="text" id="nama_perangkat" name="nama_perangkat" required>
                 </div>
                 <div class="form-group">
-                    <label for="kode_fasilitas">Kode Fasilitas</label>
-                    <input type="text" id="kode_fasilitas" name="kode_fasilitas" required>
+                    <label for="kode_perangkat">Kode Perangkat</label>
+                    <input type="text" id="kode_perangkat" name="kode_perangkat" required>
                 </div>
             </div>
             <div class="button-container">
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitButton.prop('disabled', true).text('Menyimpan...');
 
                 $.ajax({
-                    url: '/store-brand-fasilitas',
+                    url: '/store-brand-perangkat',
                     type: 'POST',
                     data: $(this).serialize(),
                     headers: {
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitButton.prop('disabled', true).text('Menyimpan...');
 
                 $.ajax({
-                    url: '/store-jenis-fasilitas',
+                    url: '/store-jenis-perangkat',
                     type: 'POST',
                     data: $(this).serialize(),
                     headers: {

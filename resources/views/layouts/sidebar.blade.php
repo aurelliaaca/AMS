@@ -220,7 +220,7 @@
     <body>
         <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="img/pgncom.png" alt="logo" />
+                <img src="{{ asset('img/pgncom.png') }}" alt="logo" />
                 <h2>AMS</h2>
             </div>
             <ul class="sidebar-links">

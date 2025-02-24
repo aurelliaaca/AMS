@@ -61,15 +61,27 @@ Route::middleware('auth')->group(function () {
 
         // DATA FASILITAS
         Route::get('/data/fasilitas', [DataController::class, 'fasilitas'])->name('data.fasilitas');
-        Route::get('/data/get', [DataController::class, 'getData']);
-        Route::post('/store-brand', [DataController::class, 'storeBrandFasilitas'])->name('store.brand');
-        Route::post('/store-jenis', [DataController::class, 'storeJenisFasilitas'])->name('store.jenis');
-        Route::post('/update-brand/{kode_brand}', [DataController::class, 'updateBrand']);
-        Route::post('/update-jenis/{kode_fasilitas}', [DataController::class, 'updateJenis']);
-        Route::get('/get-brand/{kode_brand}', [DataController::class, 'getBrandFasilitasById']);
-        Route::get('/get-jenis/{kode_fasilitas}', [DataController::class, 'getJenisFasilitasById']);
-        Route::delete('/data/brand/{kode_brand}', [DataController::class, 'deleteBrand']);
-        Route::delete('/data/jenis/{kode_fasilitas}', [DataController::class, 'deleteJenis']);
+        Route::get('/data/get-fasilitas', [DataController::class, 'getDataFasilitas']);
+        Route::post('/store-brand-fasilitas', [DataController::class, 'storeBrandFasilitas'])->name('store.brand');
+        Route::post('/store-jenis-fasilitas', [DataController::class, 'storeJenisFasilitas'])->name('store.jenis');
+        Route::post('/update-brand-fasilitas/{kode_brand}', [DataController::class, 'updateBrandFasilitas']);
+        Route::post('/update-jenis-fasilitas/{kode_fasilitas}', [DataController::class, 'updateJenisFasilitas']);
+        Route::get('/get-brand-fasilitas/{kode_brand}', [DataController::class, 'getBrandFasilitasById']);
+        Route::get('/get-jenis-fasilitas/{kode_fasilitas}', [DataController::class, 'getJenisFasilitasById']);
+        Route::delete('/data/brand-fasilitas/{kode_brand}', [DataController::class, 'deleteBrandFasilitas']);
+        Route::delete('/data/jenis-fasilitas/{kode_fasilitas}', [DataController::class, 'deleteJenisFasilitas']);
+
+        // DATA PERANGKAT
+        Route::get('/data/perangkat', [DataController::class, 'perangkat'])->name('data.perangkat');
+        Route::get('/data/get-perangkat', [DataController::class, 'getDataPerangkat']);
+        Route::post('/store-brand-perangkat', [DataController::class, 'storeBrandPerangkat'])->name('store.brand');
+        Route::post('/store-jenis-perangkat', [DataController::class, 'storeJenisPerangkat'])->name('store.jenis');
+        Route::post('/update-brand-perangkat/{kode_brand}', [DataController::class, 'updateBrandPerangkat']);
+        Route::post('/update-jenis-perangkat/{kode_perangkat}', [DataController::class, 'updateJenisPerangkat']);
+        Route::get('/get-brand-perangkat/{kode_brand}', [DataController::class, 'getBrandPerangkatById']);
+        Route::get('/get-jenis-perangkat/{kode_perangkat}', [DataController::class, 'getJenisPerangkatById']);
+        Route::delete('/data/brand-perangkat/{kode_brand}', [DataController::class, 'deleteBrandPerangkat']);
+        Route::delete('/data/jenis-perangkat/{kode_perangkat}', [DataController::class, 'deleteJenisPerangkat']);
 
         
     
