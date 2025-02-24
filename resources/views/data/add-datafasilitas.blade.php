@@ -46,26 +46,6 @@
     </div>
 </div>
 
-<div id="editBrandModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-        <button class="modal-close-btn" onclick="closeEditBrandModal()">×</button>
-        <h2>Edit Brand Fasilitas</h2>
-        <form id="editBrandForm" method="POST">
-            @csrf
-            <input type="hidden" id="edit_kode_brand" name="kode_brand">
-            <div class="form-container">
-                <div class="form-group">
-                    <label for="edit_nama_brand">Nama Brand</label>
-                    <input type="text" id="edit_nama_brand" name="nama_brand" required>
-                </div>
-            </div>
-            <div class="button-container">
-                <button type="submit" class="add-button-data">Simpan Perubahan</button>
-            </div>
-        </form>
-    </div>
-</div>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     $('#addBrandForm').on('submit', function(e) {
@@ -201,94 +181,5 @@ function openAddJenisModal() {
 
 function closeAddJenisModal() {
     document.getElementById("addJenisModal").style.display = "none";
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    $(document).on('click', '.edit-brand-btn', function() {
-        let kodeBrand = $(this).data('kode');
-
-        $.ajax({
-            url: `/get-brand/${kodeBrand}`, // Corrected syntax for URL
-            type: 'GET',
-            success: function(response) {
-                if (response.success) {
-                    $('#edit_kode_brand').val(response.brand.kode_brand);
-                    $('#edit_nama_brand').val(response.brand.nama_brand);
-                    openEditBrandModal();
-                } else {
-                    Swal.fire('Error!', response.message || 'Gagal mengambil data brand.', 'error');
-                }
-            },
-            error: function() {
-                Swal.fire('Error!', 'Gagal mengambil data brand.', 'error');
-            }
-        });
-    });
-
-    $('#editBrandForm').on('submit', function(e) {
-        e.preventDefault();
-        closeEditBrandModal();
-
-        Swal.fire({
-            title: 'Konfirmasi',
-            text: "Apakah Anda yakin ingin menyimpan perubahan?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#4f52ba',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, simpan!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const submitButton = $(this).find('button[type="submit"]');
-                submitButton.prop('disabled', true).text('Menyimpan...');
-
-                $.ajax({
-                    url: '/update-brand/' + $('#edit_kode_brand').val(),
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            Swal.fire({
-                                title: 'Berhasil!',
-                                text: 'Data berhasil diperbarui.',
-                                icon: 'success',
-                                confirmButtonColor: '#4f52ba',
-                                confirmButtonText: 'OK'
-                            }).then(() => {
-                                $('#editBrandForm')[0].reset();
-                                loadData();
-                                closeEditBrandModal();
-                            });
-                        } else {
-                            Swal.fire('Error!', response.message || 'Terjadi kesalahan', 'error');
-                        }
-                    },
-                    error: function(xhr) {
-                        let errorMessage = 'Terjadi kesalahan. Silakan coba lagi.';
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            errorMessage = xhr.responseJSON.message;
-                        }
-                        Swal.fire('Error!', errorMessage, 'error');
-                    },
-                    complete: function() {
-                        submitButton.prop('disabled', false).text('Simpan Perubahan');
-                    }
-                });
-            }
-        });
-    });
-});
-
-
-function openEditBrandModal() {
-    document.getElementById("editBrandModal").style.display = "flex";
-}
-
-function closeEditBrandModal() {
-    document.getElementById("editBrandModal").style.display = "none";
 }
 </script>

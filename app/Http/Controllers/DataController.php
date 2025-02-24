@@ -114,47 +114,189 @@ class DataController extends Controller
 
     public function getBrandFasilitasById($kode_brand)
     {
-        $brand = \DB::table('brandfasilitas')
-        ->select(
-            'brandfasilitas.nama_brand', 
-            'brandfasilitas.kode_brand'
-        )
-        ->where('brandfasilitas.kode_brand', $kode_brand) // Contoh: Filter berdasarkan id_perangkat
-        ->first(); // Ambil satu data
+        try {
+            $brand = DB::table('brandfasilitas')
+                ->select('nama_brand', 'kode_brand')
+                ->where('kode_brand', $kode_brand)
+                ->first();
 
-        if ($brand) {
+            if (!$brand) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Brand tidak ditemukan'
+                ], 404);
+            }
+
             return response()->json([
                 'success' => true,
                 'brand' => $brand
             ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengambil data'
+            ], 500);
         }
-        
-        return response()->json([
-            'success' => false,
-            'message' => 'Brand tidak ditemukan'
-        ], 404);
     }
       
     public function updateBrand(Request $request, $kode_brand)
     {
-        // Validate incoming request data
-        $request->validate([
-            'nama_brand' => 'required|string|max:255',
-            'kode_brand' => 'required|string|max:255',
-        ]);
-
-        // Update the brand
-        $updated = DB::table('brandfasilitas')
-            ->where('kode_brand', $kode_brand)
-            ->update([
-                'nama_brand' => $request->nama_brand,
-                'kode_brand' => $request->kode_brand,
+        try {
+            $request->validate([
+                'nama_brand' => 'required|string|max:255',
+                'kode_brand' => 'required|string|max:255',
             ]);
 
-        if ($updated) {
-            return response()->json(['success' => true, 'message' => 'Brand berhasil diperbarui']);
-        }
+            $updated = DB::table('brandfasilitas')
+                ->where('kode_brand', $kode_brand)
+                ->update([
+                    'nama_brand' => $request->nama_brand,
+                    'kode_brand' => $request->kode_brand,
+                ]);
 
-        return response()->json(['success' => false, 'message' => 'Terjadi kesalahan, silakan coba lagi.'], 500);
+            if (!$updated) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Data tidak ditemukan atau tidak ada perubahan'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true, 
+                'message' => 'Brand berhasil diperbarui'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui data'
+            ], 500);
+        }
+    }
+
+    public function getJenisFasilitasById($kode_fasilitas)
+    {
+        try {
+            $jenis = DB::table('jenisfasilitas')
+                ->select('nama_fasilitas', 'kode_fasilitas')
+                ->where('kode_fasilitas', $kode_fasilitas)
+                ->first();
+
+            if (!$jenis) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Jenis fasilitas tidak ditemukan'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'jenis' => $jenis
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengambil data'
+            ], 500);
+        }
+    }
+
+    public function updateJenis(Request $request, $kode_fasilitas)
+    {
+        try {
+            $request->validate([
+                'nama_fasilitas' => 'required|string|max:255',
+                'kode_fasilitas' => 'required|string|max:255',
+            ]);
+
+            $updated = DB::table('jenisfasilitas')
+                ->where('kode_fasilitas', $kode_fasilitas)
+                ->update([
+                    'nama_fasilitas' => $request->nama_fasilitas,
+                    'kode_fasilitas' => $request->kode_fasilitas,
+                ]);
+
+            if (!$updated) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Data tidak ditemukan atau tidak ada perubahan'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true, 
+                'message' => 'Jenis fasilitas berhasil diperbarui'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui data'
+            ], 500);
+        }
+    }
+
+    public function deleteBrand($kode_brand)
+    {
+        try {
+            $brand = BrandFasilitas::where('kode_brand', $kode_brand)->first();
+            
+            if (!$brand) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Brand tidak ditemukan'
+                ], 404);
+            }
+
+            $brand->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Brand berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error deleting brand: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function deleteJenis($kode_fasilitas)
+    {
+        try {
+            $jenis = JenisFasilitas::where('kode_fasilitas', $kode_fasilitas)->first();
+            
+            if (!$jenis) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Jenis fasilitas tidak ditemukan'
+                ], 404);
+            }
+
+            $jenis->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Jenis fasilitas berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error deleting jenis: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

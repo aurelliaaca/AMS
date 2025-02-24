@@ -9,9 +9,13 @@ class JenisFasilitas extends Model
 {
     use HasFactory;
     protected $table = 'jenisfasilitas';
+    protected $primaryKey = 'kode_fasilitas';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
-        'nama_fasilitas', 'kode_fasilitas',
+        'kode_fasilitas',
+        'nama_fasilitas'
     ];
 
     public $timestamps = false;

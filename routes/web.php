@@ -55,15 +55,23 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-racks-by-region/{kode_region}', [HomeController::class, 'getRacksByRegion']);
     
     // DATA
-    Route::get('/data', [DataController::class, 'index'])->name('data.index');
+    Route::get('/data', [DataController::class, 'index'])->name('data');
     Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
     Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
-    Route::get('/data/fasilitas', [DataController::class, 'fasilitas'])->name('data.fasilitas');
-    Route::get('/data/get', [DataController::class, 'getData']);
-    Route::post('/store-brand', [DataController::class, 'storeBrandFasilitas'])->name('store.brand');
-    Route::post('/store-jenis', [DataController::class, 'storeJenisFasilitas'])->name('store.jenis');
-    Route::get('/get-brand/{kode_brand}', [DataController::class, 'getBrandFasilitasById']);
-    Route::post('/update-brand/{kode_brand}', [DataController::class, 'updateBrand']);
+
+        // DATA FASILITAS
+        Route::get('/data/fasilitas', [DataController::class, 'fasilitas'])->name('data.fasilitas');
+        Route::get('/data/get', [DataController::class, 'getData']);
+        Route::post('/store-brand', [DataController::class, 'storeBrandFasilitas'])->name('store.brand');
+        Route::post('/store-jenis', [DataController::class, 'storeJenisFasilitas'])->name('store.jenis');
+        Route::post('/update-brand/{kode_brand}', [DataController::class, 'updateBrand']);
+        Route::post('/update-jenis/{kode_fasilitas}', [DataController::class, 'updateJenis']);
+        Route::get('/get-brand/{kode_brand}', [DataController::class, 'getBrandFasilitasById']);
+        Route::get('/get-jenis/{kode_fasilitas}', [DataController::class, 'getJenisFasilitasById']);
+        Route::delete('/data/brand/{kode_brand}', [DataController::class, 'deleteBrand']);
+        Route::delete('/data/jenis/{kode_fasilitas}', [DataController::class, 'deleteJenis']);
+
+        
     
     // POP Routes
     Route::get('/get-pops', [DataController::class, 'getAllPOP'])->name('pop.all');
@@ -137,31 +145,30 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-region/{id_region}', [PengaturanController::class, 'getRegion'])->name('region.get');
 
     //DATA
-    Route::get('/data', [DataController::class, 'index'])->name('data');
-    Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
-    Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
-    Route::post('/store-pop', [DataController::class, 'storePOP'])->name('pop.store');
-    Route::get('/get-pop', [DataController::class, 'getAllPOP'])->name('pop.all');
-    Route::put('/update-pop/{no_site}', [DataController::class, 'updatePOP'])->name('pop.update');
-    Route::delete('/delete-pop/{no_site}', [DataController::class, 'deletePOP'])->name('pop.delete');
-    Route::get('/get-pop/{no_site}', [DataController::class, 'getPOP'])->name('pop.get');
-    Route::get('/data/rack', [DataController::class, 'rack'])->name('data.rack');
+    // Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
+    // Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
+    // Route::post('/store-pop', [DataController::class, 'storePOP'])->name('pop.store');
+    // Route::get('/get-pop', [DataController::class, 'getAllPOP'])->name('pop.all');
+    // Route::put('/update-pop/{no_site}', [DataController::class, 'updatePOP'])->name('pop.update');
+    // Route::delete('/delete-pop/{no_site}', [DataController::class, 'deletePOP'])->name('pop.delete');
+    // Route::get('/get-pop/{no_site}', [DataController::class, 'getPOP'])->name('pop.get');
+    // Route::get('/data/rack', [DataController::class, 'rack'])->name('data.rack');
 
-    Route::get('/data/dataperangkat', [DataController::class, 'dataperangkat'])->name('data.dataperangkat');
-    Route::post('/store-dataperangkat', [DataController::class, 'storeDataPerangkat']);
-    Route::get('/get-dataperangkat/{id}', [DataController::class, 'getDataPerangkat']);
-    Route::put('/update-dataperangkat/{id}', [DataController::class, 'updateDataPerangkat']);
-    Route::delete('/delete-dataperangkat/{id}', [DataController::class, 'deleteDataPerangkat']);
+    // Route::get('/data/dataperangkat', [DataController::class, 'dataperangkat'])->name('data.dataperangkat');
+    // Route::post('/store-dataperangkat', [DataController::class, 'storeDataPerangkat']);
+    // Route::get('/get-dataperangkat/{id}', [DataController::class, 'getDataPerangkat']);
+    // Route::put('/update-dataperangkat/{id}', [DataController::class, 'updateDataPerangkat']);
+    // Route::delete('/delete-dataperangkat/{id}', [DataController::class, 'deleteDataPerangkat']);
 
     
     // Routes untuk Brand Perangkat
-    Route::post('/store-brandperangkat', [DataController::class, 'storeBrandPerangkat']);
-    Route::get('/get-brandperangkat/{id}', [DataController::class, 'getBrandPerangkat']);
-    Route::put('/update-brandperangkat/{id}', [DataController::class, 'updateBrandPerangkat']);
-    Route::delete('/delete-brandperangkat/{id}', [DataController::class, 'deleteBrandPerangkat']);
+    // Route::post('/store-brandperangkat', [DataController::class, 'storeBrandPerangkat']);
+    // Route::get('/get-brandperangkat/{id}', [DataController::class, 'getBrandPerangkat']);
+    // Route::put('/update-brandperangkat/{id}', [DataController::class, 'updateBrandPerangkat']);
+    // Route::delete('/delete-brandperangkat/{id}', [DataController::class, 'deleteBrandPerangkat']);
 
-    Route::get('/data/datafasilitas', [DataController::class, 'datafasilitas'])->name('data.datafasilitas');
-    Route::get('/get-datafasilitas/{id}', [DataController::class, 'getDataFasilitas']);
+    // Route::get('/data/datafasilitas', [DataController::class, 'datafasilitas'])->name('data.datafasilitas');
+    // Route::get('/get-datafasilitas/{id}', [DataController::class, 'getDataFasilitas']);
 
     //HISTORI
     Route::get('/histori', [MenuController::class, 'histori'])->name('histori');
