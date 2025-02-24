@@ -10,6 +10,7 @@ use App\Models\Site;
 use App\Models\Fasilitas;
 use App\Models\AlatUkur;
 use App\Models\ListJaringan;
+use App\Models\Photos;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; // Pastikan ini ditambahkan untuk menggunakan Auth
@@ -48,6 +49,9 @@ class HomeController extends Controller
 
         $totalRacksPOP = Site::where('jenis_site', 'POP')->sum('jml_rack');
         $totalRacksPOC = Site::where('jenis_site', 'POC')->sum('jml_rack');
+
+        // Ambil semua foto dari database untuk semantik
+        $photos = Photos::all();
 
         $perangkatQuery = \DB::table('listperangkat')
             ->join('site', 'listperangkat.kode_site', '=', 'site.kode_site')
@@ -89,7 +93,8 @@ class HomeController extends Controller
             'alatukurCount',
             'totalRacksPOP',
             'totalRacksPOC',
-            'listPerangkat'
+            'listPerangkat',
+            'photos' // Kirim data foto ke view dashboard
         ));
     }
 
@@ -196,5 +201,60 @@ class HomeController extends Controller
     public function datapage()
     {
         return view('data.datapage');
+    }
+
+    public function semantik()
+    {
+        $photos = Photos::all(); // Ambil semua foto dari database
+        return view('menu.dashboard', compact('photos')); // Kirim data ke view
+    }
+
+    public function uploadPhoto(Request $request)
+    {
+        // Log ukuran file
+        \Log::info('Ukuran file: ' . $request->file('photo')->getSize());
+
+        $request->validate([
+            'photo' => 'required|image|mimes:jpg,jpeg,png,gif|max:5120', // Ubah menjadi 5120 untuk 5 MB
+            'title' => 'required|string|max:255',
+            'text' => 'required|string|max:500',
+        ]);
+
+        try {
+            $file = $request->file('photo');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('img'), $filename);
+
+            $photo = new Photos();
+            $photo->title = $request->input('title');
+            $photo->text = $request->input('text');
+            $photo->file_path = 'img/' . $filename;
+            $photo->save();
+
+            return response()->json([
+                'success' => true,
+                'photoUrl' => asset($photo->file_path),
+                'title' => $photo->title,
+                'text' => $photo->text,
+                'timestamp' => $photo->created_at,
+                'id' => $photo->id,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kesalahan saat mengupload foto: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function deletePhoto($id)
+    {
+        try {
+            $photo = Photos::findOrFail($id);
+            $photo->delete();
+            return redirect()->back()->with('success', 'Foto berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus foto.');
+        }
     }
 }

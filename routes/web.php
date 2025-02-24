@@ -175,4 +175,11 @@ Route::middleware('auth')->group(function () {
     });
     Route::get('/histori/jaringan', [MenuController::class, 'getHistoryJaringan'])->name('histori.jaringan');
     Route::get('/histori/jaringan/{id_jaringan}', [MenuController::class, 'getHistoriJaringan']);
+
+    // Route untuk upload foto
+    Route::post('/upload-photo', [HomeController::class, 'uploadPhoto'])->name('upload.photo');
+
+    // Route untuk menghapus foto
+    Route::delete('/photos/{id}', [HomeController::class, 'deletePhoto'])->name('photos.delete');
+
 });
