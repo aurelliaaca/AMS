@@ -83,6 +83,9 @@ Route::middleware('auth')->group(function () {
         Route::delete('/data/brand-perangkat/{kode_brand}', [DataController::class, 'deleteBrandPerangkat']);
         Route::delete('/data/jenis-perangkat/{kode_perangkat}', [DataController::class, 'deleteJenisPerangkat']);
 
+        // DATA REGION
+        Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
+
         
     
     // POP Routes

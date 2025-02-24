@@ -583,4 +583,9 @@ class DataController extends Controller
             ], 500);
         }
     }
+
+    public function region()
+    {
+        return view('data.region');
+    }
 }
