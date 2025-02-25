@@ -1,575 +1,387 @@
 @extends('layouts.sidebar')
 
 @section('content')
-<div class="main">
-    <div class="container">
-                <h3>Informasi Perangkat</h3>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <head>
+        <link rel="stylesheet" href="{{ asset('css/aset.css') }}">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-        <!-- Titles Container -->
-        <div class="titles-container">
-            <!-- Title Perangkat -->
-            <div class="section-title">
-                <div class="title-wrapper">
-                    <span class="material-symbols-outlined">devices</span>
-                    <h4>Nama Perangkat</h4>
+    </head>
+
+    <div class="main">
+        <div class="container">
+            <div class="header">
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Perangkat</h3>
+                    <div class="button-group" style="gap: 15px;">
+                        <button class="add-button" onclick="openAddPerangkatModal()"
+                            style="min-width: 150px; padding: 8px 15px;">Tambah Perangkat</button>
+                        <span class="material-icons upload-icon" data-bs-toggle="modal" data-bs-target="#importModal"
+                            style="cursor: pointer; font-size: 24px; display: flex; align-items: center;">upload_file</span>
+                    </div>
                 </div>
-                <button type="button" class="add-button" onclick="openJenisPerangkatModal()" title="Tambah Perangkat">
-                    <span class="material-symbols-outlined">add</span>
-                </button>
             </div>
 
-            <!-- Title Brand -->
-            <div class="section-title">
-                <div class="title-wrapper">
-                    <span class="material-symbols-outlined">inventory_2</span>
-                    <h4>Brand Perangkat</h4>
+            <div class="filter-container">
+                <div>
+                    <select id="region" name="region[]" multiple data-placeholder="Pilih Region">
+                        <option value="" disabled>Pilih Region</option>
+                        @foreach ($regions as $region)
+                            <option value="{{ $region->kode_region }}">{{ $region->nama_region }}</option>
+                        @endforeach
+                    </select>
                 </div>
-                <button type="button" class="add-button" onclick="openBrandPerangkatModal()" title="Tambah Brand">
-                    <span class="material-symbols-outlined">add</span>
-                </button>
+
+                <div>
+                    <select id="site" name="site[]" multiple data-placeholder="Pilih Site" disabled>
+                        <option value="" disabled>Pilih Site</option>
+                    </select>
+                </div>
+
+                <div>
+                    <select id="jenisperangkat" name="jenisperangkat[]" multiple data-placeholder="Pilih Jenis Perangkat">
+                        <option value="" disabled>Pilih Jenis Perangkat</option>
+                        @foreach ($listpkt as $perangkat)
+                            <option value="{{ $perangkat->kode_perangkat }}">{{ $perangkat->nama_perangkat }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <select id="brand" name="brand[]" multiple data-placeholder="Pilih Brand">
+                        <option value="" disabled>Pilih Brand</option>
+                        @foreach ($brands as $brand)
+                            <option value="{{ $brand->kode_brand }}">{{ $brand->nama_brand }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" id="searchInput" class="custom-select" placeholder="Cari" onkeyup="searchTable()" />
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="tablePerangkat">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Hostname</th>
+                            <th>Region</th>
+                            <th>POP</th>
+                            <th>No Rack</th>
+                            <th>Perangkat</th>
+                            <th>Brand</th>
+                            <th>Type</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
+    </div>
 
-        <!-- Tables Container -->
-        <div class="table-container">
-            <!-- Tabel Nama Perangkat -->
-            <div class="table-section">
-                <div class="table-wrapper">
-                    <table id="jenisPerangkatTable">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama Perangkat</th>
-                                <th>Kode Perangkat</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($jenisperangkat as $index => $item)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $item->perangkat }}</td>
-                                    <td>{{ $item->kode_perangkat }}</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="edit-btn" title="Edit" onclick="editInfoPerangkat({{ $item->id }})">
-                                                <span class="material-symbols-outlined">edit</span>
-                                            </button>
-                                            <button class="delete-btn" title="Hapus" onclick="deleteInfoPerangkat({{ $item->id }})">
-                                                <span class="material-symbols-outlined">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="text-center">Tidak ada data</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+    @include('aset.perangkat.add-perangkat')
+    @include('aset.perangkat.edit-perangkat')
+    @include('aset.perangkat.lihat-perangkat')
+
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Modal Import -->
+    <div class="modal fade" id="importModal" style="display: none;" tabindex="-1" aria-labelledby="importModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Import Data Perangkat</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('import.perangkat') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <input type="file" name="file" accept=".xlsx, .xls, .csv" required>
+                        </div>
+                        <div class="modal-footer" style="margin: 10px -15px -12px;">
+                            <button type="button" class="btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn-primary">Import</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-
-    
-
-
-
-<!--============================================ Tabel Brand Perangkat ============================================-->
-            <div class="table-section">
-                <div class="table-wrapper">
-                    <table id="brandPerangkatTable">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama Brand</th>
-                                <th>Kode Brand</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @forelse($brandperangkat as $index => $item)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $item->nama_brand }}</td>
-                                    <td>{{ $item->kode_brand }}</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="edit-btn" title="Edit" onclick="editBrandPerangkat({{ $item->id }})">
-                                                <span class="material-symbols-outlined">edit</span>
-                                            </button>
-                                            <button class="delete-btn" title="Hapus" onclick="deleteBrandPerangkat({{ $item->id }})">
-                                                <span class="material-symbols-outlined">delete</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="text-center">Tidak ada data</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-<style>
-    :root {
-        --primary-color: #4f52ba;
-        --primary-light: #6366F1;
-        --primary-dark: #3a3d9c;
-        --secondary-color: #2DD4BF;
-        --danger-color: #dc2626;
-        --danger-light: #ef4444;
-    }
-
-    .container {
-        padding: 30px;
-        max-width: 1400px;
-        margin: 0 auto;
-    }
-
-    .dashboard-header {
-        margin-bottom: 30px;
-        background: white;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-    }
-
-    .dashboard-header h1 {
-        font-size: 24px;
-        font-weight: 700;
-        margin-bottom: 8px;
-        color: #4f52ba;
-    }
-
-    .dashboard-header p {
-        color: #7f8c8d;
-        font-size: 14px;
-    }
-
-    /* Titles Container */
-    .titles-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
-        gap: 30px;
-        margin-bottom: 20px;
-    }
-
-    .section-title {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px;
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-    }
-
-    .title-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .title-wrapper span {
-        color: var(--primary-color);
-        font-size: 24px;
-    }
-
-    .title-wrapper h4 {
-        color: #2c3e50;
-        font-size: 18px;
-        font-weight: 600;
-        margin: 0;
-    }
-
-    .add-button {
-        width: 35px;
-        height: 35px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--primary-color);
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .add-button:hover {
-        background: var(--primary-light);
-        transform: rotate(90deg);
-    }
-
-    .add-button span {
-        color: white;
-        font-size: 20px;
-    }
-
-    /* Tables Container */
-    .table-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
-        gap: 30px;
-        margin: 20px 0;
-    }
-
-    .table-section {
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-        overflow: hidden;
-        border: 1px solid #e2e8f0;
-    }
-
-    .table-wrapper {
-        padding: 20px;
-        overflow-x: auto;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
-    }
-
-    table th:nth-child(1), 
-    table td:nth-child(1) {
-        width: 10%;
-    }
-
-    table th:nth-child(2), 
-    table td:nth-child(2) {
-        width: 35%;
-    }
-
-    table th:nth-child(3), 
-    table td:nth-child(3) {
-        width: 35%;
-    }
-
-    table th:nth-child(4), 
-    table td:nth-child(4) {
-        width: 20%;
-    }
-
-    thead th {
-        background: #4f52ba;
-        color: white;
-        font-size: 14px;
-        font-weight: 600;
-        padding: 15px;
-        text-align: left;
-        white-space: nowrap;
-    }
-
-    tbody td {
-        padding: 15px;
-        color: #4a5568;
-        font-size: 14px;
-        border-bottom: 1px solid #e2e8f0;
-        word-wrap: break-word;
-    }
-
-    tbody tr:hover {
-        background: #f8fafc;
-        transition: background-color 0.3s ease;
-    }
-
-    /* Tombol Aksi (Edit & Delete) */
-    .action-buttons {
-        display: flex;
-        gap: 8px;
-        justify-content: flex-start;
-        min-width: 90px;
-    }
-
-    .edit-btn, .delete-btn {
-        background: none;
-        border: none;
-        padding: 4px;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: all 0.2s ease;
-    }
-
-    .edit-btn span {
-        color: #4f52ba;
-        font-size: 20px;
-    }
-
-    .delete-btn span {
-        color: #dc2626;
-        font-size: 20px;
-    }
-
-    .edit-btn:hover {
-        background: #eff6ff;
-    }
-
-    .delete-btn:hover {
-        background: #fef2f2;
-    }
-
-    /* Responsivitas */
-    @media (max-width: 1200px) {
-        .table-container {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .table-wrapper {
-            padding: 10px;
-        }
-        
-        thead th, tbody td {
-            padding: 10px;
-        }
-    }
-</style>
-
-<!-- Link untuk Material Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-
-<!-- Modal untuk Nama Perangkat -->
-<div id="addJenisPerangkatModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-        <span class="modal-close-btn" onclick="closeJenisPerangkatModal()">&times;</span>
-        <h2>Tambah Nama Perangkat</h2>
-        <form id="jenisPerangkatForm">
-            @csrf
-            <div class="form-group">
-                <label for="perangkat">Nama Perangkat</label>
-                <input type="text" id="perangkat" name="perangkat" required>
-            </div>
-            <div class="form-group">
-                <label for="kode_perangkat">Kode Perangkat</label>
-                <input type="text" id="kode_perangkat" name="kode_perangkat" required>
-            </div>
-            <button type="submit" class="submit-btn">Simpan</button>
-        </form>
+        </div>
     </div>
-</div>
 
-<!-- Modal untuk Brand Perangkat -->
-<div id="addBrandPerangkatModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-        <span class="modal-close-btn" onclick="closeBrandPerangkatModal()">&times;</span>
-        <h2>Tambah Brand Perangkat</h2>
-        <form id="brandPerangkatForm">
-            @csrf
-            <div class="form-group">
-                <label for="nama_brand">Nama Brand</label>
-                <input type="text" id="nama_brand" name="nama_brand" required>
-            </div>
-            <div class="form-group">
-                <label for="kode_brand">Kode Brand</label>
-                <input type="text" id="kode_brand" name="kode_brand" required>
-            </div>
-            <button type="submit" class="submit-btn">Simpan</button>
-        </form>
-    </div>
-</div>
+    <script>
+        $(document).ready(function () {
+            // Update the Select2 initialization
+            $('#region, #site, #jenisperangkat, #brand').select2({
+                placeholder: function () {
+                    return $(this).data('placeholder');
+                },
+                allowClear: true
+            });
 
-@push('scripts')
-<!-- Load jQuery first -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Load SweetAlert -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
-<!-- Load Material Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-<!-- CSRF Token -->
-<meta name="csrf-token" content="{{ csrf_token() }}">
+            // Event handlers untuk filter
+            $('#region').change(function () {
+                const selectedRegions = $(this).val();
+                $('#site').prop('disabled', true).empty().append('<option value="">Pilih Site</option>');
 
-<!-- Your custom scripts -->
-<script>
-$(document).ready(function() {
-    // Debug
-    console.log('JavaScript loaded');
-
-    // Setup AJAX CSRF
-    $.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-});
-
-
-
-    
-    // ============== NAMA PERANGKAT OPERATIONS ==============
-    // Open modal Nama Perangkat
-    function openJenisPerangkatModal() {
-        console.log('Opening Nama Perangkat Modal');
-        $('#addJenisPerangkatModal').show();
-    }
-
-    function closeJenisPerangkatModal() {
-        $('#addJenisPerangkatModal').hide();
-    }
-
-    // Fungsi Modal Brand Perangkat
-    function openBrandPerangkatModal() {
-        console.log('Opening Brand Perangkat Modal');
-        $('#addBrandPerangkatModal').show();
-    }
-
-    function closeBrandPerangkatModal() {
-        $('#addBrandPerangkatModal').hide();
-    }
-
-    // Form Submit Nama Perangkat
-    $('#jenisPerangkatForm').submit(function(e) {
-        e.preventDefault();
-        console.log('Submitting Nama Perangkat Form');
-        
-        $.ajax({
-            url: '/store-jenisperangkat',
-            type: 'POST',
-            data: $(this).serialize(),
-            success: function(response) {
-                if (response.success) {
-                    swal("Berhasil!", "Data berhasil disimpan", "success");
-                    closeJenisPerangkatModal();
-                    location.reload();
+                if (selectedRegions && selectedRegions.length > 0) {
+                    $.get('/get-sites', { regions: selectedRegions }, function (data) {
+                        $('#site').prop('disabled', false);
+                        $.each(data, function (key, value) {
+                            $('#site').append(new Option(value, key));
+                        });
+                    });
                 }
-            },
-            error: function(xhr) {
-                swal("Error!", "Terjadi kesalahan", "error");
-                console.error(xhr.responseText);
-            }
-        });
-    });
 
-    // Form Submit Brand Perangkat
-    $('#brandPerangkatForm').submit(function(e) {
-        e.preventDefault();
-        console.log('Submitting Brand Perangkat Form');
-        
-        $.ajax({
-            url: '/store-brandperangkat',
-            type: 'POST',
-            data: $(this).serialize(),
-            success: function(response) {
-                if (response.success) {
-                    swal("Berhasil!", "Data berhasil disimpan", "success");
-                    closeBrandPerangkatModal();
-                    location.reload();
+                LoadData(selectedRegions);
+            });
+
+            ['#site', '#jenisperangkat', '#brand'].forEach(selector => {
+                $(selector).change(function () {
+                    LoadData(
+                        $('#region').val(),
+                        $('#site').val(),
+                        $('#jenisperangkat').val(),
+                        $('#brand').val()
+                    );
+                });
+            });
+
+            // Inisialisasi awal
+            LoadData();
+        });
+
+        function LoadData(regions = [], sites = [], jenisperangkat = [], brands = []) {
+            $.get('/get-perangkat', {
+                region: regions,
+                site: sites,
+                jenisperangkat: jenisperangkat,
+                brand: brands
+            }, function (response) {
+                const tbody = $('#tablePerangkat tbody');
+                tbody.empty();
+
+                if (response.perangkat.length === 0) {
+                    tbody.append('<tr><td colspan="8" class="text-center">Tidak ada data perangkat</td></tr>');
+                    return;
                 }
-            },
-            error: function(xhr) {
-                swal("Error!", "Terjadi kesalahan", "error");
-                console.error(xhr.responseText);
-            }
-        });
-    });
 
-        // Edit Nama Perangkat
-        function editInfoPerangkat(id) {
-            console.log('Editing Nama Perangkat:', id);
-            $.get(`/get-jenisperangkat/${id}`, function(response) {
-                if (response.success) {
-                    $('#perangkat').val(response.data.perangkat);
-                    $('#kode_perangkat').val(response.data.kode_perangkat);
-                    $('#jenisPerangkatForm').append(`<input type="hidden" name="id" value="${id}">`);
-                    openJenisPerangkatModal();
+                $.each(response.perangkat, function (index, perangkat) {
+                    const kodePerangkat = [
+                        perangkat.kode_region,
+                        perangkat.kode_site,
+                        perangkat.no_rack,
+                        perangkat.kode_perangkat,
+                        perangkat.perangkat_ke,
+                        perangkat.kode_brand,
+                        perangkat.type
+                    ].filter(val => val !== null && val !== undefined && val !== '').join('-');
+
+                    tbody.append(`
+                                                            <tr>
+                                                                <td>${index + 1}</td>
+                                                                <td>${kodePerangkat || '-'}</td>
+                                                                <td>${perangkat.nama_region}</td>
+                                                                <td>${perangkat.nama_site || '-'}</td>
+                                                                <td>${perangkat.no_rack || '-'}</td>
+                                                                <td>${perangkat.nama_perangkat || '-'}</td>
+                                                                <td>${perangkat.nama_brand || '-'}</td>
+                                                                <td>${perangkat.type || '-'}</td>
+                                                                <td>
+                                                                    <button onclick="lihatPerangkat(${perangkat.id_perangkat})"
+                                                                        style="background-color: #9697D6; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
+                                                                        Lihat detail
+                                                                    </button>
+                                                                    <button onclick="editPerangkat(${perangkat.id_perangkat})" 
+                                                                        style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
+                                                                        Edit
+                                                                    </button>
+                                                                    <button onclick="deletePerangkat(${perangkat.id_perangkat})"
+                                                                        style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                                                        Delete
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        `);
+                });
+            }).fail(function () {
+                const tbody = $('#tablePerangkat tbody');
+                tbody.empty().append('<tr><td colspan="8" class="text-center">Terjadi kesalahan dalam memuat data</td></tr>');
+            });
+        }
+
+        function deletePerangkat(id_perangkat) {
+            console.log("Delete function called with id_perangkat:", id_perangkat); // Debugging line
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#4f52ba',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: /delete-perangkat/${id_perangkat},
+                        type: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire('Terhapus!', 'Perangkat berhasil dihapus.', 'success');
+                                LoadData();
+                            } else {
+                                Swal.fire('Error!', response.message || 'Terjadi kesalahan saat menghapus', 'error');
+                            }
+                        },
+                        error: function (xhr) {
+                            console.error('Error:', xhr);
+                            Swal.fire('Error!', 'Terjadi kesalahan saat menghapus perangkat', 'error');
+                        }
+                    });
                 }
             });
         }
 
-    // Delete Nama Perangkat
-    function deleteInfoPerangkat(id) {
-        console.log('Deleting Nama Perangkat:', id);
-        swal({
-            title: "Apakah Anda yakin?",
-            text: "Data yang dihapus tidak dapat dikembalikan!",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Ya, hapus!",
-            closeOnConfirm: false
-        }, function(isConfirm) {
-            if (isConfirm) {
-                $.ajax({
-                    url: `/delete-jenisperangkat/${id}`,
-                    type: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            swal("Berhasil!", "Data berhasil dihapus", "success");
-                            location.reload();
-                        }
-                    },
-                    error: function(xhr) {
-                        swal("Error!", "Terjadi kesalahan", "error");
-                        console.error(xhr.responseText);
+        function searchTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.querySelector('#tablePerangkat');
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                let cells = rows[i].getElementsByTagName('td');
+                let found = false;
+
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j] && cells[j].innerText.toLowerCase().includes(filter)) {
+                        found = true;
                     }
-                });
+                }
+                rows[i].style.display = found ? '' : 'none';
             }
-        });
-    }
+        }
 
-    // Edit Brand Perangkat
-    function editBrandPerangkat(id) {
-        console.log('Editing Brand Perangkat:', id);
-        $.get(`/get-brandperangkat/${id}`, function(response) {
-            if (response.success) {
-                $('#nama_brand').val(response.data.nama_brand);
-                $('#kode_brand').val(response.data.kode_brand);
-                $('#brandPerangkatForm').append(`<input type="hidden" name="id" value="${id}">`);
-                openBrandPerangkatModal();
-            }
+        $(document).ready(function () {
+            $('#importModal').on('shown.bs.modal', function () {
+                document.body.style.overflow = 'auto';
+                document.body.style.paddingRight = '0';
+            });
         });
-    }
+    </script>
 
-    // Delete Brand Perangkat
-    function deleteBrandPerangkat(id) {
-        console.log('Deleting Brand Perangkat:', id);
-        swal({
-            title: "Apakah Anda yakin?",
-            text: "Data yang dihapus tidak dapat dikembalikan!",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Ya, hapus!",
-            closeOnConfirm: false
-        }, function(isConfirm) {
-            if (isConfirm) {
-                $.ajax({
-                    url: `/delete-brandperangkat/${id}`,
-                    type: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            swal("Berhasil!", "Data berhasil dihapus", "success");
-                            location.reload();
-                        }
-                    },
-                    error: function(xhr) {
-                        swal("Error!", "Terjadi kesalahan", "error");
-                        console.error(xhr.responseText);
-                    }
-                });
-            }
-        });
-    }
-});
-</script>
-@endpush
+    <style>
+        .header {
+            margin-bottom: 20px;
+            width: 100%;
+        }
 
-<!-- Pastikan jQuery dan SweetAlert sudah di-load -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
-<meta name="csrf-token" content="{{ csrf_token() }}">
+        .button-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .add-button {
+            background-color: #4f52ba;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .add-button:hover {
+            background-color: #3a3d8c;
+        }
+
+        .upload-icon {
+            color: #4f52ba;
+            transition: color 0.3s;
+        }
+
+        .upload-icon:hover {
+            color: #3a3d8c;
+        }
+
+        .modal-dialog {
+            margin-top: 20px;
+        }
+
+        .modal-content {
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            border-bottom: none;
+            padding: 20px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            border-top: none;
+            padding: 20px;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: #4f52ba;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        /* Pastikan modal tersembunyi secara default */
+        .modal {
+            display: none !important;
+        }
+
+        /* Tampilkan modal hanya ketika class 'show' ditambahkan */
+        .modal.show {
+            display: block !important;
+        }
+    </style>
 @endsection

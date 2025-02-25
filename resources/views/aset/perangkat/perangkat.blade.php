@@ -121,14 +121,16 @@
     
 <!-- Di bagian bawah view, sebelum closing body -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const importModal = new bootstrap.Modal(document.getElementById('importModal'));
-        
-        // Untuk menampilkan modal
-        document.getElementById('btnImport').addEventListener('click', function() {
-            importModal.show();
+        document.addEventListener('DOMContentLoaded', function() {
+            const importButton = document.getElementById('btnImport');
+            if (importButton) { // Pastikan elemen ada sebelum menambahkan event listener
+                importButton.addEventListener('click', function() {
+                    // Tampilkan modal atau lakukan aksi lain
+                });
+            } else {
+                console.error('Element with ID "btnImport" not found.');
+            }
         });
-    });
 </script>
 
     <style>

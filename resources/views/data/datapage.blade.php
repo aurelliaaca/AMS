@@ -52,6 +52,26 @@
                 </div>
             </div>
 
+            <!-- Card POP -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon-wrapper pop-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="header-text">
+                        <h3>POC</h3>
+                        <span class="count">{{ $pocCount ?? 0 }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p>Total Point of </p>
+                    <button class="view-btn" onclick="window.location.href='/data/poc'">
+                        <span>Lihat Detail</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
 
             <!-- Card Fasilitas -->
             <div class="card">
@@ -93,6 +113,26 @@
                 </div>
             </div>
 
+
+            <!-- Card Alat Ukur -->
+            <div class="card" onclick="window.location.href='/data/dataalatukur'" style="cursor: pointer;">
+                <div class="card-header">
+                    <div class="icon-wrapper device-icon">
+                        <span class="material-symbols-outlined">square_foot</span>
+                    </div>
+                    <div class="header-text">
+                        <h3>Alat Ukur</h3>
+                        <span class="count">{{ $alatukurCount ?? 0 }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p>Jumlah alat ukur</p>
+                    <div class="view-btn">
+                        <span>Lihat Detail</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
 <!--       
             Card Rack
             <div class="card">

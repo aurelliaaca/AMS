@@ -20,9 +20,12 @@ use App\Http\Controllers\MenuController;
 use App\Models\DataPerangkat;
 use App\Models\DataFasilitas;
 use App\Models\DataAlatUkur;
+use App\Models\Poc;
 use App\Http\Controllers\JaringanController;
 use App\Models\ImportPerangkat;
+use App\Models\ImportAlatUkur;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Controllers\ProfileController;
 
 
 Route::get('/', function () {
@@ -72,7 +75,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/data/rack', [DataController::class, 'rack'])->name('data.rack');
 
     // PROFILE
-    Route::post('/profile/update', [ProfilController::class, 'update'])->name('profile.update');
+    Route::post('/profile/update', [ProfilController::class, 'update'])->name('profil.update');
+    Route::post('/profile/upload-photo', [ProfilController::class, 'uploadPhoto'])->name('profil.uploadPhoto');
+    Route::post('/profile/reset-photo', [ProfilController::class, 'resetPhoto'])->name('profil.resetPhoto');
+
 
     // ASET
     // PERANGKAT
@@ -163,7 +169,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/update-dataperangkat/{id}', [DataController::class, 'updateDataPerangkat']);
     Route::delete('/delete-dataperangkat/{id}', [DataController::class, 'deleteDataPerangkat']);
 
-    
+    Route::get('/data/poc', [DataController::class, 'poc'])->name('data.poc');
+    Route::get('/get-poc/{no_site}', [DataController::class, 'getPOC'])->name('poc.get');
+
+
     // Routes untuk Nama Perangkat
     Route::post('/store-jenisperangkat', [DataController::class, 'storeJenisPerangkat']);
     Route::get('/get-jenisperangkat/{id}', [DataController::class, 'getJenisPerangkat']);
@@ -193,6 +202,11 @@ Route::middleware('auth')->group(function () {
     });
     Route::get('/histori/jaringan', [MenuController::class, 'getHistoryJaringan'])->name('histori.jaringan');
     Route::get('/histori/jaringan/{id_jaringan}', [MenuController::class, 'getHistoriJaringan']);
-    // Route untuk import perangkat
+
+    //IMPORT
     Route::post('/import-perangkat', [PerangkatController::class, 'importPerangkat'])->name('import.perangkat');
+
+    Route::post('/import-alatukur', [AlatUkurController::class, 'importAlatUkur'])->name('import.alatukur');
+
+    Route::post('/alatukur/import', [AlatUkurController::class, 'import'])->name('alatukur.import');
 });

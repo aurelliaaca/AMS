@@ -14,6 +14,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Alatukur</h3>
                     <button class="add-button" onclick="openAddAlatukurModal()">Tambah Alatukur</button>
+                    <button class="add-button" style="width: 150px;" onclick="importData()">Import</button>
                 </div>
             </div>
             
@@ -203,6 +204,68 @@
             }
             rows[i].style.display = found ? '' : 'none';
         }
+    }
+
+
+    function importData() {
+        // Logika untuk mengimpor data
+        // Misalnya, membuka dialog untuk memilih file
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.csv, .xlsx, .xls'; // Format yang diterima
+        input.onchange = (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                // Lakukan sesuatu dengan file, seperti mengupload
+                console.log('File yang dipilih:', file);
+                
+                // Membuat FormData untuk mengirim file
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // Mengunggah file ke server
+                $.ajax({
+                    url: '{{ route("alatukur.import") }}', // Pastikan ini sesuai dengan route yang benar
+                    type: 'POST',
+                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    data: formData,
+                    processData: false, // Jangan proses data
+                    contentType: false, // Jangan set content type
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: "Berhasil!",
+                                text: "Data berhasil diimpor.",
+                                icon: "success",
+                                confirmButtonText: "OK",
+                                customClass: {
+                                    confirmButton: 'swal2-confirm2' // Gunakan kelas CSS untuk tombol OK
+                                }
+                            }).then(() => {
+                                location.reload(); // Muat ulang halaman untuk melihat perubahan
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Gagal!",
+                                text: response.message,
+                                icon: "error",
+                                confirmButtonText: "OK"
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText); // Tambahkan ini untuk melihat detail kesalahan
+                        Swal.fire({
+                            title: "Error!",
+                            text: "Terjadi kesalahan saat mengunggah file. Lihat konsol untuk detail.",
+                            icon: "error",
+                            confirmButtonText: "OK"
+                        });
+                    }
+                });
+            }
+        };
+        input.click(); // Membuka dialog file
     }
     </script>
 @endsection

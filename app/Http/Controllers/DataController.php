@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Region;
 use App\Models\Pop;
+use App\Models\Poc;
 use App\Models\DataPerangkat;
 use App\Models\DataAlatUkur;
 use App\Models\DataFasilitas;
@@ -294,6 +295,14 @@ public function dataalatukur()
         $jenisalatukur = JenisAlatUkur::all();
         $brandalatukur = BrandAlatUkur::all();
         return view('data.dataalatukur', compact('jenisalatukur', 'brandalatukur'));
+    }
+
+
+    public function poc()
+    {
+        $site = Site::all();
+        $region = Region::all();
+        return view('data.poc', compact('site', 'region'));
     }
 
 }

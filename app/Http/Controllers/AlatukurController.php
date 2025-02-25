@@ -373,5 +373,27 @@ class AlatukurController extends Controller
             'histori' => $histori
         ]);
     }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:csv,xlsx,xls'
+        ]);
+
+        // Cek apakah file diterima
+        if (!$request->hasFile('file')) {
+            return response()->json(['success' => false, 'message' => 'Tidak ada file yang diunggah.']);
+        }
+
+        \Log::info('File yang diupload: ', [$request->file('file')->getClientOriginalName()]);
+
+        try {
+            Excel::import(new AlatUkurImport, $request->file('file'));
+            return response()->json(['success' => true, 'message' => 'Data berhasil diimpor.']);
+        } catch (\Exception $e) {
+            \Log::error('Error importing file: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage()]);
+        }
+    }
 }
 
