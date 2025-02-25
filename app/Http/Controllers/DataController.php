@@ -11,6 +11,8 @@ use App\Models\JenisFasilitas;
 use App\Models\BrandFasilitas;
 use App\Models\Region;
 use App\Models\Site;
+use App\Models\JenisAlatukur;
+use App\Models\BrandAlatukur;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -587,6 +589,287 @@ class DataController extends Controller
         }
     }
 
+    // ------------------- DATA ALAT UKUR -------------------
+    public function alatukur()
+    {
+        return view('data.dataalatukur');
+    }
+
+    public function getDataAlatukur()
+    {
+        $brandAlatukur = BrandAlatukur::orderBy('nama_brand', 'asc')->get();
+        $jenisAlatukur = JenisAlatukur::orderBy('nama_alatukur', 'asc')->get();
+        
+
+        return response()->json([
+            'brandAlatukur' => $brandAlatukur,
+            'jenisAlatukur' => $jenisAlatukur,
+        ]);
+    }
+    public function storeBrandAlatukur(Request $request)
+    {
+        $validated = $request->validate([
+            'kode_brand' => 'required|string|unique:brandalatukur,kode_brand',
+            'nama_brand' => 'required|string',
+        ]);
+
+        $exist = BrandAlatukur::where('kode_brand', strtoupper($request->kode_brand))
+            ->orWhere('nama_brand', $request->nama_brand)
+            ->exists();
+
+        if ($exist) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode brand atau nama brand sudah ada dalam database.',
+            ], 400);
+        }
+
+        try {
+            $brandalatukur = BrandAlatukur::create([
+                'kode_brand' => strtoupper($request->kode_brand),
+                'nama_brand' => $request->nama_brand,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data brand berhasil disimpan.',
+                'data' => $brandalatukur,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving brand alatukur: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function storeJenisAlatukur(Request $request)
+    {
+        $validated = $request->validate([
+            'kode_alatukur' => 'required|string|unique:jenisalatukur,kode_alatukur',
+            'nama_alatukur' => 'required|string',
+        ]);
+
+        $exist = JenisAlatukur::where('kode_alatukur', $request->kode_alatukur)
+            ->orWhere('nama_alatukur', $request->nama_alatukur)
+            ->exists();
+
+        if ($exist) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode alatukur atau nama alatukur sudah ada dalam database.',
+            ], 400);
+        }
+
+        try {
+            $jenisalatukur = JenisAlatukur::create([
+                'kode_alatukur' => strtoupper($request->kode_alatukur),
+                'nama_alatukur' => $request->nama_alatukur,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data jenis berhasil disimpan.',
+                'data' => $jenisalatukur,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving jenis alatukur: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getBrandAlatukurById($kode_brand)
+    {
+        try {
+            $brand = DB::table('brandalatukur')
+                ->select('nama_brand', 'kode_brand')
+                ->where('kode_brand', $kode_brand)
+                ->first();
+
+            if (!$brand) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Brand tidak ditemukan'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'brand' => $brand
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengambil data'
+            ], 500);
+        }
+    }
+      
+    public function updateBrandAlatukur(Request $request, $kode_brand)
+    {
+        try {
+            $request->validate([
+                'nama_brand' => 'required|string|max:255',
+                'kode_brand' => 'required|string|max:255',
+            ]);
+
+            $updated = DB::table('brandalatukur')
+                ->where('kode_brand', $kode_brand)
+                ->update([
+                    'nama_brand' => $request->nama_brand,
+                    'kode_brand' => $request->kode_brand,
+                ]);
+
+            if (!$updated) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Data tidak ditemukan atau tidak ada perubahan'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true, 
+                'message' => 'Brand berhasil diperbarui'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui data'
+            ], 500);
+        }
+    }
+
+    public function getJenisAlatukurById($kode_alatukur)
+    {
+        try {
+            $jenis = DB::table('jenisalatukur')
+                ->select('nama_alatukur', 'kode_alatukur')
+                ->where('kode_alatukur', $kode_alatukur)
+                ->first();
+
+            if (!$jenis) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Jenis alatukur tidak ditemukan'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'jenis' => $jenis
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengambil data'
+            ], 500);
+        }
+    }
+
+    public function updateJenisAlatukur(Request $request, $kode_alatukur)
+    {
+        try {
+            $request->validate([
+                'nama_alatukur' => 'required|string|max:255',
+                'kode_alatukur' => 'required|string|max:255',
+            ]);
+
+            $updated = DB::table('jenisalatukur')
+                ->where('kode_alatukur', $kode_alatukur)
+                ->update([
+                    'nama_alatukur' => $request->nama_alatukur,
+                    'kode_alatukur' => $request->kode_alatukur,
+                ]);
+
+            if (!$updated) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Data tidak ditemukan atau tidak ada perubahan'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true, 
+                'message' => 'Jenis fasilitas berhasil diperbarui'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui data'
+            ], 500);
+        }
+    }
+
+    public function deleteBrandAlatukur($kode_brand)
+    {
+        try {
+            $brand = BrandAlatukur::where('kode_brand', $kode_brand)->first();
+            
+            if (!$brand) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Brand tidak ditemukan'
+                ], 404);
+            }
+
+            $brand->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Brand berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error deleting brand: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function deleteJenisAlatukur($kode_alatukur)
+    {
+        try {
+            $jenis = JenisAlatukur::where('kode_alatukur', $kode_alatukur)->first();
+            
+            if (!$jenis) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Jenis alatukur tidak ditemukan'
+                ], 404);
+            }
+
+            $jenis->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Jenis fasilitas berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error deleting jenis: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function region()
     {
         return view('data.region');
@@ -596,7 +879,8 @@ class DataController extends Controller
     {
         try {
             $regions = Region::with(['sites'])->orderBy('nama_region', 'asc')->get()->map(function($region) {
-                $region->jumlah_pop = $region->sites->count();
+                $region->jumlah_pop = $region->sites->where('jenis_site', 'POP')->count();
+                $region->jumlah_poc = $region->sites->where('jenis_site', 'POC')->count();
                 return $region;
             });
 
@@ -870,6 +1154,50 @@ class DataController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateSite(Request $request, $id_site)
+    {
+        try {
+            $request->validate([
+                'nama_site' => 'required|string|max:255',
+                'kode_site' => 'required|string|max:255',
+                'jenis_site' => 'nullable|string',
+                'jml_rack' => 'nullable|string',
+            ]);
+
+            $updated = DB::table('site')
+                ->where('id_site', $id_site)
+                ->update([
+                    'nama_site' => $request->nama_site,
+                    'kode_site' => $request->kode_site,
+                    'jenis_site' => $request->jenis_site,
+                    'jml_rack' => $request->jml_rack,
+                ]);
+
+            if (!$updated) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Data tidak ditemukan atau tidak ada perubahan'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true, 
+                'message' => 'Region berhasil diperbarui'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui data'
             ], 500);
         }
     }
