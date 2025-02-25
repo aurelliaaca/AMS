@@ -9,6 +9,10 @@ class JenisAlatukur extends Model
 {
     use HasFactory;
     protected $table = 'jenisalatukur';
+    protected $primaryKey = 'kode_alatukur';
+    public $incrementing = false;
+    protected $keyType = 'string';
+    public $timestamps = false;
 
     protected $fillable = [
         'nama_alatukur', 'kode_alatukur',

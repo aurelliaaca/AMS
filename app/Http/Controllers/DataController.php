@@ -27,12 +27,6 @@ class DataController extends Controller
         return view('data.datapage', compact('popCount', 'perangkatCount', 'perangkatCount', 'regionCount'));
     }
 
-    public function pop()
-    {
-        $site = Site::all();
-        return view('data.pop', compact('site'));
-    }
-
     // ------------------- DATA FASILITAS -------------------
     public function perangkat()
     {

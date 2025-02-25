@@ -85,6 +85,19 @@ Route::middleware('auth')->group(function () {
         Route::delete('/data/brand-perangkat/{kode_brand}', [DataController::class, 'deleteBrandPerangkat']);
         Route::delete('/data/jenis-perangkat/{kode_perangkat}', [DataController::class, 'deleteJenisPerangkat']);
 
+        // DATA ALAT UKUR
+        Route::get('/data/alatukur', [DataController::class, 'alatukur'])->name('data.alatukur');
+        Route::get('/data/get-alatukur', [DataController::class, 'getDataAlatukur']);
+        Route::post('/store-brand-alatukur', [DataController::class, 'storeBrandAlatukur'])->name('store.brand');
+        Route::post('/store-jenis-alatukur', [DataController::class, 'storeJenisAlatukur'])->name('store.jenis');
+        Route::post('/update-brand-alatukur/{kode_brand}', [DataController::class, 'updateBrandAlatukur']);
+        Route::post('/update-jenis-alatukur/{kode_alatukur}', [DataController::class, 'updateJenisAlatukur']);
+        Route::get('/get-brand-alatukur/{kode_brand}', [DataController::class, 'getBrandAlatukurById']);
+        Route::get('/get-jenis-alatukur/{kode_alatukur}', [DataController::class, 'getJenisAlatukurById']);
+        Route::delete('/data/brand-alatukur/{kode_brand}', [DataController::class, 'deleteBrandAlatukur']);
+        Route::delete('/data/jenis-alatukur/{kode_alatukur}', [DataController::class, 'deleteJenisAlatukur']);
+
+    
         // DATA REGION
         Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
         Route::post('/store-region', [DataController::class, 'storeRegion'])->name('region.store');
@@ -94,7 +107,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/update-region/{id_region}', [DataController::class, 'updateRegion'])->name('region.update');
         Route::post('/store-site', [DataController::class, 'storeSite'])->name('site.store');
         Route::get('/get-site/{id_site}', [DataController::class, 'getSite'])->name('site.get');
+        Route::post('/update-site/{id_site}', [DataController::class, 'updateSite'])->name('site.update');
         Route::delete('/site/delete/{id_site}', [DataController::class, 'deleteSite'])->name('site.delete');
+
+        
     // POP Routes
     Route::get('/get-pops', [DataController::class, 'getAllPOP'])->name('pop.all');
     Route::get('/get-pop/{id}', [DataController::class, 'getPOP'])->name('pop.get');

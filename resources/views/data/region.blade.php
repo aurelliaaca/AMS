@@ -31,6 +31,7 @@
 
 @include('data.add-region')
 @include('data.edit-region')
+
 <script>
     $(document).ready(function() {
         // Load data when page first opens
@@ -67,23 +68,23 @@
                                 </div>
                                 <div class="card-info">
                                     <div class="count-numbers">${region.nama_region || ''}</div>
-                                    <div class="count-name">Jumlah POP: ${region.jumlah_pop || 0}</div>
+                                    <div class="count-name">Jumlah POP: ${region.jumlah_pop || 0} | Jumlah POC: ${region.jumlah_poc || 0}</div>
                                     <div class="count-details">${region.email || ''}</div>
                                 </div>
                                 <div class="action-buttons">
-                                    <button onclick="openAddSiteModal(${region.id_region})"
+                                    <button onclick="event.stopPropagation(); openAddSiteModal(${region.id_region})"
                                         style="background-color:rgb(209, 210, 241); color: white; border: none; padding: 5px; border-radius: 3px; cursor: pointer; margin-right: 5px; margin-right: -1px;">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
-                                    <button onclick="lihatRegion(${region.id_region})"
+                                    <button onclick="event.stopPropagation(); lihatRegion(${region.id_region})"
                                         style="background-color: #9697D6; color: white; border: none; padding: 5px; border-radius: 3px; cursor: pointer; margin-right: 5px; margin-right: -1px;">
                                         <i class="fa-solid fa-eye"></i>
                                     </button>
-                                    <button onclick="editRegion(${region.id_region})"
+                                    <button onclick="event.stopPropagation(); editRegion(${region.id_region})"
                                         style="background-color: #4f52ba; color: white; border: none; padding: 5px; border-radius: 3px; margin-right: 5px; cursor: pointer; margin-right: -1px; margin-left: -1px;">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
-                                    <button onclick="deleteRegion(${region.id_region})"
+                                    <button onclick="event.stopPropagation(); deleteRegion(${region.id_region})"
                                         style="background-color: #dc3545; color: white; border: none; padding: 5px; border-radius: 3px; cursor: pointer; margin-left: -1px;">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
@@ -112,7 +113,7 @@
                                                                     <td>${site.jml_rack || ''}</td>
                                                                     <td>
                                                                         <div class="action-buttons">
-                                                                            <button onclick="editSite(${site.id_site})"
+                                                                            <button onclick="event.stopPropagation(); editSite(${site.id_site})"
                                                                                 style="background-color: #4f52ba; color: white; border: none; padding: 5px; border-radius: 3px; margin-right: 5px; cursor: pointer; margin-right: -2px;">
                                                                                 <i class="fa-solid fa-pen"></i>
                                                                             </button>
@@ -154,94 +155,6 @@
         console.log('Lihat region:', idRegion);
         // Implement view region functionality
     }
-
-    function editRegion(idRegion) {
-        event.stopPropagation();
-        
-        console.log('Editing region:', idRegion); // Debug log
-        
-        $.ajax({
-            url: `/get-region/${idRegion}`,
-            type: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                console.log('Response:', response); // Debug log
-                if (response.success) {
-                    const region = response.region;
-                    $('#kode_region-input').val(region.id_region);
-                    $('#namaRegionEdit').val(region.nama_region);
-                    $('#kodeRegionEdit').val(region.kode_region);
-                    $('#emailEdit').val(region.email);
-                    $('#alamatEdit').val(region.alamat);
-                    $('#koordinatEdit').val(region.koordinat);
-                    document.getElementById("editRegionModal").style.display = "flex";
-                } else {
-                    Swal.fire('Error!', response.message || 'Gagal mengambil data region', 'error');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Ajax Error:', {xhr, status, error}); // Debug log
-                Swal.fire('Error!', 'Gagal mengambil data region: ' + (xhr.responseJSON?.message || error), 'error');
-            }
-        });
-    }
-
-    // Handle form submission untuk edit
-    $('#editRegionForm').on('submit', function(e) {
-        e.preventDefault();
-        const id_region = $('#kode_region-input').val();
-        
-        Swal.fire({
-            title: 'Konfirmasi',
-            text: "Apakah Anda yakin ingin mengupdate data ini?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#4f52ba',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, update!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const submitButton = $(this).find('button[type="submit"]');
-                submitButton.prop('disabled', true).text('Mengupdate...');
-
-                $.ajax({
-                    url: `/update-region/${id_region}`,
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        if (response.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: 'Data berhasil diupdate!',
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(() => {
-                                closeEditRegionModal();
-                                loadData();
-                            });
-                        } else {
-                            Swal.fire('Error!', response.message || 'Terjadi kesalahan', 'error');
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error('Error:', xhr);
-                        let errorMessage = 'Terjadi kesalahan saat mengupdate data';
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            errorMessage = xhr.responseJSON.message;
-                        }
-                        Swal.fire('Error!', errorMessage, 'error');
-                    },
-                    complete: function() {
-                        submitButton.prop('disabled', false).text('Update');
-                    }
-                });
-            }
-        });
-    });
 
     function deleteRegion(idRegion) {
         event.stopPropagation(); // Prevent card toggle
@@ -286,13 +199,6 @@
                 });
             }
         });
-    }
-
-    function editSite(kodeSite) {
-        // Prevent event bubbling
-        event.stopPropagation();
-        console.log('Edit site:', kodeSite);
-        // Implement edit site functionality
     }
 
     function deleteSite(idSite) {
