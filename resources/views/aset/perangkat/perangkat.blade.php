@@ -96,6 +96,117 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Modal Import -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Import Data Perangkat</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('import.perangkat') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3">
+                            <div class ="form-group">
+                            <input type="file" name="file" accept=".xlsx, .xls, .csv" required>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn-primary">Save changes</button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+    
+<!-- Di bagian bawah view, sebelum closing body -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const importButton = document.getElementById('btnImport');
+        if (importButton) { // Pastikan elemen ada sebelum menambahkan event listener
+            importButton.addEventListener('click', function() {
+                // Tampilkan modal atau lakukan aksi lain
+            });
+        } else {
+            console.error('Element with ID "btnImport" not found.');
+        }
+    });
+</script>
+
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-dialog {
+            margin-top: 20px;
+        }
+
+        .modal-content {
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            border-bottom: none;
+            padding: 20px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            border-top: none;
+            padding: 20px;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: #4f52ba;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+
+    
+
     <script>
     $(document).ready(function() {
         // Update the Select2 initialization

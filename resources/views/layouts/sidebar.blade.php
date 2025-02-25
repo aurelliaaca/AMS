@@ -270,9 +270,9 @@
             </a>
             </li>
             
-            <li>
+            <!-- <li>
                 <a href="{{ route(name: 'pengaturan') }}"><span class="material-symbols-outlined"> settings </span>Pengaturan</a>
-            </li>
+            </li> -->
 
             
             <li>

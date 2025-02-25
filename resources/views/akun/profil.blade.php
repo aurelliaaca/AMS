@@ -3,6 +3,14 @@
 @section('content')
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+        
+        .div-class {
+            margin-top: 20px; /* Jarak atas */
+            margin-bottom: 20px; /* Jarak bawah */
+            padding-top: 20px; /* Ruang di dalam elemen, bagian atas */
+            padding-bottom: 20px; /* Ruang di dalam elemen, bagian bawah */
+        }
+  
         .profile-container {
             margin: 5px auto;
             background-color: #fff;
@@ -13,17 +21,20 @@
             margin: 20px auto;
             display: flex;
             gap: 20px;
+            margin: 10px auto; /* Jarak atas dan bawah lebih luas */
+            padding: 20px; /* Tambahkan padding untuk memberi ruang di dalam */
         }
 
         /* Profile Sidebar */
         .profile-sidebar {
-            width: 35%;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px 0.5px #DADADA;
-            text-align: center;
-        }
+                width: 35%;
+                padding: 50px;
+                background: linear-gradient(135deg, #6a74d1, #6f86e0);
+                color: white;
+                text-align: center;
+                border-radius: 10px;
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            }
 
         .profile-info {
             text-align: center;
@@ -34,7 +45,7 @@
             height: 250px;
             border-radius: 50%;
             margin-bottom: 15px;
-            border: 4px solid #4f52ba;
+            border: 5px solid #4f52ba;
             object-fit: cover;
             object-position: center;
             overflow: hidden;
@@ -44,21 +55,21 @@
         .profile-name {
             font-weight: bold;
             font-size: 1.5em;
-            color: #333;
+            color: #ffff;
             margin-bottom: 5px;
         }
 
         .profile-role, .profile-email {
-            font-size: 1em;
-            color: #555;
+            font-size: 1.5em;
+            color: #ffff;
             margin-bottom: 5px;
         }
 
         .btn-dashboard {
-            margin-top: 20px;
+            margin-top: 80px;
             display: inline-block;
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 8px 16px;
+            font-size: 14px;
             font-weight: bold;
             border-radius: 5px;
             background-color: #4f52ba;
@@ -83,13 +94,13 @@
 
         .profile-details h2 {
             margin-bottom: 10px;
-            font-size: 1.5em;
+            font-size: 2em;
             color: #4f52ba;
         }
 
         .form-row {
             display: flex;
-            gap: 20px;
+            gap: 30px;
         }
 
         .form-group {
@@ -98,8 +109,8 @@
 
         .form-group label {
             font-weight: bold;
-            margin-top: 10px;
-            margin-bottom: 5px;
+            margin-top: 15px;
+            margin-bottom: 10px;
             display: block;
         }
 
@@ -113,7 +124,7 @@
         }
 
         .form-submit {
-            margin-top: 20px;
+            margin-top: 180px;
             text-align: right;
         }
 
@@ -151,7 +162,7 @@
             flex-direction: column;
             align-items: center;
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .button-group {
@@ -162,7 +173,7 @@
         }
 
         .upload-btn, .reset-btn {
-            padding: 8px 16px;
+            padding: 5px 10px;
             border: none;
             border-radius: 5px;
             font-size: 14px;
@@ -170,6 +181,7 @@
             display: flex;
             align-items: center;
             transition: all 0.3s ease;
+            margin-top: 20px;
         }
 
         .upload-btn {
@@ -195,8 +207,8 @@
         }
 
         .file-info {
-            color: #666;
-            font-size: 13px;
+            color: #555;
+            font-size: 12px;
             text-align: center;
         }
 
@@ -237,7 +249,7 @@
             <!-- Profile Sidebar -->
             <div class="profile-sidebar">
                 <div class="profile-info">
-                    <img class="profile-image" src="{{ asset('img/pgngirls.jpg') }}" alt="Profile Image">
+                <img class="profile-image" src="{{ auth()->user()->profile_picture ? asset('storage/' . auth()->user()->profile_picture) : asset('img/profilreset.png') }}" alt="Profile Image">
                     <div class="profile-name">{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</div>
                     <div class="profile-role">Role: {{ auth()->user()->role }}</div>
                     <div class="profile-email">{{ auth()->user()->email }}</div>
@@ -312,65 +324,107 @@
     </div>
 
     <script>
-    document.getElementById('updateProfileForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Ambil data form
-        const formData = new FormData(this);
-        
-        fetch('/profile/update', {
+    //UBAH PROFIL
+    document.getElementById('upload-photo').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        // Validasi ukuran file (maksimal 2048KB)
+        if (file.size > 2048 * 1024) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Ukuran file terlalu besar. Maksimal 2048KB.',
+                icon: 'error'
+            });
+            return;
+        }
+
+        // Tampilkan pratinjau sementara sebelum dikirim ke server
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.querySelector('.profile-image').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        // Kirim ke server
+        const formData = new FormData();
+        formData.append('profile_picture', file);
+
+        fetch('/profile/upload-photo', {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // Ambil CSRF dari meta tag
             },
             body: formData
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Update tampilan profil tanpa reload
-                const firstName = formData.get('first_name');
-                const lastName = formData.get('last_name');
-                
-                // Update nama di sidebar
-                document.querySelector('.profile-name').textContent = `${firstName} ${lastName}`;
-                
-                // Update mobile number jika ditampilkan
-                const mobileNumber = formData.get('mobile_number');
-                const mobileElement = document.querySelector('.profile-mobile');
-                if (mobileElement) {
-                    mobileElement.textContent = mobileNumber;
-                }
-                
-                // Update company jika ditampilkan
-                const company = formData.get('company');
-                const companyElement = document.querySelector('.profile-company');
-                if (companyElement) {
-                    companyElement.textContent = company;
-                }
+                // Update gambar dengan timestamp agar cache tidak menghalangi
+                document.querySelector('.profile-image').src = data.profile_picture + "?t=" + new Date().getTime();
 
-                // Tampilkan pesan sukses
                 Swal.fire({
                     title: 'Berhasil!',
-                    text: 'Profil berhasil diperbarui',
+                    text: 'Foto profil berhasil diperbarui',
                     icon: 'success',
                     showConfirmButton: false,
                     timer: 1500
                 });
             } else {
-                throw new Error(data.message || 'Terjadi kesalahan');
+                Swal.fire({
+                    title: 'Error!',
+                    text: data.message || 'Terjadi kesalahan saat mengunggah foto.',
+                    icon: 'error'
+                });
             }
         })
         .catch(error => {
             console.error('Error:', error);
             Swal.fire({
                 title: 'Error!',
-                text: error.message || 'Terjadi kesalahan saat menyimpan data',
+                text: 'Terjadi kesalahan saat mengunggah foto',
                 icon: 'error'
             });
         });
+    }
+});
+
+
+// Fungsi untuk mereset foto profil
+document.querySelector('.reset-btn').addEventListener('click', function() {
+    const profileImage = document.querySelector('.profile-image');
+    profileImage.src = "{{ asset('img/profilreset.png') }}" + "?t=" + new Date().getTime(); // Tambahkan timestamp untuk menghindari cache
+
+    // Kirim permintaan ke server untuk mereset foto profil di database
+    fetch('/profile/reset-photo', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                title: 'Berhasil!',
+                text: 'Foto profil telah direset',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        } else {
+            throw new Error(data.message || 'Terjadi kesalahan');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: error.message || 'Terjadi kesalahan saat mereset foto',
+            icon: 'error'
+        });
     });
+});
     </script>
 @endsection

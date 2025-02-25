@@ -24,7 +24,7 @@ class Region extends Model
 
     public function sites()
     {
-        return $this->hasMany(Site::class, 'kode_region', 'kode_region');
+        return $this->hasMany(Site::class, 'kode_region', 'kode_region', 'nama_site');
     }
 
     public function perangkat()

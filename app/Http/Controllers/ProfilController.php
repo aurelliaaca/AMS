@@ -95,4 +95,37 @@ class ProfilController extends Controller
             ], 500);
         }
     }
+
+public function uploadPhoto(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'profile_picture' => 'required|image|max:2048',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['success' => false, 'message' => 'File tidak ditemukan.']);
+    }
+
+    $file = $request->file('profile_picture');
+    $filename = time() . '.' . $file->getClientOriginalExtension();
+    $path = $file->storeAs('public/profile_pictures', $filename);
+
+    if ($path) {
+        return response()->json(['success' => true, 'message' => 'Foto profil berhasil diperbarui']);
+    } else {
+        return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat mengunggah foto']);
+    }
+}
+
+    public function resetPhoto()
+{
+    $user = auth()->user();
+    
+    // Set kembali ke gambar default
+    $user->profile_picture = 'img/profilreset.png';
+    $user->save();
+
+    return response()->json(['success' => true, 'message' => 'Foto profil telah direset.']);
+}
+
 } 

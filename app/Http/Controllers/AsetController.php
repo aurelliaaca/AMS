@@ -541,4 +541,5 @@ public function getPop(Request $request)
             'message' => 'Alat ukur tidak ditemukan'
         ], 404);
     }
+
 }
