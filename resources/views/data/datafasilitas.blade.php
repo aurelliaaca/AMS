@@ -36,7 +36,7 @@
             <!-- Tabel Nama Perangkat -->
             <div class="table-section">
                 <div class="table-wrapper">
-                    <table id="namaPerangkatTable">
+                    <table id="jenisFasilitasTable">
                         <thead>
                             <tr>
                                 <th>No</th>

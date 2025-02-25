@@ -19,6 +19,7 @@ use App\Http\Controllers\DataController;
 use App\Http\Controllers\MenuController;
 use App\Models\DataPerangkat;
 use App\Models\DataFasilitas;
+use App\Models\DataAlatUkur;
 use App\Http\Controllers\JaringanController;
 use App\Models\ImportPerangkat;
 use Maatwebsite\Excel\Facades\Excel;
@@ -164,10 +165,10 @@ Route::middleware('auth')->group(function () {
 
     
     // Routes untuk Nama Perangkat
-    Route::post('/store-namaperangkat', [DataController::class, 'storeNamaPerangkat']);
-    Route::get('/get-namaperangkat/{id}', [DataController::class, 'getNamaPerangkat']);
-    Route::put('/update-namaperangkat/{id}', [DataController::class, 'updateNamaPerangkat']);
-    Route::delete('/delete-namaperangkat/{id}', [DataController::class, 'deleteNamaPerangkat']);
+    Route::post('/store-jenisperangkat', [DataController::class, 'storeJenisPerangkat']);
+    Route::get('/get-jenisperangkat/{id}', [DataController::class, 'getJenisPerangkat']);
+    Route::put('/update-jenisperangkat/{id}', [DataController::class, 'updateJenisPerangkat']);
+    Route::delete('/delete-jenisperangkat/{id}', [DataController::class, 'deleteJenisPerangkat']);
 
     // Routes untuk Brand Perangkat
     Route::post('/store-brandperangkat', [DataController::class, 'storeBrandPerangkat']);
@@ -175,8 +176,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/update-brandperangkat/{id}', [DataController::class, 'updateBrandPerangkat']);
     Route::delete('/delete-brandperangkat/{id}', [DataController::class, 'deleteBrandPerangkat']);
 
+    //data fasilitas
     Route::get('/data/datafasilitas', [DataController::class, 'datafasilitas'])->name('data.datafasilitas');
     Route::get('/get-datafasilitas/{id}', [DataController::class, 'getDataFasilitas']);
+
+    Route::get('/data/dataalatukur', [DataController::class, 'dataalatukur'])->name('data.dataalatukur');
+    Route::get('/get-dataalatukur/{id}', [DataController::class, 'getDataAlatUkur']);
 
     //HISTORI
     Route::get('/histori', [MenuController::class, 'histori'])->name('histori');

@@ -14,12 +14,9 @@ use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Exception;
 use Illuminate\Support\Facades\Storage;
-use App\Imports\ImportPerangkat;
 use Illuminate\Support\Facades\Log;
 
-class PerangkatController extends Controller
-{
-    // 
+class PerangkatController extends Controller{
     public function perangkat()
     {
         $regions = Region::orderBy('nama_region', 'asc')->get();
@@ -27,7 +24,7 @@ class PerangkatController extends Controller
         $brands = BrandPerangkat::orderBy('nama_brand', 'asc')->get();
         return view('aset.perangkat.perangkat', compact('listpkt', 'brands', 'regions'));
     }
-    
+
     // tabel
     public function getPerangkat(Request $request)
     {
@@ -134,146 +131,146 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
     }
 
     // tambah
-    // tambah
     public function store(Request $request)
-{
-    try {
-        // Logging di awal function
-        \Log::info('Starting store process with data:', $request->all());
+    {
+        try {
+            // Logging di awal function
+            \Log::info('Starting store process with data:', $request->all());
 
-        // Validasi input
-        $validated = $request->validate([
-            'kode_region' => 'required|exists:region,kode_region',
-            'kode_site' => 'required|exists:site,kode_site',
-            'kode_perangkat' => 'required|exists:jenisperangkat,kode_perangkat',
-            'kode_brand' => 'nullable|exists:brandperangkat,kode_brand',
-            'no_rack' => 'nullable|string',
-            'type' => 'nullable|string',
-            'uawal' => 'nullable|integer|required_with:no_rack',
-            'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal',
-        ]);
-
-        \Log::info('Validation passed, validated data:', $validated);
-
-        // Logging sebelum pengecekan overlap
-        \Log::info('Checking for overlap with parameters:', [
-            'region' => $request->kode_region,
-            'site' => $request->kode_site,
-            'rack' => $request->no_rack,
-            'uawal' => $request->uawal,
-            'uakhir' => $request->uakhir
-        ]);
-
-        if ($request->has('no_rack') && $request->no_rack !== null) {
-            $overlapQuery = ListPerangkat::where('kode_region', $request->kode_region)
-                ->where('kode_site', $request->kode_site)
-                ->where('no_rack', $request->no_rack)
-                ->where(function ($query) use ($request) {
-                    $query->whereBetween('uawal', [$request->uawal, $request->uakhir])
-                        ->orWhereBetween('uakhir', [$request->uawal, $request->uakhir])
-                        ->orWhere(function ($query) use ($request) {
-                            $query->where('uawal', '<=', $request->uawal)
-                                ->where('uakhir', '>=', $request->uakhir);
-                        });
-                });
-            
-            // Log the actual SQL query
-            \Log::info('Overlap check query:', [
-                'sql' => $overlapQuery->toSql(),
-                'bindings' => $overlapQuery->getBindings()
+            // Validasi input
+            $validated = $request->validate([
+                'kode_region' => 'required|exists:region,kode_region',
+                'kode_site' => 'required|exists:site,kode_site',
+                'kode_perangkat' => 'required|exists:jenisperangkat,kode_perangkat',
+                'kode_brand' => 'nullable|exists:brandperangkat,kode_brand',
+                'no_rack' => 'nullable|string',
+                'type' => 'nullable|string',
+                'uawal' => 'nullable|integer|required_with:no_rack',
+                'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal',
             ]);
 
-            $overlapExists = $overlapQuery->exists();
-            
-            if ($overlapExists) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Rentang U Awal dan U Akhir sudah ada di dalam tabel.'
-                ], 400);
+            \Log::info('Validation passed, validated data:', $validated);
+
+            // Logging sebelum pengecekan overlap
+            \Log::info('Checking for overlap with parameters:', [
+                'region' => $request->kode_region,
+                'site' => $request->kode_site,
+                'rack' => $request->no_rack,
+                'uawal' => $request->uawal,
+                'uakhir' => $request->uakhir
+            ]);
+
+            if ($request->has('no_rack') && $request->no_rack !== null) {
+                $overlapQuery = ListPerangkat::where('kode_region', $request->kode_region)
+                    ->where('kode_site', $request->kode_site)
+                    ->where('no_rack', $request->no_rack)
+                    ->where(function ($query) use ($request) {
+                        $query->whereBetween('uawal', [$request->uawal, $request->uakhir])
+                            ->orWhereBetween('uakhir', [$request->uawal, $request->uakhir])
+                            ->orWhere(function ($query) use ($request) {
+                                $query->where('uawal', '<=', $request->uawal)
+                                    ->where('uakhir', '>=', $request->uakhir);
+                            });
+                    });
+                
+                // Log the actual SQL query
+                \Log::info('Overlap check query:', [
+                    'sql' => $overlapQuery->toSql(),
+                    'bindings' => $overlapQuery->getBindings()
+                ]);
+
+                $overlapExists = $overlapQuery->exists();
+                
+                if ($overlapExists) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Rentang U Awal dan U Akhir sudah ada di dalam tabel.'
+                    ], 400);
+                }
             }
-        }
 
-        // Logging sebelum mengambil max id_perangkat
-        \Log::info('Getting max id_perangkat value');
-        
-        $maxid_perangkat = ListPerangkat::max('id_perangkat') ?? 0;
-        $newid_perangkat = $maxid_perangkat + 1;
+            // Logging sebelum mengambil max id_perangkat
+            \Log::info('Getting max id_perangkat value');
+            
+            $maxid_perangkat = ListPerangkat::max('id_perangkat') ?? 0;
+            $newid_perangkat = $maxid_perangkat + 1;
 
-        \Log::info('Calculated new id_perangkat value:', ['maxid_perangkat' => $maxid_perangkat, 'newid_perangkat' => $newid_perangkat]);
+            \Log::info('Calculated new id_perangkat value:', ['maxid_perangkat' => $maxid_perangkat, 'newid_perangkat' => $newid_perangkat]);
 
-        // Logging sebelum menghitung perangkat_ke
-        \Log::info('Calculating perangkat_ke for:', [
-            'region' => $request->kode_region,
-            'site' => $request->kode_site
-        ]);
+            // Logging sebelum menghitung perangkat_ke
+            \Log::info('Calculating perangkat_ke for:', [
+                'region' => $request->kode_region,
+                'site' => $request->kode_site
+            ]);
 
-        $lastPktKe = ListPerangkat::where('kode_region', $request->kode_region)
-            ->where('kode_site', $request->kode_site)
-            ->count();
+            $lastPktKe = ListPerangkat::where('kode_region', $request->kode_region)
+                ->where('kode_site', $request->kode_site)
+                ->count();
 
-        $pktKe = $lastPktKe + 1;
+            $pktKe = $lastPktKe + 1;
 
-        \Log::info('Calculated perangkat_ke:', ['lastPktKe' => $lastPktKe, 'newPktKe' => $pktKe]);
+            \Log::info('Calculated perangkat_ke:', ['lastPktKe' => $lastPktKe, 'newPktKe' => $pktKe]);
 
-        // Menyiapkan data untuk disimpan
-        $dataToStore = [
-            'id_perangkat' => $newid_perangkat,
-            'kode_region' => $request->kode_region,
-            'kode_site' => $request->kode_site,
-            'kode_perangkat' => $request->kode_perangkat,
-            'kode_brand' => $request->kode_brand,
-            'no_rack' => $request->no_rack ?: null,
-            'type' => $request->type,
-            'uawal' => $request->uawal,
-            'uakhir' => $request->uakhir,
-            'perangkat_ke' => $pktKe,
-        ];
+            // Menyiapkan data untuk disimpan
+            $dataToStore = [
+                'id_perangkat' => $newid_perangkat,
+                'kode_region' => $request->kode_region,
+                'kode_site' => $request->kode_site,
+                'kode_perangkat' => $request->kode_perangkat,
+                'kode_brand' => $request->kode_brand,
+                'no_rack' => $request->no_rack ?: null,
+                'type' => $request->type,
+                'uawal' => $request->uawal,
+                'uakhir' => $request->uakhir,
+                'perangkat_ke' => $pktKe,
+            ];
 
-        \Log::info('Attempting to store data:', $dataToStore);
+            \Log::info('Attempting to store data:', $dataToStore);
 
-        $perangkat = ListPerangkat::create($dataToStore);
+            $perangkat = ListPerangkat::create($dataToStore);
 
-        \Log::info('Successfully stored perangkat:', $perangkat->toArray());
+            \Log::info('Successfully stored perangkat:', $perangkat->toArray());
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Perangkat berhasil ditambahkan!',
-            'data' => $perangkat,
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Perangkat berhasil ditambahkan!',
+                'data' => $perangkat,
+            ]);
 
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        \Log::error('Validation Exception:', [
-            'message' => $e->getMessage(),
-            'errors' => $e->errors(),
-            'request_data' => $request->all()
-        ]);
-        return response()->json([
-            'success' => false,
-            'message' => 'Validasi gagal: ' . implode(', ', array_map(function($errors) {
-                return implode(', ', $errors);
-            }, $e->errors())),
-            'errors' => $e->errors(),
-        ], 422);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation Exception:', [
+                'message' => $e->getMessage(),
+                'errors' => $e->errors(),
+                'request_data' => $request->all()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal: ' . implode(', ', array_map(function($errors) {
+                    return implode(', ', $errors);
+                }, $e->errors())),
+                'errors' => $e->errors(),
+            ], 422);
 
-    } catch (\Exception $e) {
-        \Log::error('Unexpected Error in store method:', [
-            'message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-            'request_data' => $request->all(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine()
-        ]);
-        
-        return response()->json([
-            'success' => false,
-            'message' => 'Terjadi kesalahan pada server: ' . $e->getMessage(),
-            'debug_info' => [
+        } catch (\Exception $e) {
+            \Log::error('Unexpected Error in store method:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine()
-            ]
-        ], 500);
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan pada server: ' . $e->getMessage(),
+                'debug_info' => [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ]
+            ], 500);
+        }
     }
-}
+
     // kebutuhan hapus dan edit (ngefetch id_perangkat)
     public function getPerangkatById($id_perangkat)
     {
@@ -352,112 +349,112 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
 
     // edit
     public function update(Request $request, $id_perangkat)
-{
-    try {
-        // Validasi input
-        $validated = $request->validate([
-            'kode_region' => 'required|exists:region,kode_region',
-            'kode_site' => 'required|exists:site,kode_site',
-            'kode_perangkat' => 'required|exists:jenisperangkat,kode_perangkat',
-            'kode_brand' => 'nullable|exists:brandperangkat,kode_brand',
-            'no_rack' => 'nullable|string',
-            'type' => 'nullable|string',
-            'uawal' => 'nullable|integer|required_with:no_rack', // Required if no_rack is present
-            'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal', // Required if no_rack is present and must be greater than or equal to uawal
-        ]);
+    {
+        try {
+            // Validasi input
+            $validated = $request->validate([
+                'kode_region' => 'required|exists:region,kode_region',
+                'kode_site' => 'required|exists:site,kode_site',
+                'kode_perangkat' => 'required|exists:jenisperangkat,kode_perangkat',
+                'kode_brand' => 'nullable|exists:brandperangkat,kode_brand',
+                'no_rack' => 'nullable|string',
+                'type' => 'nullable|string',
+                'uawal' => 'nullable|integer|required_with:no_rack', // Required if no_rack is present
+                'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal', // Required if no_rack is present and must be greater than or equal to uawal
+            ]);
 
-        // Debug: log data yang diterima
-        \Log::info('Update received data:', $request->all());
+            // Debug: log data yang diterima
+            \Log::info('Update received data:', $request->all());
 
-        // Cari perangkat berdasarkan id_perangkat
-        $perangkat = ListPerangkat::where('id_perangkat', $id_perangkat)->first();
+            // Cari perangkat berdasarkan id_perangkat
+            $perangkat = ListPerangkat::where('id_perangkat', $id_perangkat)->first();
 
-        if (!$perangkat) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Perangkat tidak ditemukan'
-            ], 404);
-        }
-
-        // Jika no_rack ada, lakukan pengecekan overlap
-        if ($request->has('no_rack') && $request->no_rack !== null) {
-            $overlapExists = ListPerangkat::where('kode_region', $request->kode_region)
-                ->where('kode_site', $request->kode_site)
-                ->where('no_rack', $request->no_rack)
-                ->where('id_perangkat', '!=', $id_perangkat) // Exclude the current device being updated
-                ->where(function ($query) use ($request) {
-                    $query->whereBetween('uawal', [$request->uawal, $request->uakhir])
-                        ->orWhereBetween('uakhir', [$request->uawal, $request->uakhir])
-                        ->orWhere(function ($query) use ($request) {
-                            $query->where('uawal', '<=', $request->uawal)
-                                ->where('uakhir', '>=', $request->uakhir);
-                        });
-                })
-                ->exists();
-
-            if ($overlapExists) {
+            if (!$perangkat) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Rentang U Awal dan U Akhir sudah ada di dalam tabel.'
-                ], 400);
+                    'message' => 'Perangkat tidak ditemukan'
+                ], 404);
             }
+
+            // Jika no_rack ada, lakukan pengecekan overlap
+            if ($request->has('no_rack') && $request->no_rack !== null) {
+                $overlapExists = ListPerangkat::where('kode_region', $request->kode_region)
+                    ->where('kode_site', $request->kode_site)
+                    ->where('no_rack', $request->no_rack)
+                    ->where('id_perangkat', '!=', $id_perangkat) // Exclude the current device being updated
+                    ->where(function ($query) use ($request) {
+                        $query->whereBetween('uawal', [$request->uawal, $request->uakhir])
+                            ->orWhereBetween('uakhir', [$request->uawal, $request->uakhir])
+                            ->orWhere(function ($query) use ($request) {
+                                $query->where('uawal', '<=', $request->uawal)
+                                    ->where('uakhir', '>=', $request->uakhir);
+                            });
+                    })
+                    ->exists();
+
+                if ($overlapExists) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Rentang U Awal dan U Akhir sudah ada di dalam tabel.'
+                    ], 400);
+                }
+            }
+
+            // Misal $fasilitas merupakan data fasilitas yang sedang diupdate
+            if ($perangkat->kode_region !== $request->kode_region || $perangkat->kode_site !== $request->kode_site) {
+                $lastPktKe = ListPerangkat::where('kode_region', $request->kode_region)
+                                ->where('kode_site', $request->kode_site)
+                                ->count();
+                $pktKe = $lastPktKe + 1;
+            } else {
+                // Jika tidak berubah, pertahankan nilai fasilitas_ke yang lama
+                $pktKe = $perangkat->fasilitas_ke;
+            }
+
+            // Update data
+            $perangkat->update([
+                'kode_region' => $request->kode_region,
+                'kode_site' => $request->kode_site,
+                'kode_perangkat' => $request->kode_perangkat,
+                'kode_brand' => $request->kode_brand,
+                'no_rack' => $request->no_rack ?: null,
+                'type' => $request->type,
+                'uawal' => $request->uawal,
+                'uakhir' => $request->uakhir,
+                'perangkat_ke'=> $pktKe,
+            ]);
+
+            // Debug: log data yang diupdate
+            \Log::info('Updated data:', $perangkat->toArray());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Perangkat berhasil diupdate!',
+                'data' => $perangkat
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Tangani error validasi
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal: ' . $e->getMessage(),
+                'errors' => $e->errors(),
+            ], 422);
+
+        } catch (\Exception $e) {
+            // Debug: log error
+            \Log::error('Error updating perangkat: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengupdate perangkat: ' . $e->getMessage()
+            ], 500);
         }
-
-        // Misal $fasilitas merupakan data fasilitas yang sedang diupdate
-        if ($perangkat->kode_region !== $request->kode_region || $perangkat->kode_site !== $request->kode_site) {
-            $lastPktKe = ListPerangkat::where('kode_region', $request->kode_region)
-                            ->where('kode_site', $request->kode_site)
-                            ->count();
-            $pktKe = $lastPktKe + 1;
-        } else {
-            // Jika tidak berubah, pertahankan nilai fasilitas_ke yang lama
-            $pktKe = $perangkat->fasilitas_ke;
-        }
-
-        // Update data
-        $perangkat->update([
-            'kode_region' => $request->kode_region,
-            'kode_site' => $request->kode_site,
-            'kode_perangkat' => $request->kode_perangkat,
-            'kode_brand' => $request->kode_brand,
-            'no_rack' => $request->no_rack ?: null,
-            'type' => $request->type,
-            'uawal' => $request->uawal,
-            'uakhir' => $request->uakhir,
-            'perangkat_ke'=> $pktKe,
-        ]);
-
-        // Debug: log data yang diupdate
-        \Log::info('Updated data:', $perangkat->toArray());
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Perangkat berhasil diupdate!',
-            'data' => $perangkat
-        ]);
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        // Tangani error validasi
-        return response()->json([
-            'success' => false,
-            'message' => 'Validasi gagal: ' . $e->getMessage(),
-            'errors' => $e->errors(),
-        ], 422);
-
-    } catch (\Exception $e) {
-        // Debug: log error
-        \Log::error('Error updating perangkat: ' . $e->getMessage());
-        \Log::error($e->getTraceAsString());
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Gagal mengupdate perangkat: ' . $e->getMessage()
-        ], 500);
     }
-}
 
     //  rack berdasarkan site
-        public function getSiteRack(Request $request)
+    public function getSiteRack(Request $request)
     {
         try {
             $site = Site::where('kode_site', $request->site)->first();
@@ -496,48 +493,13 @@ if ($request->has('jenisperangkat') && !empty($request->jenisperangkat)) {
 
     public function importPerangkat(Request $request)
     {
-        try {
-            Log::info('Mulai proses import');
+        $file = $request->file('file');
+        $namafile = $file->getClientOriginalName();
+        $file->move('EmployeeData', $namafile);
 
-            // Validasi file
-            $request->validate([
-                'file' => 'required|mimes:xlsx,xls,csv|max:2048'
-            ]);
+        // Membaca file CSV
+        $data = array_map('str_getcsv', file(public_path('EmployeeData/' . $namafile)));
 
-            if ($request->hasFile('file')) {
-                $file = $request->file('file');
-                $namafile = time() . '-' . $file->getClientOriginalName();
-                $filePath = 'ImportPerangkat/' . $namafile;
-
-                // Simpan file ke storage Laravel
-                Storage::put($filePath, file_get_contents($file));
-
-                Log::info('File berhasil disimpan di storage: ' . $filePath);
-
-}
-
-                // Debugging: Pastikan file ada
-                if (!Storage::exists($filePath)) {
-                    Log::error('File tidak ditemukan setelah disimpan!');
-                    return back()->with('error', 'Gagal menyimpan file.');
-                }
-
-                // Debug: Cek path file
-                Log::info('Path file: ' . storage_path('app/' . $filePath));
-
-                // Import ke database
-                Excel::import(new ImportPerangkat, storage_path('app/' . $filePath));
-
-                Log::info('Import selesai tanpa error');
-
-                return back()->with('success', 'Data perangkat berhasil diimpor.');
-            } else {
-                Log::warning('Tidak ada file yang diunggah');
-                return back()->with('error', 'Tidak ada file yang diunggah.');
-            }
-        } catch (Exception $e) {
-            Log::error('Error saat import: ' . $e->getMessage());
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
-        }
+        return redirect()->back()->with('success', 'Data berhasil diimpor.');
     }
 }

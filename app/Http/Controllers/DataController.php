@@ -6,14 +6,18 @@ use Illuminate\Http\Request;
 use App\Models\Region;
 use App\Models\Pop;
 use App\Models\DataPerangkat;
+use App\Models\DataAlatUkur;
+use App\Models\DataFasilitas;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Models\NamaPerangkat;
 use App\Models\Site;
 use App\Models\BrandPerangkat;
 use App\Models\BrandFasilitas;
-use App\Models\DataFasilitas;
-use App\Models\NamaFasilitas;
+use App\Models\BrandAlatUkur;
+use App\Models\JenisFasilitas;
+use App\Models\JenisAlatUkur;
+use App\Models\JenisPerangkat;
+
 
 
 
@@ -23,12 +27,13 @@ class DataController extends Controller
     public function index()
     {
         $popCount = DB::table('pop')->count();
-        $fasilitasCount = DB::table('list_fasilitas')->count();
-        $perangkatCount = DB::table('perangkat')->count();
+        $fasilitasCount = DB::table('listfasilitas')->count();
+        $perangkatCount = DB::table('listperangkat')->count();
         $regionCount = DB::table('region')->count();
+        $alatukurCount = DB::table('jenisalatukur')->count();
         // $rackCount = DB::table('rack')->count();
 
-        return view('data.datapage', compact('popCount', 'fasilitasCount', 'perangkatCount', 'regionCount'));
+        return view('data.datapage', compact('popCount', 'fasilitasCount', 'perangkatCount', 'regionCount', 'alatukurCount'));
     }
 
     public function region()
@@ -154,10 +159,10 @@ class DataController extends Controller
     public function dataperangkat()
     {
         try {
-            $namaperangkat = NamaPerangkat::all();
+            $jenisperangkat = JenisPerangkat::all();
             $brandperangkat = BrandPerangkat::all();
             
-            return view('data.dataperangkat', compact('namaperangkat', 'brandperangkat'));
+            return view('data.dataperangkat', compact('jenisperangkat', 'brandperangkat'));
         } catch (\Exception $e) {
             \Log::error('Error di dataperangkat: ' . $e->getMessage());
             return back()->with('error', 'Terjadi kesalahan saat mengambil data');
@@ -168,7 +173,7 @@ class DataController extends Controller
     public function storeDataPerangkat(Request $request)
     {
         try {
-            $perangkat = new NamaPerangkat();
+            $perangkat = new JenisPerangkat();
             $perangkat->perangkat = $request->perangkat;
             $perangkat->kode_perangkat = $request->kode_perangkat;
             $perangkat->save();
@@ -183,8 +188,8 @@ class DataController extends Controller
     public function getDataPerangkat($id)
     {
         try {
-            $namaperangkat = NamaPerangkat::find($id);
-            return response()->json(['success' => true, 'namaperangkat' => $namaperangkat]);
+            $jenisperangkat = JenisPerangkat::find($id);
+            return response()->json(['success' => true, 'jenisperangkat' => $jenisperangkat]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -194,7 +199,7 @@ class DataController extends Controller
     public function updateDataPerangkat(Request $request, $id)
     {
         try {
-            $perangkat = NamaPerangkat::find($id);
+            $perangkat = JenisPerangkat::find($id);
             $perangkat->perangkat = $request->perangkat;
             $perangkat->kode_perangkat = $request->kode_perangkat;
             $perangkat->save();
@@ -209,7 +214,7 @@ class DataController extends Controller
     public function deleteDataPerangkat($id)
     {
         try {
-            NamaPerangkat::find($id)->delete();
+            JenisPerangkat::find($id)->delete();
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
@@ -283,4 +288,12 @@ public function getSites(Request $request)
         
     return response()->json($sites);
 }
+
+public function dataalatukur()
+    {
+        $jenisalatukur = JenisAlatUkur::all();
+        $brandalatukur = BrandAlatUkur::all();
+        return view('data.dataalatukur', compact('jenisalatukur', 'brandalatukur'));
+    }
+
 }

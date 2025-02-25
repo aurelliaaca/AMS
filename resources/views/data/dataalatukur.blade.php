@@ -3,18 +3,18 @@
 @section('content')
 <div class="main">
     <div class="container">
-                <h3>Informasi Perangkat</h3>
+                <h3>Informasi Alat Ukur</h3>
 
 
         <!-- Titles Container -->
         <div class="titles-container">
-            <!-- Title Perangkat -->
+            <!-- Title AlatUkur -->
             <div class="section-title">
                 <div class="title-wrapper">
                     <span class="material-symbols-outlined">devices</span>
-                    <h4>Nama Perangkat</h4>
+                    <h4>Nama Alat Ukur</h4>
                 </div>
-                <button type="button" class="add-button" onclick="openJenisPerangkatModal()" title="Tambah Perangkat">
+                <button type="button" class="add-button" onclick="openJenisAlatUkurModal()" title="Tambah Alat Ukur">
                     <span class="material-symbols-outlined">add</span>
                 </button>
             </div>
@@ -23,9 +23,9 @@
             <div class="section-title">
                 <div class="title-wrapper">
                     <span class="material-symbols-outlined">inventory_2</span>
-                    <h4>Brand Perangkat</h4>
+                    <h4>Brand Alat Ukur</h4>
                 </div>
-                <button type="button" class="add-button" onclick="openBrandPerangkatModal()" title="Tambah Brand">
+                <button type="button" class="add-button" onclick="openBrandAlatUkurModal()" title="Tambah Brand">
                     <span class="material-symbols-outlined">add</span>
                 </button>
             </div>
@@ -33,30 +33,30 @@
 
         <!-- Tables Container -->
         <div class="table-container">
-            <!-- Tabel Nama Perangkat -->
+            <!-- Tabel Nama AlatUkur -->
             <div class="table-section">
                 <div class="table-wrapper">
-                    <table id="jenisPerangkatTable">
+                    <table id="jenisAlatUkurTable">
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama Perangkat</th>
-                                <th>Kode Perangkat</th>
+                                <th>Nama Alat Ukur</th>
+                                <th>Kode Alat Ukur</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($jenisperangkat as $index => $item)
+                            @forelse($jenisalatukur as $index => $item)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $item->perangkat }}</td>
-                                    <td>{{ $item->kode_perangkat }}</td>
+                                    <td>{{ $item->nama_alatukur }}</td>
+                                    <td>{{ $item->kode_alatukur }}</td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="edit-btn" title="Edit" onclick="editInfoPerangkat({{ $item->id }})">
+                                            <button class="edit-btn" title="Edit" onclick="editInfoAlatUkur({{ $item->id }})">
                                                 <span class="material-symbols-outlined">edit</span>
                                             </button>
-                                            <button class="delete-btn" title="Hapus" onclick="deleteInfoPerangkat({{ $item->id }})">
+                                            <button class="delete-btn" title="Hapus" onclick="deleteInfoAlatUkur({{ $item->id }})">
                                                 <span class="material-symbols-outlined">delete</span>
                                             </button>
                                         </div>
@@ -76,10 +76,10 @@
 
 
 
-<!--============================================ Tabel Brand Perangkat ============================================-->
+<!--============================================ Tabel Brand AlatUkur ============================================-->
             <div class="table-section">
                 <div class="table-wrapper">
-                    <table id="brandPerangkatTable">
+                    <table id="brandAlatUkurTable">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -89,17 +89,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                        @forelse($brandperangkat as $index => $item)
+                        @forelse($brandalatukur as $index => $item)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $item->nama_brand }}</td>
                                     <td>{{ $item->kode_brand }}</td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="edit-btn" title="Edit" onclick="editBrandPerangkat({{ $item->id }})">
+                                            <button class="edit-btn" title="Edit" onclick="editBrandAlatUkur({{ $item->id }})">
                                                 <span class="material-symbols-outlined">edit</span>
                                             </button>
-                                            <button class="delete-btn" title="Hapus" onclick="deleteBrandPerangkat({{ $item->id }})">
+                                            <button class="delete-btn" title="Hapus" onclick="deleteBrandAlatUkur({{ $item->id }})">
                                                 <span class="material-symbols-outlined">delete</span>
                                             </button>
                                         </div>
@@ -336,32 +336,32 @@
 <!-- Link untuk Material Icons -->
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-<!-- Modal untuk Nama Perangkat -->
-<div id="addJenisPerangkatModal" class="modal-overlay" style="display: none;">
+<!-- Modal untuk Nama Alat Ukur -->
+<div id="addJenisAlatUkurModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
-        <span class="modal-close-btn" onclick="closeJenisPerangkatModal()">&times;</span>
-        <h2>Tambah Nama Perangkat</h2>
-        <form id="jenisPerangkatForm">
+        <span class="modal-close-btn" onclick="closeJenisAlatUkurModal()">&times;</span>
+        <h2>Tambah Nama AlatUkur</h2>
+        <form id="jenisAlatUkurForm">
             @csrf
             <div class="form-group">
-                <label for="perangkat">Nama Perangkat</label>
-                <input type="text" id="perangkat" name="perangkat" required>
+                <label for="alatukur">Nama AlatUkur</label>
+                <input type="text" id="alatukur" name="alatukur" required>
             </div>
             <div class="form-group">
-                <label for="kode_perangkat">Kode Perangkat</label>
-                <input type="text" id="kode_perangkat" name="kode_perangkat" required>
+                <label for="kode_alatukur">Kode AlatUkur</label>
+                <input type="text" id="kode_alatukur" name="kode_alatukur" required>
             </div>
             <button type="submit" class="submit-btn">Simpan</button>
         </form>
     </div>
 </div>
 
-<!-- Modal untuk Brand Perangkat -->
-<div id="addBrandPerangkatModal" class="modal-overlay" style="display: none;">
+<!-- Modal untuk Brand AlatUkur -->
+<div id="addBrandAlatUkurModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
-        <span class="modal-close-btn" onclick="closeBrandPerangkatModal()">&times;</span>
-        <h2>Tambah Brand Perangkat</h2>
-        <form id="brandPerangkatForm">
+        <span class="modal-close-btn" onclick="closeBrandAlatUkurModal()">&times;</span>
+        <h2>Tambah Brand AlatUkur</h2>
+        <form id="brandAlatUkurForm">
             @csrf
             <div class="form-group">
                 <label for="nama_brand">Nama Brand</label>
@@ -404,39 +404,39 @@ $(document).ready(function() {
 
     
     // ============== NAMA PERANGKAT OPERATIONS ==============
-    // Open modal Nama Perangkat
-    function openJenisPerangkatModal() {
-        console.log('Opening Nama Perangkat Modal');
-        $('#addJenisPerangkatModal').show();
+    // Open modal Nama AlatUkur
+    function openJenisAlatUkurModal() {
+        console.log('Opening Nama AlatUkur Modal');
+        $('#addJenisAlatUkurModal').show();
     }
 
-    function closeJenisPerangkatModal() {
-        $('#addJenisPerangkatModal').hide();
+    function closeJenisAlatUkurModal() {
+        $('#addJenisAlatUkurModal').hide();
     }
 
-    // Fungsi Modal Brand Perangkat
-    function openBrandPerangkatModal() {
-        console.log('Opening Brand Perangkat Modal');
-        $('#addBrandPerangkatModal').show();
+    // Fungsi Modal Brand AlatUkur
+    function openBrandAlatUkurModal() {
+        console.log('Opening Brand AlatUkur Modal');
+        $('#addBrandAlatUkurModal').show();
     }
 
-    function closeBrandPerangkatModal() {
-        $('#addBrandPerangkatModal').hide();
+    function closeBrandAlatUkurModal() {
+        $('#addBrandAlatUkurModal').hide();
     }
 
-    // Form Submit Nama Perangkat
-    $('#jenisPerangkatForm').submit(function(e) {
+    // Form Submit Nama AlatUkur
+    $('#jenisAlatUkurForm').submit(function(e) {
         e.preventDefault();
-        console.log('Submitting Nama Perangkat Form');
+        console.log('Submitting Nama AlatUkur Form');
         
         $.ajax({
-            url: '/store-jenisperangkat',
+            url: '/store-jenisalatukur',
             type: 'POST',
             data: $(this).serialize(),
             success: function(response) {
                 if (response.success) {
                     swal("Berhasil!", "Data berhasil disimpan", "success");
-                    closeJenisPerangkatModal();
+                    closeJenisAlatUkurModal();
                     location.reload();
                 }
             },
@@ -447,19 +447,19 @@ $(document).ready(function() {
         });
     });
 
-    // Form Submit Brand Perangkat
-    $('#brandPerangkatForm').submit(function(e) {
+    // Form Submit Brand AlatUkur
+    $('#brandAlatUkurForm').submit(function(e) {
         e.preventDefault();
-        console.log('Submitting Brand Perangkat Form');
+        console.log('Submitting Brand AlatUkur Form');
         
         $.ajax({
-            url: '/store-brandperangkat',
+            url: '/store-brandalatukur',
             type: 'POST',
             data: $(this).serialize(),
             success: function(response) {
                 if (response.success) {
                     swal("Berhasil!", "Data berhasil disimpan", "success");
-                    closeBrandPerangkatModal();
+                    closeBrandAlatUkurModal();
                     location.reload();
                 }
             },
@@ -470,22 +470,22 @@ $(document).ready(function() {
         });
     });
 
-        // Edit Nama Perangkat
-        function editInfoPerangkat(id) {
-            console.log('Editing Nama Perangkat:', id);
-            $.get(`/get-jenisperangkat/${id}`, function(response) {
+        // Edit Nama AlatUkur
+        function editInfoAlatUkur(id) {
+            console.log('Editing Nama AlatUkur:', id);
+            $.get(`/get-jenisalatukur/${id}`, function(response) {
                 if (response.success) {
-                    $('#perangkat').val(response.data.perangkat);
-                    $('#kode_perangkat').val(response.data.kode_perangkat);
-                    $('#jenisPerangkatForm').append(`<input type="hidden" name="id" value="${id}">`);
-                    openJenisPerangkatModal();
+                    $('#alatukur').val(response.data.alatukur);
+                    $('#kode_alatukur').val(response.data.kode_alatukur);
+                    $('#jenisAlatUkurForm').append(`<input type="hidden" name="id" value="${id}">`);
+                    openJenisAlatUkurModal();
                 }
             });
         }
 
-    // Delete Nama Perangkat
-    function deleteInfoPerangkat(id) {
-        console.log('Deleting Nama Perangkat:', id);
+    // Delete Nama AlatUkur
+    function deleteInfoAlatUkur(id) {
+        console.log('Deleting Nama AlatUkur:', id);
         swal({
             title: "Apakah Anda yakin?",
             text: "Data yang dihapus tidak dapat dikembalikan!",
@@ -497,7 +497,7 @@ $(document).ready(function() {
         }, function(isConfirm) {
             if (isConfirm) {
                 $.ajax({
-                    url: `/delete-jenisperangkat/${id}`,
+                    url: `/delete-jenisalatukur/${id}`,
                     type: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -517,22 +517,22 @@ $(document).ready(function() {
         });
     }
 
-    // Edit Brand Perangkat
-    function editBrandPerangkat(id) {
-        console.log('Editing Brand Perangkat:', id);
-        $.get(`/get-brandperangkat/${id}`, function(response) {
+    // Edit Brand AlatUkur
+    function editBrandAlatUkur(id) {
+        console.log('Editing Brand AlatUkur:', id);
+        $.get(`/get-brandalatukur/${id}`, function(response) {
             if (response.success) {
                 $('#nama_brand').val(response.data.nama_brand);
                 $('#kode_brand').val(response.data.kode_brand);
-                $('#brandPerangkatForm').append(`<input type="hidden" name="id" value="${id}">`);
-                openBrandPerangkatModal();
+                $('#brandAlatUkurForm').append(`<input type="hidden" name="id" value="${id}">`);
+                openBrandAlatUkurModal();
             }
         });
     }
 
-    // Delete Brand Perangkat
-    function deleteBrandPerangkat(id) {
-        console.log('Deleting Brand Perangkat:', id);
+    // Delete Brand AlatUkur
+    function deleteBrandAlatUkur(id) {
+        console.log('Deleting Brand AlatUkur:', id);
         swal({
             title: "Apakah Anda yakin?",
             text: "Data yang dihapus tidak dapat dikembalikan!",
@@ -544,7 +544,7 @@ $(document).ready(function() {
         }, function(isConfirm) {
             if (isConfirm) {
                 $.ajax({
-                    url: `/delete-brandperangkat/${id}`,
+                    url: `/delete-brandalatukur/${id}`,
                     type: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

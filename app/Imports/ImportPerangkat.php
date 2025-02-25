@@ -16,17 +16,19 @@ class ImportPerangkat implements ToModel, WithHeadingRow
         
         try {
             return new Perangkat([
-                'kode_region' => $row['kode_region'],
-                'kode_site' => $row['kode_site'],
-                'no_rack' => $row['no_rack'],
-                'kode_pkt' => $row['kode_pkt'],
-                'pkt_ke' => $row['pkt_ke'],
-                'kode_brand' => $row['kode_brand'],
-                'type' => $row['type']
+                'kode_region' => $row[0],
+                'kode_site' => $row[1],
+                'no_rack' => $row[2],
+                'kode_pkt' => $row[3],
+                'pkt_ke' => $row[4],
+                'kode_brand' => $row[5],
+                'type' => $row[6]
             ]);
         } catch (Exception $e) {
             Log::error('Error processing row: ' . $e->getMessage());
             throw $e;
         }
     }
+
 } 
+
