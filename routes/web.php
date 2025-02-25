@@ -123,6 +123,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-sites', [FasilitasController::class, 'getSites']);
     Route::get('/histori-fasilitas/{id_fasilitas}', [FasilitasController::class, 'showHistori']);
     Route::get('/get-site-rack', [FasilitasController::class, 'getSiteRack']);
+    Route::post('/fasilitas/import', [FasilitasController::class, 'import'])->name('fasilitas.import');
+    Route::post('/fasilitas/export', [FasilitasController::class, 'export'])->name('fasilitas.export');
 
 
     // JARINGAN
