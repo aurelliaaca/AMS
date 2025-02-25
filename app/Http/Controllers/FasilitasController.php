@@ -9,6 +9,9 @@ use App\Models\HistoriFasilitas;
 use Illuminate\Support\Facades\DB;
 use App\Models\Region;
 use App\Models\Site;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\FasilitasImport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class FasilitasController extends Controller
 {
@@ -531,6 +534,72 @@ class FasilitasController extends Controller
             'success' => true,
             'histori' => $histori
         ]);
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:csv,xlsx,xls'
+        ]);
+
+        // Mengambil data dari file yang diunggah
+        $file = $request->file('file');
+        $data = Excel::toArray(new FasilitasImport, $file); // Menggunakan Laravel Excel untuk mengimpor data
+
+        foreach ($data[0] as $row) {
+            // Misal $row berisi data yang diimpor
+            $fasilitas = new ListFasilitas();
+            
+            // Mengisi data fasilitas dari baris yang diimpor
+            $fasilitas->kode_region = $row['kode_region'];
+            $fasilitas->kode_site = $row['kode_site'];
+            // ... isi data lainnya sesuai kebutuhan
+
+            // Hitung fasilitas_ke
+            $lastPktKe = ListFasilitas::where('kode_region', $fasilitas->kode_region)
+                            ->where('kode_site', $fasilitas->kode_site)
+                            ->count();
+            $fasilitas->fasilitas_ke = $lastPktKe + 1; // Menetapkan nilai fasilitas_ke
+
+            // Simpan data fasilitas ke database
+            $fasilitas->save();
+        }
+
+        try {
+            Excel::import(new FasilitasImport, $request->file('file'));
+            return response()->json(['success' => true, 'message' => 'Data berhasil diimpor.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage()]);
+        }
+    }
+
+    public function export(Request $request)
+    {
+        try {
+            $request->validate([
+                'option' => 'required|in:all,unique'
+            ]);
+
+            // Ambil data berdasarkan opsi yang dipilih
+            if ($request->option === 'all') {
+                $fasilitas = ListFasilitas::all(); // Ambil semua data
+            } else {
+                // Ambil data yang tidak sama (misalnya, berdasarkan kriteria tertentu)
+                $fasilitas = ListFasilitas::distinct()->get(); // Sesuaikan dengan logika Anda
+            }
+
+            // Buat PDF
+            $pdf = PDF::loadView('aset.fasilitas.export-fasilitas', compact('fasilitas'));
+
+            // Simpan PDF ke file dan kembalikan URL
+            $filePath = 'exports/data_fasilitas_' . time() . '.pdf';
+            $pdf->save(public_path($filePath));
+
+            return response()->json(['success' => true, 'file_url' => url($filePath)]);
+        } catch (\Exception $e) {
+            \Log::error('Kesalahan saat mengekspor data: ' . $e->getMessage()); // Log kesalahan
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat mengekspor data: ' . $e->getMessage()]);
+        }
     }
 }
 

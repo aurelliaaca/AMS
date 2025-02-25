@@ -3,6 +3,8 @@
 @section('content')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
 
     <head>
         <link rel="stylesheet" href="{{ asset('css/general.css') }}">
@@ -10,6 +12,15 @@
         <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
         <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
         <script src="https://kit.fontawesome.com/bdb0f9e3e2.js" crossorigin="anonymous"></script>
+        <style>
+            .select2-container {
+                width: 100% !important; /* Pastikan select2 menggunakan lebar penuh */
+            }
+
+            .select2-selection {
+                height: 40px; /* Ubah tinggi select2 sesuai kebutuhan */
+            }
+        </style>
     </head>
 
     <div class="main">
@@ -17,9 +28,13 @@
             <div class="header">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Fasilitas</h3>
-                    @if(auth()->user()->role == '1')
-                        <button class="add-button" onclick="openAddFasilitasModal()">Tambah Fasilitas</button>
-                    @endif  
+                    <div class="button-container">
+                        <button class="add-button" style="width: 150px;" onclick="importData()">Import</button>
+                        @if(auth()->user()->role == '1')
+                            <button class="add-button" style="width: 150px;" onclick="openAddFasilitasModal()">Tambah Fasilitas</button>
+                        @endif  
+                        <button class="add-button" style="width: 150px;" onclick="openExportModal()">Export</button>
+                    </div>
                 </div>
             </div>
             
@@ -254,5 +269,124 @@
             rows[i].style.display = found ? '' : 'none';
         }
     }
+
+    function importData() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.csv, .xlsx, .xls'; // Format yang diterima
+        input.onchange = (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                $.ajax({
+                    url: '{{ route("fasilitas.import") }}', // Pastikan ini sesuai dengan route yang benar
+                    type: 'POST',
+                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: "Berhasil!",
+                                text: "Data berhasil diimpor.",
+                                icon: "success",
+                                confirmButtonText: "OK"
+                            }).then(() => {
+                                location.reload(); // Muat ulang halaman untuk melihat perubahan
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Gagal!",
+                                text: response.message,
+                                icon: "error",
+                                confirmButtonText: "OK"
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            title: "Error!",
+                            text: "Terjadi kesalahan saat mengunggah file. Lihat konsol untuk detail.",
+                            icon: "error",
+                            confirmButtonText: "OK"
+                        });
+                    }
+                });
+            }
+        };
+        input.click(); // Membuka dialog file
+    }
+
+    function openExportModal() {
+        const modal = document.getElementById('exportModal');
+        console.log('Membuka modal ekspor...'); // Log saat membuka modal
+        if (modal) {
+            modal.style.display = 'block';
+            console.log('Modal ditemukan dan ditampilkan.'); // Log jika modal ditemukan
+        } else {
+            console.error('Modal tidak ditemukan!'); // Log kesalahan jika modal tidak ada
+        }
+    }
+
+    function closeExportModal() {
+        const modal = document.getElementById('exportModal');
+        if (modal) {
+            modal.style.display = 'none';
+        } else {
+            console.error('Modal tidak ditemukan!');
+        }
+    }
+
+    function exportData() {
+        const exportOption = document.querySelector('input[name="export_option"]:checked').value;
+        console.log('Opsi ekspor yang dipilih:', exportOption); // Log opsi yang dipilih
+
+        // Mengirim permintaan ke server untuk mengekspor data
+        $.ajax({
+            url: '{{ route("fasilitas.export") }}',
+            type: 'POST', // Pastikan ini adalah POST
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            data: { option: exportOption },
+            success: function(response) {
+                console.log('Response dari server:', response); // Log response dari server
+                if (response.success) {
+                    // Jika berhasil, arahkan ke URL file PDF yang dihasilkan
+                    window.location.href = response.file_url; // Mengunduh PDF
+                    closeExportModal(); // Tutup modal
+                } else {
+                    Swal.fire('Gagal!', response.message, 'error'); // Tampilkan pesan kesalahan yang lebih spesifik
+                }
+            },
+            error: function(xhr) {
+                console.error('Kesalahan saat mengirim permintaan:', xhr); // Log kesalahan saat permintaan gagal
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Terjadi kesalahan saat mengekspor data.';
+                Swal.fire('Error!', errorMessage, 'error'); // Tampilkan pesan kesalahan yang lebih spesifik
+            }
+        });
+    }
     </script>
+
+    <!-- Modal Export -->
+    <div id="exportModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <span class="modal-close-btn" onclick="closeExportModal()">&times;</span>
+            <h2>Pilih Opsi Ekspor</h2>
+            <form id="exportForm">
+                <div>
+                    <label>
+                        <input type="radio" name="export_option" value="all" checked> Semua Data
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <input type="radio" name="export_option" value="unique"> Data Tidak Sama
+                    </label>
+                </div>
+                <button type="button" onclick="exportData()">Ekspor</button>
+            </form>
+        </div>
+    </div>
 @endsection
