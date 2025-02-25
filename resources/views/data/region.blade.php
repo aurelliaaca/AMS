@@ -55,7 +55,7 @@
 }
 
 .count-numbers {
-    font-size: 22px; /* Ukuran font untuk nama region */
+    font-size: 16px; /* Ukuran font untuk nama region */
     font-weight: bold; /* Menebalkan teks */
 }
 
@@ -254,13 +254,15 @@
         </div>
 
         <div class="card-grid">
+        {{ dd($regions) }}
             @foreach ($regions as $region)
                 <div class="card-wrapper">
                     <div class="card-counter primary" data-region="{{ $region->kode_region }}" onclick="toggleTable('{{ $region->kode_region }}')">
                         <i class="material-symbols-outlined">distance</i>
                         <div class="card-info">
+  
                             <div class="count-numbers">{{ $region->nama_region }}, {{ $region->kode_region }} </div>
-                            <div class="count-pop">{{ $region->jumlah_pop }}</div>
+                            <div class="jumlah-pop">{{ $region->sites->count() }} POP</div>
                             <div class="count-email">{{ $region->email }}</div>
                         </div>
                     </div>
@@ -272,7 +274,7 @@
                                         <td colspan="2" style="font-weight: bold;">{{ $site->nama_site }}</td>
                                     </tr>
                                     @php
-                                        $deviceData = \App\Models\Site::where('kode_region', $site->kode_site)->get();
+                                        $deviceData = \App\Models\Site::where('kode_site', $site->kode_site)->get();
                                         $slotCount = $deviceData->count();
                                     @endphp
                                     @for ($i = 1; $i <= $slotCount; $i++)
@@ -297,12 +299,6 @@
         </div>
     </div>
 </div>
-
-
-<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-
 
 <script>
     // Function to toggle the visibility of the table
