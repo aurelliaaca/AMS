@@ -9,7 +9,10 @@ use App\Models\JenisPerangkat;
 use App\Models\BrandPerangkat;
 use App\Models\JenisFasilitas;
 use App\Models\BrandFasilitas;
+use App\Models\Region;
+use App\Models\Site;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class DataController extends Controller
 {
@@ -588,4 +591,287 @@ class DataController extends Controller
     {
         return view('data.region');
     }
+
+    public function getAllRegions()
+    {
+        try {
+            $regions = Region::with(['sites'])->orderBy('nama_region', 'asc')->get()->map(function($region) {
+                $region->jumlah_pop = $region->sites->count();
+                return $region;
+            });
+
+            // Debug untuk melihat data yang dikirim
+            \Log::info('Data regions:', ['regions' => $regions->toArray()]);
+
+            return response()->json([
+                'success' => true,
+                'regions' => $regions
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error in getAllRegions: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function storeRegion(Request $request)
+    {
+        $validated = $request->validate([
+            'kode_region' => 'required|string|unique:region,kode_region',
+            'nama_region' => 'required|string',
+            'email' => 'nullable|string',
+            'alamat' => 'nullable|string',
+            'koordinat' => 'nullable|string',
+        ]);
+
+        $exist = Region::where('kode_region', strtoupper($request->kode_region))
+            ->orWhere('nama_region', $request->nama_region)
+            ->exists();
+
+        if ($exist) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode region atau nama region sudah ada dalam database.',
+            ], 400);
+        }
+
+        try {
+            $region = Region::create([
+                'kode_region' => strtoupper($request->kode_region),
+                'nama_region' => $request->nama_region,
+                'email' => $request->email,
+                'alamat' => $request->alamat,
+                'koordinat' => $request->koordinat,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data region berhasil disimpan.',
+                'data' => $region,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving region: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getRegion($id_region)
+    {
+        try {
+            $region = Region::where('id_region', $id_region)
+                           ->orWhere('kode_region', $id_region)
+                           ->firstOrFail();
+                           
+            \Log::info('Region found:', ['region' => $region->toArray()]); // Debug log
+            
+            return response()->json([
+                'success' => true,
+                'region' => $region
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::error('Region not found with ID: ' . $id_region);
+            return response()->json([
+                'success' => false,
+                'message' => 'Region tidak ditemukan'
+            ], 404);
+        } catch (\Exception $e) {
+            \Log::error('Error getting region: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data region: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateRegion(Request $request, $id_region)
+    {
+        try {
+            $request->validate([
+                'nama_region' => 'required|string|max:255',
+                'kode_region' => 'required|string|max:255',
+                'email' => 'nullable|string',
+                'alamat' => 'nullable|string',
+                'koordinat' => 'nullable|string',
+            ]);
+
+            $updated = DB::table('region')
+                ->where('id_region', $id_region)
+                ->update([
+                    'nama_region' => $request->nama_region,
+                    'kode_region' => $request->kode_region,
+                    'email' => $request->email,
+                    'alamat' => $request->alamat,
+                    'koordinat' => $request->koordinat,
+                ]);
+
+            if (!$updated) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Data tidak ditemukan atau tidak ada perubahan'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true, 
+                'message' => 'Region berhasil diperbarui'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui data'
+            ], 500);
+        }
+    }
+
+    public function deleteRegion($id_region)
+{
+    try {
+        $region = Region::where('id_region', $id_region)->first();
+
+        if (!$region) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Region tidak ditemukan'
+            ], 404);
+        }
+
+        // Menghapus site yang memiliki kode_region yang sama
+        Site::where('kode_region', $region->kode_region)->delete();
+
+        // Menghapus region
+        $region->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Region dan site yang terkait berhasil dihapus'
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Error deleting region: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+
+    public function storeSite(Request $request)
+    {
+        $validated = $request->validate([
+            'kode_region' => 'required|string|exists:region,kode_region',
+            'kode_site' => 'required|string|unique:site,kode_site',
+            'nama_site' => 'required|string',
+            'jenis_site' => 'nullable|string',
+            'jml_rack' => 'nullable|string',
+        ]);
+
+        $exist = Site::where('kode_site', strtoupper($request->kode_site))
+            ->orWhere('nama_site', $request->nama_site)
+            ->exists();
+
+        if ($exist) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode site atau nama site sudah ada dalam database.',
+            ], 400);
+        }
+
+        try {
+            // Verify if the region exists
+            $region = Region::where('kode_region', strtoupper($request->kode_region))->first();
+            if (!$region) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Region tidak ditemukan.',
+                ], 404);
+            }
+
+            $site = Site::create([
+                'kode_region' => strtoupper($request->kode_region),
+                'kode_site' => strtoupper($request->kode_site),
+                'nama_site' => $request->nama_site,
+                'jenis_site' => $request->jenis_site,
+                'jml_rack' => $request->jml_rack,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data site berhasil disimpan.',
+                'data' => $site,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saving site: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getSite($id_site)
+    {
+        try {
+            $site = Site::where('id_site', $id_site)
+                           ->orWhere('kode_site', $id_site)
+                           ->firstOrFail();
+                           
+            \Log::info('Site found:', ['site' => $site->toArray()]); // Debug log
+            
+            return response()->json([
+                'success' => true,
+                'site' => $site
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::error('Site not found with ID: ' . $id_site);
+            return response()->json([
+                'success' => false,
+                'message' => 'Site tidak ditemukan'
+            ], 404);
+        } catch (\Exception $e) {
+            \Log::error('Error getting site: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data site: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function deleteSite($id_site)
+    {
+        try {
+            $site = Site::where('id_site', $id_site)->first();
+            
+            if (!$site) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Site tidak ditemukan'
+                ], 404);
+            }
+
+            $site->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Site berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error deleting site: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

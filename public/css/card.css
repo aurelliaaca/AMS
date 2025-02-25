@@ -17,28 +17,29 @@
     transition: transform 0.2s;
     position: relative;
     overflow: hidden;
-    min-height: 140px;
+    min-height: 140px; /* This can be changed to a fixed height */
+    height: 180px; /* Set a fixed height for consistency */
     cursor: pointer;
 }
 
 .icon-wrapper {
-    position: absolute; /* Menjadikan posisi ikon absolut */
-    top: 50%; /* Posisikan di tengah */
-    left: 10px; /* Sesuaikan jarak dari kiri */
-    transform: translateY(-50%); /* Untuk memposisikan ikon di tengah vertikal */
-    width: 60px; /* Sesuaikan ukuran */
-    height: 60px; /* Sesuaikan ukuran */
-    border-radius: 12px; /* Sesuaikan dengan styling yang ada */
+    position: absolute; /* Absolute positioning for the icon */
+    top: 50%; /* Center vertically */
+    left: 10px; /* Adjust distance from the left */
+    transform: translateY(-50%); /* Center the icon vertically */
+    width: 60px; /* Adjust size */
+    height: 60px; /* Adjust size */
+    border-radius: 12px; /* Match existing styling */
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1; /* Pastikan di atas */
+    z-index: 1; /* Ensure it is on top */
 }
 
-.card-counter canvas{
+.card-counter canvas {
     position: absolute;
     top: 50%;
-    left: 10px;
+    left: 20px;
     transform: translateY(-50%);
     font-size: 125px;
     z-index: 1;
@@ -55,7 +56,7 @@
 }
 
 .count-numbers {
-    font-size: 35px;
+    font-size: 30px;
     font-weight: bold;
     margin-bottom: 10px;
     position: relative;
@@ -96,4 +97,33 @@
     padding: 5px;
     text-align: center;
     border-radius: 4px;
+}
+
+.action-buttons {
+    bottom: 10px; /* Position at the bottom */
+    right: 10px; /* Position at the right */
+    display: flex;
+    z-index: 3; /* Higher z-index to ensure visibility */
+}
+
+.action-buttons button {
+    margin-left: 2px; /* Mengurangi margin untuk jarak yang lebih dekat */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px; /* Ukuran tombol tetap sama */
+    height: 30px; /* Ukuran tombol tetap sama */
+}
+
+.action-buttons button i {
+    position: static; /* Reset the position */
+    font-size: 14px; /* Smaller size for icons */
+    transform: none; /* Reset transform */
+    color: white; /* Make sure icon is visible on button */
+}
+
+/* Jika ingin menambahkan sedikit padding ke tombol */
+.action-buttons button {
+    margin: 0; /* Menghapus padding agar ukuran tombol tetap 30x30 */
 }

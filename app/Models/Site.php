@@ -9,12 +9,13 @@ class Site extends Model
 {
     use HasFactory;
     protected $table = 'site';
-    protected $primaryKey = 'kode_site';
+    protected $primaryKey = 'id_site';
+    public $timestamps = false;
 
     protected $fillable = [
         'nama_site',
         'kode_site',
-        'no_site',
+        'id_site',
         'jenis_site',
         'kode_region',
         'jml_rack'

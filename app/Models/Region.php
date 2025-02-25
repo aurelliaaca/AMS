@@ -11,9 +11,10 @@ class Region extends Model
     protected $table = 'region';
     public $timestamps = false;
     protected $primaryKey = 'id_region'; 
-
+    protected $keyType = 'string';
 
     protected $fillable = [
+        'id_region',
         'nama_region',
         'kode_region',
         'email',

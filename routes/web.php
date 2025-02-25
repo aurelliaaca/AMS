@@ -85,9 +85,14 @@ Route::middleware('auth')->group(function () {
 
         // DATA REGION
         Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
-
-        
-    
+        Route::post('/store-region', [DataController::class, 'storeRegion'])->name('region.store');
+        Route::get('/get-regions', [DataController::class, 'getAllRegions'])->name('get.regions');
+        Route::delete('/region/delete/{id_region}', [DataController::class, 'deleteRegion'])->name('region.delete');
+        Route::get('/get-region/{id_region}', [DataController::class, 'getRegion'])->name('region.get');
+        Route::post('/update-region/{id_region}', [DataController::class, 'updateRegion'])->name('region.update');
+        Route::post('/store-site', [DataController::class, 'storeSite'])->name('site.store');
+        Route::get('/get-site/{id_site}', [DataController::class, 'getSite'])->name('site.get');
+        Route::delete('/site/delete/{id_site}', [DataController::class, 'deleteSite'])->name('site.delete');
     // POP Routes
     Route::get('/get-pops', [DataController::class, 'getAllPOP'])->name('pop.all');
     Route::get('/get-pop/{id}', [DataController::class, 'getPOP'])->name('pop.get');
