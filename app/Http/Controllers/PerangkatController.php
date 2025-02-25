@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Region;
 use App\Models\Site;
 use Exception;
+use Illuminate\Support\Facades\Storage;
+// use App\Imports\ImportPerangkat;
 use Illuminate\Support\Facades\Log;
 
 class PerangkatController extends Controller
@@ -41,7 +43,10 @@ class PerangkatController extends Controller
                 'region.nama_region',
                 'jenisperangkat.nama_perangkat',
                 'brandperangkat.nama_brand'
-            );
+            )
+            ->orderBy('nama_region')
+            ->orderBy('nama_site')
+            ->orderBy('no_rack');
 
         // Log total data setelah join
         $totalAfterJoin = $perangkat->count();
@@ -136,17 +141,17 @@ class PerangkatController extends Controller
             // Logging di awal function
             \Log::info('Starting store process with data:', $request->all());
 
-            // Validasi input
-            $validated = $request->validate([
-                'kode_region' => 'required|exists:region,kode_region',
-                'kode_site' => 'required|exists:site,kode_site',
-                'kode_perangkat' => 'required|exists:jenisperangkat,kode_perangkat',
-                'kode_brand' => 'nullable|exists:brandperangkat,kode_brand',
-                'no_rack' => 'nullable|string',
-                'type' => 'nullable|string',
-                'uawal' => 'nullable|integer|required_with:no_rack',
-                'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal',
-            ]);
+        // Validasi input
+        $validated = $request->validate([
+            'kode_region' => 'required|exists:region,kode_region',
+            'kode_site' => 'required|exists:site,kode_site',
+            'kode_perangkat' => 'required|exists:jenisperangkat,kode_perangkat',
+            'kode_brand' => 'nullable|exists:brandperangkat,kode_brand',
+            'no_rack' => 'nullable|string',
+            'type' => 'nullable|string',
+            'uawal' => 'nullable|integer|min:1|required_with:no_rack',
+            'uakhir' => 'nullable|integer|min:1|required_with:no_rack|gte:uawal',
+        ]);
 
             \Log::info('Validation passed, validated data:', $validated);
 
@@ -265,25 +270,25 @@ class PerangkatController extends Controller
                 'errors' => $e->errors(),
             ], 422);
 
-        } catch (\Exception $e) {
-            \Log::error('Unexpected Error in store method:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'request_data' => $request->all(),
+    } catch (Exception $e) {
+        \Log::error('Unexpected Error in store method:', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+            'request_data' => $request->all(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ]);
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Terjadi kesalahan pada server: ' . $e->getMessage(),
+            'debug_info' => [
                 'file' => $e->getFile(),
                 'line' => $e->getLine()
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan pada server: ' . $e->getMessage(),
-                'debug_info' => [
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine()
-                ]
-            ], 500);
-        }
+            ]
+        ], 500);
     }
+}
     // kebutuhan hapus dan edit (ngefetch id_perangkat)
     public function getPerangkatById($id_perangkat)
     {
@@ -344,12 +349,12 @@ class PerangkatController extends Controller
                     'success' => true,
                     'message' => 'Perangkat berhasil dihapus'
                 ]);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 DB::rollback();
                 throw $e;
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \Log::error('Error deleting perangkat: ' . $e->getMessage());
             \Log::error($e->getTraceAsString());
 
@@ -362,19 +367,19 @@ class PerangkatController extends Controller
 
     // edit
     public function update(Request $request, $id_perangkat)
-    {
-        try {
-            // Validasi input
-            $validated = $request->validate([
-                'kode_region' => 'required|exists:region,kode_region',
-                'kode_site' => 'required|exists:site,kode_site',
-                'kode_perangkat' => 'required|exists:jenisperangkat,kode_perangkat',
-                'kode_brand' => 'nullable|exists:brandperangkat,kode_brand',
-                'no_rack' => 'nullable|string',
-                'type' => 'nullable|string',
-                'uawal' => 'nullable|integer|required_with:no_rack', // Required if no_rack is present
-                'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal', // Required if no_rack is present and must be greater than or equal to uawal
-            ]);
+{
+    try {
+        // Validasi input
+        $validated = $request->validate([
+            'kode_region' => 'required|exists:region,kode_region',
+            'kode_site' => 'required|exists:site,kode_site',
+            'kode_perangkat' => 'required|exists:jenisperangkat,kode_perangkat',
+            'kode_brand' => 'nullable|exists:brandperangkat,kode_brand',
+            'no_rack' => 'nullable|string',
+            'type' => 'nullable|string',
+            'uawal' => 'nullable|integer|min:1|required_with:no_rack', // Required if no_rack is present
+            'uakhir' => 'nullable|integer|min:1|required_with:no_rack|gte:uawal', // Required if no_rack is present and must be greater than or equal to uawal
+        ]);
 
             // Debug: log data yang diterima
             \Log::info('Update received data:', $request->all());
@@ -413,16 +418,14 @@ class PerangkatController extends Controller
                 }
             }
 
-            // Misal $fasilitas merupakan data fasilitas yang sedang diupdate
-            if ($perangkat->kode_region !== $request->kode_region || $perangkat->kode_site !== $request->kode_site) {
-                $lastPktKe = ListPerangkat::where('kode_region', $request->kode_region)
-                    ->where('kode_site', $request->kode_site)
-                    ->count();
-                $pktKe = $lastPktKe + 1;
-            } else {
-                // Jika tidak berubah, pertahankan nilai fasilitas_ke yang lama
-                $pktKe = $perangkat->fasilitas_ke;
-            }
+        if ($perangkat->kode_region !== $request->kode_region || $perangkat->kode_site !== $request->kode_site) {
+            $lastPktKe = ListPerangkat::where('kode_region', $request->kode_region)
+                            ->where('kode_site', $request->kode_site)
+                            ->count();
+            $pktKe = $lastPktKe + 1;
+        } else {
+            $pktKe = $perangkat->perangkat_ke;
+        }
 
             // Update data
             $perangkat->update([
@@ -454,10 +457,10 @@ class PerangkatController extends Controller
                 'errors' => $e->errors(),
             ], 422);
 
-        } catch (\Exception $e) {
-            // Debug: log error
-            \Log::error('Error updating perangkat: ' . $e->getMessage());
-            \Log::error($e->getTraceAsString());
+    } catch (Exception $e) {
+        // Debug: log error
+        \Log::error('Error updating perangkat: ' . $e->getMessage());
+        \Log::error($e->getTraceAsString());
 
             return response()->json([
                 'success' => false,
@@ -481,7 +484,7 @@ class PerangkatController extends Controller
             return response()->json([
                 'jml_rack' => $site->jml_rack
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'jml_rack' => 0,
                 'error' => $e->getMessage()
@@ -492,8 +495,8 @@ class PerangkatController extends Controller
     public function showHistori($id_perangkat)
     {
         // Ambil data histori perangkat berdasarkan id_perangkat
-        $histori = HistoriPerangkat::where('idHiPe', $id_perangkat)
-            ->select('aksi', 'tanggal_perubahan')
+        $histori = HistoriPerangkat::where('id_perangkat', $id_perangkat)
+            ->select('histori', 'tanggal_perubahan')
             ->orderBy('tanggal_perubahan', 'desc')
             ->get();
 
@@ -504,14 +507,19 @@ class PerangkatController extends Controller
         ]);
     }
 
-    public function importPerangkat(Request $request)
-    {
-        try {
-            Log::info('Mulai proses import');
+
+//     public function importPerangkat(Request $request)
+//     {
+//         try {
+//             Log::info('Mulai proses import');
 
             $request->validate([
                 'file' => 'required|file|mimes:csv,txt|max:2048'
             ]);
+//             // Validasi file
+//             $request->validate([
+//                 'file' => 'required|mimes:xlsx,xls,csv|max:2048'
+//             ]);
 
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
@@ -587,6 +595,29 @@ class PerangkatController extends Controller
                     }
                 }
                 fclose($handle);
+//             if ($request->hasFile('file')) {
+//                 $file = $request->file('file');
+//                 $namafile = time() . '-' . $file->getClientOriginalName();
+//                 $filePath = 'ImportPerangkat/' . $namafile;
+
+//                 // Simpan file ke storage Laravel
+//                 Storage::put($filePath, file_get_contents($file));
+
+//                 Log::info('File berhasil disimpan di storage: ' . $filePath);
+
+// }
+
+//                 // Debugging: Pastikan file ada
+//                 if (!Storage::exists($filePath)) {
+//                     Log::error('File tidak ditemukan setelah disimpan!');
+//                     return back()->with('error', 'Gagal menyimpan file.');
+//                 }
+
+//                 // Debug: Cek path file
+//                 Log::info('Path file: ' . storage_path('app/' . $filePath));
+
+//                 // Import ke database
+//                 Excel::import(new ImportPerangkat, storage_path('app/' . $filePath));
 
                 Log::info('Import selesai');
                 return back()->with('success', 'Data perangkat berhasil diimpor.');
@@ -599,4 +630,16 @@ class PerangkatController extends Controller
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+//                 Log::info('Import selesai tanpa error');
+
+//                 return back()->with('success', 'Data perangkat berhasil diimpor.');
+//             } else {
+//                 Log::warning('Tidak ada file yang diunggah');
+//                 return back()->with('error', 'Tidak ada file yang diunggah.');
+//             }
+//         } catch (Exception $e) {
+//             Log::error('Error saat import: ' . $e->getMessage());
+//             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+//         }
+//     }
 }

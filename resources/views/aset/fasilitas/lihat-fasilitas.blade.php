@@ -28,14 +28,14 @@
                     <label>Type</label>
                     <p id="typeView"></p>
                 </div>
+            </div>
+            <div class="right-column">
                 <div class="form-group">
                     <label>Serial Number</label>
                     <p id="serialnumberView"></p>
                 </div>
-            </div>
-            <div class="right-column">
                 <div class="form-group">
-                    <label>Status/Keterangan</label>
+                    <label>Status dan Keterangan</label>
                     <p id="statusView"></p>
                 </div><div class="form-group">
                     <label>Jumlah Fasilitas</label>
@@ -83,6 +83,8 @@ function lihatFasilitas(id_fasilitas) {
                 fasilitas.type
             ];
 
+            const statusText = fasilitas.no_rack ? "Installed" : "Dismantled";
+
             // Filter nilai yang bukan null atau undefined, lalu gabungkan dengan "-"
             $('#hostnameView').text(values.filter(val => val).join('-'));
             $('#regionView').text(fasilitas.nama_region);
@@ -92,7 +94,7 @@ function lihatFasilitas(id_fasilitas) {
             $('#typeView').text(fasilitas.type || '-');
             $('#serialnumberView').text(fasilitas.serialnumber || '-');
             $('#jmlfasilitasView').text(fasilitas.jml_fasilitas || '-');
-            $('#statusView').text(fasilitas.status || '-');
+            $('#statusView').text(`${statusText}, ${fasilitas.status || '-'}`);
             $('#noRackView').text(fasilitas.no_rack ? `Rack ${fasilitas.no_rack}` : '-');
             $('#uawalView').text(fasilitas.uawal || '-');
             $('#uakhirView').text(fasilitas.uakhir || '-');
@@ -119,8 +121,8 @@ function lihatFasilitas(id_fasilitas) {
 
                             tableBody.append(`
                                 <tr>
-                                    <td>${item.aksi}</td>
-                                    <td>${formattedTanggal}</td>
+                                    <td style="width: 50%; text-align: justify;">${item.histori}</td>
+                                    <td style="width: 50%;">${formattedTanggal}</td>
                                 </tr>
                             `);
                         });
@@ -138,5 +140,15 @@ function lihatFasilitas(id_fasilitas) {
 }
 function closeLihatFasilitasModal() {
     document.getElementById("lihatFasilitasModal").style.display = "none";
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById("lihatFasilitasModal");
+    const modalContent = document.querySelector(".modal-content");
+
+    // Jika klik di luar modal-content, tutup modal
+    if (event.target === modal) {
+        closeLihatFasilitasModal();
+    }
 }
 </script>

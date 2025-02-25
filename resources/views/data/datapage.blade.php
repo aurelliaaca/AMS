@@ -94,7 +94,7 @@
             </div>
 
             <!-- Card Perangkat -->
-            <div class="card" onclick="window.location.href='/data/dataperangkat'" style="cursor: pointer;">
+            <div class="card" onclick="window.location.href='/data/perangkat'" style="cursor: pointer;">
                 <div class="card-header">
                     <div class="icon-wrapper device-icon">
                         <span class="material-symbols-outlined">construction</span>

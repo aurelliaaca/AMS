@@ -1,382 +1,343 @@
 @extends('layouts.sidebar')
 @section('content')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="{{ asset('css/data.css') }}">
+<link rel="stylesheet" href="{{ asset('css/general.css') }}">
+<link rel="stylesheet" href="{{ asset('css/card.css') }}">
+<link rel="stylesheet" href="{{ asset('css/tabel.css') }}">
+<link rel="stylesheet" href="{{ asset('css/modal.css') }}">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 <style>
-
-    .card-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr); /* Change from 4 to 3 columns */
-        gap: 20px;
-        margin-top: 20px;
-    }
-
-    /* Responsive Card Layout */
-    .cards-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 25px;
-    }
-/* Card Styling */
-.card-counter {
-    background: linear-gradient(45deg, #4f52ba 0%, #6f86e0 100%);
-    color: white;
-    border-radius: 10px;
-    padding: 20px;
-    display: flex;
-    flex-direction: row; /* Horizontal layout */
-    justify-content: flex-start; /* Keep items aligned to the start (left) */
-    align-items: center; /* Center align items vertically */
-    transition: transform 0.2s ease;
-    position: relative;
-    overflow: hidden;
-    min-height: 140px;
-    cursor: pointer;
-}
-
-.card-counter i {
-    font-size: 150px; /* Larger icon size */
-    opacity: 0.15; /* Make the icon subtle */
-    margin-right: 20px; /* Space between the icon and text */
-    z-index: 1;
-}
-
-.card-counter > div {
-    display: flex;
-    flex-direction: column; /* Stack text vertically */
-    justify-content: flex-start; /* Align text to the top */
-    align-items: flex-end; /* Align text to the right */
-    flex-grow: 1; /* Make sure text takes up available space */
-}
-
-.card-info {
-    display: flex;
-    flex-direction: column; /* Mengatur agar informasi ditampilkan dalam kolom */
-    align-items: flex-end; /* Mengatur agar semua teks berada di sebelah kanan */
-    width: 100%; /* Memastikan lebar penuh */
-}
-
-.count-numbers {
-    font-size: 16px; /* Ukuran font untuk nama region */
-    font-weight: bold; /* Menebalkan teks */
-}
-
-.count-pop, .count-email {
-    font-size: 14px; /* Ukuran font untuk jumlah pop dan email */
-    opacity: 0.8; /* Sedikit transparansi untuk membedakan */
-}
-
-.jumlah-pop {
-    font-size: 14px;
-    font-weight: normal;
-    text-align: right; /* Align text to the right */
-    color: #fff;
-    opacity: 0.8;
-    margin-bottom: 5px; /* Reduced margin for consistency */
-}
-
-.count-name {
-    font-size: 16px;
-    position: relative;
-    z-index: 2;
-    text-align: right; /* Align text to the right */
-    font-style: italic;
-    opacity: 0.6;
-    bottom: 5px;
-}
-
-
-.count-name {
-    font-size: 16px;
-    position: relative;
-    z-index: 2;
-    text-align: right; /* Align text to the right */
-    font-style: italic;
-    opacity: 0.6;
-    bottom: 5px;
-}
-
-
-    .toggle-table {
-        display: none;
-    }
-
-    .toggle-table table {
-        width: 100%;
-        border-collapse: separate;
-        border-radius: 5px;
-        overflow: hidden;
-    }
-
-    .toggle-table tr td {
-        border: 1px solid #ddd;
-        padding: 5px;
-        text-align: center;
-        border-radius: 4px;
-    }
-
-    /* Responsive Card Layout */
-    .cards-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 25px;
-    }
-
-    /* Card Styling */
-    .card {
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-        transition: all 0.3s ease;
-        overflow: hidden;
-    }
-
-    /* Hover Effect on Card */
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Card Header Styling */
-    .card-header {
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-
-    /* Icon Wrapper */
-    .icon-wrapper {
-        width: 50px;
-        height: 50px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Icon Styling */
-    .icon-wrapper i {
+    .fa-city {
         font-size: 24px;
-        color: white;
-    }
-
-    /* -------------------------- FILTER -------------------------- */
-    .filter-container {
-        display: flex;
-        gap: 20px;
-        align-items: center;
-        width: 100%;
-    }
-
-    .filter-container > * {
-        flex: 1;
-    }
-
-    select, .search-bar input {
-        width: 100%;
-        font-size: 12px;
-        padding: 12px 12px;
-        border: 1px solid #4f52ba;
-        border-radius: 5px;
-        background-color: #fff;
-        transition: border-color 0.3s;
-    }
-
-    .search-bar input {
-        outline: none;
-    }
-
-    select:focus, .search-bar input:focus {
-        border-color: #4f52ba;
-        box-shadow: 0 0 5px rgba(79, 82, 186, 0.5);
-    }
-
-    .select2-container {
-        width: 100%;
-    }
-
-    .select2-selection {
-        width: 100%;
-        font-size: 12px;
-        padding: 8px 12px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        background-color: #fff;
-        transition: border-color 0.3s;
-        border: 1px solid #4f52ba !important;
-    }
-
-    .select2-selection:focus {
-        border-color: #4f52ba !important;
-        box-shadow: 0 0 5px rgba(79, 82, 186, 0.5) !important;
-    }
-
-    .select2-selection__placeholder {
         color: #4f52ba;
-        font-size: 12px;
-    }
-
-    .select2-container--open .select2-selection {
-        border-color: #4f52ba;
-        box-shadow: 0 0 5px rgba(79, 82, 186, 0.5);
-    }
-
-    .select2-results__option {
-        font-size: 12px;
-        padding: 10px;
-    }
-
-    .select2-results__option--highlighted {
-        background-color: #4f52ba !important;
-        color: #fff;
     }
 </style>
 <div class="main">
     <div class="container">
         <div class="header">
-            <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Region</h3>
-        </div>
-
-        <div class="filter-container">
-            <select id="region" name="region[]" multiple>
-                <option value="">Pilih Region</option>
-                @foreach ($regions as $region)
-                    <option value="{{ $region->kode_region }}">{{ $region->nama_region }}</option>
-                @endforeach
-            </select>
-
-            <select id="site" name="site[]" multiple disabled>
-                <option value="">Pilih Site</option>
-            </select>
-
-            <div class="search-bar">
-                <input type="text" id="searchInput" class="custom-select" placeholder="Cari" />
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Region</h3>
+                <button type="button" class="add-button" onclick="openAddRegionModal()">Tambah Region</button>
             </div>
         </div>
-
-        <div class="card-grid">
-        {{ dd($regions) }}
-            @foreach ($regions as $region)
-                <div class="card-wrapper">
-                    <div class="card-counter primary" data-region="{{ $region->kode_region }}" onclick="toggleTable('{{ $region->kode_region }}')">
-                        <i class="material-symbols-outlined">distance</i>
-                        <div class="card-info">
-  
-                            <div class="count-numbers">{{ $region->nama_region }}, {{ $region->kode_region }} </div>
-                            <div class="jumlah-pop">{{ $region->sites->count() }} POP</div>
-                            <div class="count-email">{{ $region->email }}</div>
-                        </div>
-                    </div>
-                    <div class="toggle-table" id="table-{{ $region->kode_region }}">
-                        <table>
-                            <tbody>
-                                @foreach($region->sites as $site)
-                                    <tr>
-                                        <td colspan="2" style="font-weight: bold;">{{ $site->nama_site }}</td>
-                                    </tr>
-                                    @php
-                                        $deviceData = \App\Models\Site::where('kode_site', $site->kode_site)->get();
-                                        $slotCount = $deviceData->count();
-                                    @endphp
-                                    @for ($i = 1; $i <= $slotCount; $i++)
-                                        @php
-                                            $device = $deviceData->where('kode_region', $i)->first();
-                                            $deviceCode = $device ? $device->nama_site : '';
-                                            $style = $device ? 'background-color: #DCDCF2; font-weight: bold;' : '';
-                                        @endphp
-                                        @if ($deviceCode)
-                                            <tr style="{{ $style }}">
-                                                <td style="width:20%; vertical-align: bottom;">{{ $i }}</td>
-                                                <td>{{ $deviceCode }}</td>
-                                            </tr>
-                                        @endif
-                                    @endfor
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            @endforeach
+        <div class="card-grid" id="regionCardsContainer">
+            <!-- Cards will be loaded here dynamically -->
         </div>
     </div>
 </div>
 
+@include('data.add-region')
+@include('data.edit-region')
 <script>
-    // Function to toggle the visibility of the table
+    $(document).ready(function() {
+        // Load data when page first opens
+        loadData();
+    });
+
     function toggleTable(regionCode) {
         const table = document.getElementById('table-' + regionCode);
-        table.style.display = table.style.display === 'block' ? 'none' : 'block';
+        table.style.display = (table.style.display === 'block') ? 'none' : 'block';
     }
 
-    $(document).ready(function() {
-        // Initialize Select2 with custom settings
-        $('#region').select2({
-            placeholder: "Pilih Region",
-            allowClear: true,
-            closeOnSelect: false,
-            width: '100%',
-            language: {
-                noResults: function() {
-                    return "Tidak ada hasil";
+    function openAddRegionModal() {
+        $('#addRegionForm')[0].reset();
+        document.getElementById("addRegionModal").style.display = "flex";
+    }
+
+    function closeAddRegionModal() {
+        document.getElementById("addRegionModal").style.display = "none";
+    }
+
+    function loadData() {
+        $.ajax({
+            url: '/get-regions',
+            type: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    let html = '';
+                    response.regions.forEach(function(region) {
+                        html += `
+                        <div class="card-wrapper">
+                            <div class="card-counter" data-region="${region.kode_region}" onclick="toggleTable('${region.kode_region}')">
+                                <div class="icon-wrapper">
+                                    <i class="fa-solid fa-city"></i>
+                                </div>
+                                <div class="card-info">
+                                    <div class="count-numbers">${region.nama_region || ''}</div>
+                                    <div class="count-name">Jumlah POP: ${region.jumlah_pop || 0}</div>
+                                    <div class="count-details">${region.email || ''}</div>
+                                </div>
+                                <div class="action-buttons">
+                                    <button onclick="openAddSiteModal(${region.id_region})"
+                                        style="background-color:rgb(209, 210, 241); color: white; border: none; padding: 5px; border-radius: 3px; cursor: pointer; margin-right: 5px; margin-right: -1px;">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                    <button onclick="lihatRegion(${region.id_region})"
+                                        style="background-color: #9697D6; color: white; border: none; padding: 5px; border-radius: 3px; cursor: pointer; margin-right: 5px; margin-right: -1px;">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    <button onclick="editRegion(${region.id_region})"
+                                        style="background-color: #4f52ba; color: white; border: none; padding: 5px; border-radius: 3px; margin-right: 5px; cursor: pointer; margin-right: -1px; margin-left: -1px;">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button onclick="deleteRegion(${region.id_region})"
+                                        style="background-color: #dc3545; color: white; border: none; padding: 5px; border-radius: 3px; cursor: pointer; margin-left: -1px;">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="toggle-table" id="table-${region.kode_region}">
+                                <div class="table-container">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Nama Site</th>
+                                                <th>Kode Site</th>
+                                                <th>Jenis Site</th>
+                                                <th>Jumlah Rack</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>`;
+                                            if (region.sites && region.sites.length > 0) {
+                                                region.sites.forEach(function(site) {
+                                                    html += `
+                                                                <tr>
+                                                                    <td>${site.nama_site || ''}</td>
+                                                                    <td>${site.kode_site || ''}</td>
+                                                                    <td>${site.jenis_site || ''}</td>
+                                                                    <td>${site.jml_rack || ''}</td>
+                                                                    <td>
+                                                                        <div class="action-buttons">
+                                                                            <button onclick="editSite(${site.id_site})"
+                                                                                style="background-color: #4f52ba; color: white; border: none; padding: 5px; border-radius: 3px; margin-right: 5px; cursor: pointer; margin-right: -2px;">
+                                                                                <i class="fa-solid fa-pen"></i>
+                                                                            </button>
+                                                                            <button onclick="deleteSite(${site.id_site})"
+                                                                                style="background-color: #dc3545; color: white; border: none; padding: 5px; border-radius: 3px; cursor: pointer; margin-left: -1px;">
+                                                                                <i class="fa-solid fa-trash-can"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>`;
+                                                });
+                                            } else {
+                                                html += `
+                                                                <tr>
+                                                                    <td colspan="5" class="no-data">Belum ada data site</td>
+                                                                </tr>`;
+                                            }
+                                            html += `
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+                    $('#regionCardsContainer').html(html);
                 }
+                                    // Debug untuk melihat data yang diterima
+                                    console.log('Data regions:', response.regions);
+            },
+            error: function(xhr) {
+                Swal.fire('Error!', 'Gagal memuat data region', 'error');
             }
         });
+    }
 
-        $('#site').select2({
-            placeholder: "Pilih Site",
-            allowClear: true,
-            closeOnSelect: false,
-            width: '100%',
-            language: {
-                noResults: function() {
-                    return "Tidak ada hasil";
+    function lihatRegion(idRegion) {
+        // Prevent event bubbling
+        event.stopPropagation(); 
+        console.log('Lihat region:', idRegion);
+        // Implement view region functionality
+    }
+
+    function editRegion(idRegion) {
+        event.stopPropagation();
+        
+        console.log('Editing region:', idRegion); // Debug log
+        
+        $.ajax({
+            url: `/get-region/${idRegion}`,
+            type: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                console.log('Response:', response); // Debug log
+                if (response.success) {
+                    const region = response.region;
+                    $('#kode_region-input').val(region.id_region);
+                    $('#namaRegionEdit').val(region.nama_region);
+                    $('#kodeRegionEdit').val(region.kode_region);
+                    $('#emailEdit').val(region.email);
+                    $('#alamatEdit').val(region.alamat);
+                    $('#koordinatEdit').val(region.koordinat);
+                    document.getElementById("editRegionModal").style.display = "flex";
+                } else {
+                    Swal.fire('Error!', response.message || 'Gagal mengambil data region', 'error');
                 }
+            },
+            error: function(xhr, status, error) {
+                console.error('Ajax Error:', {xhr, status, error}); // Debug log
+                Swal.fire('Error!', 'Gagal mengambil data region: ' + (xhr.responseJSON?.message || error), 'error');
             }
         });
+    }
 
-        // Adjust dropdown width to match container
-        $('#region, #site').on('select2:open', function() {
-            $('.select2-dropdown').css('width', '300px');
-        });
+    // Handle form submission untuk edit
+    $('#editRegionForm').on('submit', function(e) {
+        e.preventDefault();
+        const id_region = $('#kode_region-input').val();
+        
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: "Apakah Anda yakin ingin mengupdate data ini?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#4f52ba',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, update!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const submitButton = $(this).find('button[type="submit"]');
+                submitButton.prop('disabled', true).text('Mengupdate...');
 
-        // When region is selected, fetch sites from the database
-        $('#region').change(function() {
-            let selectedRegions = $(this).val();
-
-            // Empty the site dropdown
-            $('#site').empty().append('<option value="">Pilih Site</option>').prop('disabled', true);
-
-            if (selectedRegions && selectedRegions.length > 0) {
                 $.ajax({
-                    url: '/get-sites',
+                    url: `/update-region/${id_region}`,
                     type: 'POST',
-                    data: { 
-                        kode_region: selectedRegions, 
-                        _token: '{{ csrf_token() }}' 
-                    },
+                    data: $(this).serialize(),
                     success: function(response) {
-                        $('#site').prop('disabled', false);
-                        response.forEach(site => {
-                            $('#site').append(new Option(site.nama_site, site.kode_site));
-                        });
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: 'Data berhasil diupdate!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                closeEditRegionModal();
+                                loadData();
+                            });
+                        } else {
+                            Swal.fire('Error!', response.message || 'Terjadi kesalahan', 'error');
+                        }
                     },
-                    error: function(xhr, status, error) {
-                        console.error('Error fetching sites:', error);
+                    error: function(xhr) {
+                        console.error('Error:', xhr);
+                        let errorMessage = 'Terjadi kesalahan saat mengupdate data';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+                        Swal.fire('Error!', errorMessage, 'error');
+                    },
+                    complete: function() {
+                        submitButton.prop('disabled', false).text('Update');
                     }
                 });
             }
-
-            filterRacks(); // Call filter function to update display
-        });
-
-        // When site is selected
-        $('#site').change(function() {
-            filterRacks(); // Call filter function to update display
-        });
-
-        // Search functionality
-        $('#searchInput').on('keyup', function() {
-            filterRacks(); // Call filter function to update display
         });
     });
+
+    function deleteRegion(idRegion) {
+        event.stopPropagation(); // Prevent card toggle
+        
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data yang dihapus tidak dapat dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#4f52ba',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/region/delete/${idRegion}`,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Terhapus!',
+                                response.message,
+                                'success'
+                            ).then(() => {
+                                loadData();
+                            });
+                        } else {
+                            Swal.fire('Error!', response.message, 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        let errorMessage = 'Terjadi kesalahan saat menghapus data';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+                        Swal.fire('Error!', errorMessage, 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    function editSite(kodeSite) {
+        // Prevent event bubbling
+        event.stopPropagation();
+        console.log('Edit site:', kodeSite);
+        // Implement edit site functionality
+    }
+
+    function deleteSite(idSite) {
+        event.stopPropagation(); // Prevent card toggle
+        
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data yang dihapus tidak dapat dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#4f52ba',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/site/delete/${idSite}`,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Terhapus!',
+                                response.message,
+                                'success'
+                            ).then(() => {
+                                loadData();
+                            });
+                        } else {
+                            Swal.fire('Error!', response.message, 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        let errorMessage = 'Terjadi kesalahan saat menghapus data';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+                        Swal.fire('Error!', errorMessage, 'error');
+                    }
+                });
+            }
+        });
+    }
 </script>
 @endsection

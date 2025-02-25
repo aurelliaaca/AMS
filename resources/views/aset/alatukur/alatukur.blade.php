@@ -5,7 +5,11 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <head>
-        <link rel="stylesheet" href="{{ asset('css/aset.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/general.css') }}">        
+        <link rel="stylesheet" href="{{ asset(path: 'css/tabel.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
+        <script src="https://kit.fontawesome.com/bdb0f9e3e2.js" crossorigin="anonymous"></script>
     </head>
 
     <div class="main">
@@ -13,8 +17,9 @@
             <div class="header">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Alatukur</h3>
-                    <button class="add-button" onclick="openAddAlatukurModal()">Tambah Alatukur</button>
-                    <button class="add-button" style="width: 150px;" onclick="importData()">Import</button>
+                    @if(auth()->user()->role == '1')
+                        <button class="add-button" onclick="openAddAlatukurModal()">Tambah Alatukur</button>
+                    @endif  
                 </div>
             </div>
             
@@ -55,6 +60,7 @@
                 <table id="tableAlatukur">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>No</th>
                             <th>Hostname</th>
                             <th>Region</th>
@@ -97,7 +103,6 @@
                 );
             });
         });
-
         LoadData();
     });
 
@@ -120,28 +125,34 @@
                     alatukur.type
                 ].filter(val => val !== null && val !== undefined && val !== '').join('-');
 
+                const actionButtons = `
+                    <button onclick="lihatAlatukur(${alatukur.id_alatukur})"
+                        style="background-color: #9697D6; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+
+                    @if(auth()->user()->role == '1')
+                    <button onclick="editAlatukur(${alatukur.id_alatukur})" 
+                        style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                        <button onclick="deleteAlatukur(${alatukur.id_alatukur})"
+                            style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    @endif
+                `;
+
                 tbody.append(`
                     <tr>
+                        <td></td>
                         <td>${index + 1}</td>
                         <td>${kodeAlatukur || '-'}</td>
                         <td>${alatukur.nama_region}</td>
                         <td>${alatukur.nama_alatukur || '-'}</td>
                         <td>${alatukur.nama_brand || '-'}</td>
                         <td>${alatukur.type || '-'}</td>
-                        <td>
-                            <button onclick="lihatAlatukur(${alatukur.id_alatukur})"
-                                style="background-color: #9697D6; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
-                                Lihat detail
-                            </button>
-                            <button onclick="editAlatukur(${alatukur.id_alatukur})" 
-                                style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px; cursor: pointer;">
-                                Edit
-                            </button>
-                            <button onclick="deleteAlatukur(${alatukur.id_alatukur})"
-                                style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
-                                Delete
-                            </button>
-                        </td>
+                        <td>${actionButtons}</td>
                     </tr>
                 `);
             });

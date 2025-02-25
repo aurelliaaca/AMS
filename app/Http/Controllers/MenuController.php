@@ -101,24 +101,6 @@ class MenuController extends Controller
         }
     }
 
-    public function deleteJaringan($id_jaringan)
-    {
-        try {
-            $jaringan = ListJaringan::findOrFail($id_jaringan);
-            $jaringan->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Jaringan berhasil dihapus'
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error menghapus jaringan: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menghapus jaringan'
-            ]);
-        }
-    }
 
     public function getHistoriJaringan($id_jaringan)
     {

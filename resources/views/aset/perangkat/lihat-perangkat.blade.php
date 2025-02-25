@@ -31,6 +31,10 @@
                     <p id="typeView"></p>
                 </div>
                 <div class="form-group">
+                    <label>Status</label>
+                    <p id="statusView"></p>
+                </div>
+                <div class="form-group">
                     <label>No Rack</label>
                     <p id="noRackView"></p>
                 </div>
@@ -73,6 +77,8 @@ function lihatPerangkat(id_perangkat) {
                 perangkat.type
             ];
 
+            const statusText = perangkat.no_rack ? "Installed" : "Dismantled";
+
             // Filter nilai yang bukan null atau undefined, lalu gabungkan dengan "-"
             $('#hostnameView').text(values.filter(val => val).join('-'));
             $('#regionView').text(perangkat.nama_region);
@@ -80,6 +86,7 @@ function lihatPerangkat(id_perangkat) {
             $('#perangkatView').text(perangkat.nama_perangkat);
             $('#brandView').text(perangkat.nama_brand || '-');
             $('#typeView').text(perangkat.type || '-');
+            $('#statusView').text(statusText);
             $('#noRackView').text(perangkat.no_rack ? `Rack ${perangkat.no_rack}` : '-');
             $('#uawalView').text(perangkat.uawal || '-');
             $('#uakhirView').text(perangkat.uakhir || '-');
@@ -106,8 +113,8 @@ function lihatPerangkat(id_perangkat) {
 
                             tableBody.append(`
                                 <tr>
-                                    <td>${item.aksi}</td>
-                                    <td>${formattedTanggal}</td>
+                                    <td style="width: 50%; text-align: justify;">${item.histori}</td>
+                                    <td style="width: 50%;">${formattedTanggal}</td>
                                 </tr>
                             `);
                         });
@@ -125,5 +132,15 @@ function lihatPerangkat(id_perangkat) {
 }
 function closeLihatPerangkatModal() {
     document.getElementById("lihatPerangkatModal").style.display = "none";
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById("lihatPerangkatModal");
+    const modalContent = document.querySelector(".modal-content");
+
+    // Jika klik di luar modal-content, tutup modal
+    if (event.target === modal) {
+        closeLihatPerangkatModal();
+    }
 }
 </script>

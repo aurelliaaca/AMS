@@ -22,10 +22,6 @@ use App\Models\DataFasilitas;
 use App\Models\DataAlatUkur;
 use App\Models\Poc;
 use App\Http\Controllers\JaringanController;
-use App\Models\ImportPerangkat;
-use App\Models\ImportAlatUkur;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Controllers\ProfileController;
 
 
 Route::get('/', function () {
@@ -61,10 +57,44 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-racks-by-region/{kode_region}', [HomeController::class, 'getRacksByRegion']);
     
     // DATA
-    Route::get('/data', [DataController::class, 'index'])->name('data.index');
+    Route::get('/data', [DataController::class, 'index'])->name('data');
     Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
     Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
-    
+
+        // DATA FASILITAS
+        Route::get('/data/fasilitas', [DataController::class, 'fasilitas'])->name('data.fasilitas');
+        Route::get('/data/get-fasilitas', [DataController::class, 'getDataFasilitas']);
+        Route::post('/store-brand-fasilitas', [DataController::class, 'storeBrandFasilitas'])->name('store.brand');
+        Route::post('/store-jenis-fasilitas', [DataController::class, 'storeJenisFasilitas'])->name('store.jenis');
+        Route::post('/update-brand-fasilitas/{kode_brand}', [DataController::class, 'updateBrandFasilitas']);
+        Route::post('/update-jenis-fasilitas/{kode_fasilitas}', [DataController::class, 'updateJenisFasilitas']);
+        Route::get('/get-brand-fasilitas/{kode_brand}', [DataController::class, 'getBrandFasilitasById']);
+        Route::get('/get-jenis-fasilitas/{kode_fasilitas}', [DataController::class, 'getJenisFasilitasById']);
+        Route::delete('/data/brand-fasilitas/{kode_brand}', [DataController::class, 'deleteBrandFasilitas']);
+        Route::delete('/data/jenis-fasilitas/{kode_fasilitas}', [DataController::class, 'deleteJenisFasilitas']);
+
+        // DATA PERANGKAT
+        Route::get('/data/perangkat', [DataController::class, 'perangkat'])->name('data.perangkat');
+        Route::get('/data/get-perangkat', [DataController::class, 'getDataPerangkat']);
+        Route::post('/store-brand-perangkat', [DataController::class, 'storeBrandPerangkat'])->name('store.brand');
+        Route::post('/store-jenis-perangkat', [DataController::class, 'storeJenisPerangkat'])->name('store.jenis');
+        Route::post('/update-brand-perangkat/{kode_brand}', [DataController::class, 'updateBrandPerangkat']);
+        Route::post('/update-jenis-perangkat/{kode_perangkat}', [DataController::class, 'updateJenisPerangkat']);
+        Route::get('/get-brand-perangkat/{kode_brand}', [DataController::class, 'getBrandPerangkatById']);
+        Route::get('/get-jenis-perangkat/{kode_perangkat}', [DataController::class, 'getJenisPerangkatById']);
+        Route::delete('/data/brand-perangkat/{kode_brand}', [DataController::class, 'deleteBrandPerangkat']);
+        Route::delete('/data/jenis-perangkat/{kode_perangkat}', [DataController::class, 'deleteJenisPerangkat']);
+
+        // DATA REGION
+        Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
+        Route::post('/store-region', [DataController::class, 'storeRegion'])->name('region.store');
+        Route::get('/get-regions', [DataController::class, 'getAllRegions'])->name('get.regions');
+        Route::delete('/region/delete/{id_region}', [DataController::class, 'deleteRegion'])->name('region.delete');
+        Route::get('/get-region/{id_region}', [DataController::class, 'getRegion'])->name('region.get');
+        Route::post('/update-region/{id_region}', [DataController::class, 'updateRegion'])->name('region.update');
+        Route::post('/store-site', [DataController::class, 'storeSite'])->name('site.store');
+        Route::get('/get-site/{id_site}', [DataController::class, 'getSite'])->name('site.get');
+        Route::delete('/site/delete/{id_site}', [DataController::class, 'deleteSite'])->name('site.delete');
     // POP Routes
     Route::get('/get-pops', [DataController::class, 'getAllPOP'])->name('pop.all');
     Route::get('/get-pop/{id}', [DataController::class, 'getPOP'])->name('pop.get');
@@ -114,7 +144,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/edit-jaringan/{id_jaringan}', [AsetController::class, 'editJaringan'])->name('jaringan.edit');
     Route::post('/update-jaringan/{id_jaringan}', [AsetController::class, 'updateJaringan'])->name('jaringan.update');
     Route::get('/jaringan/{id_jaringan}/detail', [JaringanController::class, 'getDetail'])->name('jaringan.detail');
-
+    Route::get('/get-last-kode-site-insan', [JaringanController::class, 'getLastKodeSiteInsan']);
+    Route::post('/jaringan/import', [JaringanController::class, 'import'])->name('jaringan.import');
+    
 
     // ALAT UKUR
     Route::get('/alatukur', [AlatukurController::class, 'alatukur'])->name('alatukur');
@@ -140,35 +172,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-region/{id_region}', [PengaturanController::class, 'getRegion'])->name('region.get');
 
     //DATA
-    Route::get('/data', [DataController::class, 'index'])->name('data');
-    Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
-    Route::post('/get-sites', function (Request $request) {
-        $regionCodes = $request->kode_region;
-    
-        // Ambil site berdasarkan region yang dipilih
-        $sites = DB::table('site')
-            ->whereIn('kode_region', $regionCodes)
-            ->select('kode_site', 'nama_site', 'kode_region')
-            ->get();
-    
-        return response()->json($sites);
-    });
-    
+    // Route::get('/data/region', [DataController::class, 'region'])->name('data.region');
+    // Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
+    // Route::post('/store-pop', [DataController::class, 'storePOP'])->name('pop.store');
+    // Route::get('/get-pop', [DataController::class, 'getAllPOP'])->name('pop.all');
+    // Route::put('/update-pop/{no_site}', [DataController::class, 'updatePOP'])->name('pop.update');
+    // Route::delete('/delete-pop/{no_site}', [DataController::class, 'deletePOP'])->name('pop.delete');
+    // Route::get('/get-pop/{no_site}', [DataController::class, 'getPOP'])->name('pop.get');
+    // Route::get('/data/rack', [DataController::class, 'rack'])->name('data.rack');
 
-    Route::get('/data/pop', [DataController::class, 'pop'])->name('data.pop');
-    Route::post('/store-pop', [DataController::class, 'storePOP'])->name('pop.store');
-    Route::get('/get-pop', [DataController::class, 'getAllPOP'])->name('pop.all');
-    Route::put('/update-pop/{no_site}', [DataController::class, 'updatePOP'])->name('pop.update');
-    Route::delete('/delete-pop/{no_site}', [DataController::class, 'deletePOP'])->name('pop.delete');
-    Route::get('/get-pop/{no_site}', [DataController::class, 'getPOP'])->name('pop.get');
-    Route::get('/data/rack', [DataController::class, 'rack'])->name('data.rack');
-
-    Route::get('/data/dataperangkat', [DataController::class, 'dataperangkat'])->name('data.dataperangkat');
-    Route::post('/store-dataperangkat', [DataController::class, 'storeDataPerangkat']);
-    Route::get('/get-dataperangkat/{id}', [DataController::class, 'getDataPerangkat']);
-    Route::put('/update-dataperangkat/{id}', [DataController::class, 'updateDataPerangkat']);
-    Route::delete('/delete-dataperangkat/{id}', [DataController::class, 'deleteDataPerangkat']);
-
+    // Route::get('/data/dataperangkat', [DataController::class, 'dataperangkat'])->name('data.dataperangkat');
+    // Route::post('/store-dataperangkat', [DataController::class, 'storeDataPerangkat']);
+    // Route::get('/get-dataperangkat/{id}', [DataController::class, 'getDataPerangkat']);
+    // Route::put('/update-dataperangkat/{id}', [DataController::class, 'updateDataPerangkat']);
+    // Route::delete('/delete-dataperangkat/{id}', [DataController::class, 'deleteDataPerangkat']);
     Route::get('/data/poc', [DataController::class, 'poc'])->name('data.poc');
     Route::get('/get-poc/{no_site}', [DataController::class, 'getPOC'])->name('poc.get');
 
@@ -180,10 +197,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/delete-jenisperangkat/{id}', [DataController::class, 'deleteJenisPerangkat']);
 
     // Routes untuk Brand Perangkat
-    Route::post('/store-brandperangkat', [DataController::class, 'storeBrandPerangkat']);
-    Route::get('/get-brandperangkat/{id}', [DataController::class, 'getBrandPerangkat']);
-    Route::put('/update-brandperangkat/{id}', [DataController::class, 'updateBrandPerangkat']);
-    Route::delete('/delete-brandperangkat/{id}', [DataController::class, 'deleteBrandPerangkat']);
+    // Route::post('/store-brandperangkat', [DataController::class, 'storeBrandPerangkat']);
+    // Route::get('/get-brandperangkat/{id}', [DataController::class, 'getBrandPerangkat']);
+    // Route::put('/update-brandperangkat/{id}', [DataController::class, 'updateBrandPerangkat']);
+    // Route::delete('/delete-brandperangkat/{id}', [DataController::class, 'deleteBrandPerangkat']);
 
     //data fasilitas
     Route::get('/data/datafasilitas', [DataController::class, 'datafasilitas'])->name('data.datafasilitas');
@@ -209,4 +226,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/import-alatukur', [AlatUkurController::class, 'importAlatUkur'])->name('import.alatukur');
 
     Route::post('/alatukur/import', [AlatUkurController::class, 'import'])->name('alatukur.import');
+
+    // Route untuk upload foto
+    Route::post('/upload-photo', [HomeController::class, 'uploadPhoto'])->name('upload.photo');
+
+    // Route untuk menghapus foto
+    Route::delete('/photos/{id}', [HomeController::class, 'deletePhoto'])->name('photos.delete');
 });

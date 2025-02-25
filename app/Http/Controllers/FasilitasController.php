@@ -177,8 +177,8 @@ class FasilitasController extends Controller
             'serialnumber' => 'nullable|string',
             'jml_fasilitas' => 'nullable|integer|min:0',
             'status' => 'nullable|string',
-            'uawal' => 'nullable|integer|required_with:no_rack',
-            'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal',
+            'uawal' => 'nullable|integer|min:1|required_with:no_rack',
+            'uakhir' => 'nullable|integer|min:1|required_with:no_rack|gte:uawal',
         ]);
 
         \Log::info('Validation passed, validated data:', $validated);
@@ -396,8 +396,8 @@ class FasilitasController extends Controller
             'serialnumber' => 'nullable|string',
             'jml_fasilitas' => 'nullable|integer|min:0',
             'status' => 'nullable|string',
-            'uawal' => 'nullable|integer|required_with:no_rack',
-            'uakhir' => 'nullable|integer|required_with:no_rack|gte:uawal',
+            'uawal' => 'nullable|integer|min:1|required_with:no_rack',
+            'uakhir' => 'nullable|integer|min:1|required_with:no_rack|gte:uawal',
         ]);
 
         // Debug: log data yang diterima
@@ -520,9 +520,9 @@ class FasilitasController extends Controller
 
     public function showHistori($id_fasilitas)
     {
-        // Ambil data histori fasilitas berdasarkan id_fasilitas
-        $histori = HistoriFasilitas::where('idHiPe', $id_fasilitas)
-            ->select('aksi', 'tanggal_perubahan')
+        // Ambil data histori perangkat berdasarkan id_perangkat
+        $histori = HistoriFasilitas::where('id_fasilitas', $id_fasilitas)
+            ->select('histori', 'tanggal_perubahan')
             ->orderBy('tanggal_perubahan', 'desc')
             ->get();
 

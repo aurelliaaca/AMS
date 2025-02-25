@@ -1,0 +1,120 @@
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 8px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-spacing: 0;
+    background-color: #fff;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+thead th {
+    background: #4f52ba;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 15px;
+    text-align: center;
+    border-bottom: 2px solid #e2e8f0;
+}
+th {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+th {
+    background-color: #4f52ba;
+    color: #fff;
+}
+
+td {
+    font-weight: normal;
+    font-size: 14px;
+}
+
+.no-data {
+    text-align: center;
+    color: rgba(79, 82, 186, 0.2);
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: rgba(79, 82, 186, 0.2);
+}
+
+th:nth-child(1), td:nth-child(1) { 
+    width: 2.5%;
+}
+
+th:nth-child(2), td:nth-child(2) {
+    width: 2.5%;
+}
+
+th:nth-child(3), td:nth-child(3) { 
+    width: 20%;
+    text-align: center;
+}
+
+th:nth-child(4), td:nth-child(4) { 
+    width: 7%;
+    text-align: center;
+}
+
+th:nth-last-child(2), td:nth-last-child(2) {
+    width: 10%;
+    text-align: center;
+}
+
+th:last-child, td:last-child {
+    width: 10%;
+    text-align: center;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.action-buttons button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 5px;
+    transition: color 0.3s ease;
+}
+
+.action-buttons .edit-btn {
+    color: #4f52ba;
+}
+
+.action-buttons .edit-btn:hover {
+    color: #3a3e9b;
+}
+
+.action-buttons .delete-btn {
+    color: #e63946;
+}
+
+.action-buttons .delete-btn:hover {
+    color: #b71c1c;
+}
+
+.action-buttons i {
+    font-size: 17.5px; /* Sesuaikan ukuran ikon */
+}

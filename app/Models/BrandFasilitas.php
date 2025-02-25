@@ -9,8 +9,14 @@ class BrandFasilitas extends Model
 {
     use HasFactory;
     protected $table = 'brandfasilitas';
+    protected $primaryKey = 'kode_brand';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
-        'nama_brand', 'kode_brand',
+        'kode_brand',
+        'nama_brand'
     ];
+
+    public $timestamps = false;
 }

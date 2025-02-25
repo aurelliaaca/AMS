@@ -359,13 +359,13 @@ class AlatukurController extends Controller
         ], 500);
     }
 }
-    public function showHistori($id_alatukur)
-    {
-        // Ambil data histori alatukur berdasarkan id_alatukur
-        $histori = HistoriAlatukur::where('idHiPe', $id_alatukur)
-            ->select('aksi', 'tanggal_perubahan')
-            ->orderBy('tanggal_perubahan', 'desc')
-            ->get();
+public function showHistori($id_alatukur)
+{
+    // Ambil data histori perangkat berdasarkan id_perangkat
+    $histori = HistoriAlatukur::where('id_alatukur', $id_alatukur)
+        ->select('histori', 'tanggal_perubahan')
+        ->orderBy('tanggal_perubahan', 'desc')
+        ->get();
 
         // Kembalikan data dalam format JSON
         return response()->json([

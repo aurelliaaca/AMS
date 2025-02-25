@@ -9,12 +9,18 @@ class JenisPerangkat extends Model
 {
     use HasFactory;
     protected $table = 'jenisperangkat';
+    protected $primaryKey = 'kode_perangkat';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
-        'nama_perangkat', 'kode_perangkat',
+        'kode_perangkat',
+        'nama_perangkat'
     ];
 
-    public function jenisperangkat()
+    public $timestamps = false;
+
+    public function jenisfasilitas()
     {
         return $this->hasMany(ListPerangkat::class, 'kode_perangkat', 'kode_perangkat');
     }
