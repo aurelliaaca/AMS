@@ -1,61 +1,67 @@
-.table-container {
-    width: 100%;
+.table-responsive {
     overflow-x: auto;
-    border-radius: 8px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    background-color: #fff;
-    border-spacing: 0;
-    background-color: #fff;
+    margin-bottom: 1rem;
+    background-color: transparent;
 }
 
-td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-    text-align: center;
+table thead th,
+table tbody td {
+    text-align: center; /* Center text for both headers and data cells */
 }
 
-thead th {
-    background: #4f52ba;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
+table thead {
+    background-color: rgba(209, 210, 241, 0.316);
+    border-top-left-radius: 10px; /* Apply border radius to the top left */
+    border-top-right-radius: 10px; /* Apply border radius to the top right */
+    overflow: hidden; /* Ensure the radius applies correctly */
+}
+
+table thead th {
+    color: #4f52ba;
+    border-bottom: 2px solid #e3e6f0;
+    font-weight: bold;
     padding: 15px;
-    text-align: center;
-    border-bottom: 2px solid #e2e8f0;
-}
-th {
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
-    text-align: center;
-}
-
-th {
-    background-color: #4f52ba;
-    color: #fff;
-}
-
-td {
-    font-weight: normal;
     font-size: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
+
+table tbody td {
+    padding: 15px;
+    border-bottom: 1px solid #e3e6f0;
+    color: #5a5c69;
+    font-size: 14px;
+    vertical-align: middle;
+    font-weight: normal;
+}
+
+/* Remove alternating colors */
+table tbody tr:hover {
+    background-color: rgba(209, 210, 241, 0.316);
+}
+
+/* Commented out odd/even row background colors
+table tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+*/
 
 .no-data {
     text-align: center;
     color: rgba(79, 82, 186, 0.2);
 }
 
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-tr:hover {
-    background-color: rgba(79, 82, 186, 0.2);
-}
-
+/* Width settings for specific columns */
 th:nth-child(1), td:nth-child(1) { 
     width: 2.5%;
 }
@@ -65,25 +71,22 @@ th:nth-child(2), td:nth-child(2) {
 }
 
 th:nth-child(3), td:nth-child(3) { 
-    width: 20%;
-    text-align: center;
+    width: 15%;
 }
 
 th:nth-child(4), td:nth-child(4) { 
     width: 7%;
-    text-align: center;
 }
 
 th:nth-last-child(2), td:nth-last-child(2) {
     width: 10%;
-    text-align: center;
 }
 
 th:last-child, td:last-child {
-    width: 10%;
-    text-align: center;
+    width: 15%;
 }
 
+/* Action buttons styles */
 .action-buttons {
     display: flex;
     gap: 8px;

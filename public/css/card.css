@@ -22,6 +22,10 @@
     cursor: pointer;
 }
 
+.card-counter:hover {
+    transform: translateY(-10px);
+}
+
 .icon-wrapper {
     position: absolute; /* Absolute positioning for the icon */
     top: 50%; /* Center vertically */

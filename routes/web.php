@@ -230,12 +230,14 @@ Route::middleware('auth')->group(function () {
     //HISTORI
     Route::get('/histori', [MenuController::class, 'histori'])->name('histori');
     Route::get('/get-history-perangkat', [MenuController::class, 'getHistoryPerangkat'])->name('history.perangkat');
-    Route::prefix('histori')->group(function () {
-        Route::get('/perangkat', [MenuController::class, 'historiPerangkat'])->name('histori.perangkat');
-        Route::get('/fasilitas', [MenuController::class, 'historiFasilitas'])->name('histori.fasilitas');
-        Route::get('/jaringan', [MenuController::class, 'historiJaringan'])->name('histori.jaringan');
-    });
-    Route::get('/histori/jaringan', [MenuController::class, 'getHistoryJaringan'])->name('histori.jaringan');
+    Route::get('/get-history-fasilitas', [MenuController::class, 'getHistoryFasilitas'])->name('history.fasilitas');
+    Route::get('/get-history-alatukur', [MenuController::class, 'getHistoryAlatukur'])->name('history.alatukur');
+    Route::get('/get-history-jaringan', [MenuController::class, 'getHistoryJaringan'])->name('histori.jaringan');
+    // Route::prefix('histori')->group(function () {
+    //     // Route::get('/perangkat', [MenuController::class, 'historiPerangkat'])->name('histori.perangkat');
+    //     Route::get('/fasilitas', [MenuController::class, 'historiFasilitas'])->name('histori.fasilitas');
+    //     Route::get('/jaringan', [MenuController::class, 'historiJaringan'])->name('histori.jaringan');
+    // });
     Route::get('/histori/jaringan/{id_jaringan}', [MenuController::class, 'getHistoriJaringan']);
 
     //IMPORT
