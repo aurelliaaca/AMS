@@ -321,41 +321,37 @@
     }
 
     function openExportModal() {
-        const modal = document.getElementById('exportModal');
-        console.log('Membuka modal ekspor...'); // Log saat membuka modal
-        if (modal) {
-            modal.style.display = 'block';
-            console.log('Modal ditemukan dan ditampilkan.'); // Log jika modal ditemukan
-        } else {
-            console.error('Modal tidak ditemukan!'); // Log kesalahan jika modal tidak ada
-        }
+        document.getElementById('exportModal').style.display = 'flex'; // Menggunakan flex untuk memusatkan
     }
 
     function closeExportModal() {
-        const modal = document.getElementById('exportModal');
-        if (modal) {
-            modal.style.display = 'none';
-        } else {
-            console.error('Modal tidak ditemukan!');
-        }
+        document.getElementById('exportModal').style.display = 'none'; // Menyembunyikan modal
     }
 
     function exportData() {
-        const exportOption = document.querySelector('input[name="export_option"]:checked').value;
+        const isAllDataChecked = document.getElementById('exportAll').checked; // Cek apakah checkbox dicentang
+        const selectedRegion = document.getElementById('roSelect').value; // Ambil nilai dari dropdown region
+        const exportOption = isAllDataChecked ? 'all' : 'unique'; // Tentukan opsi ekspor berdasarkan checkbox
+
         console.log('Opsi ekspor yang dipilih:', exportOption); // Log opsi yang dipilih
+
+        // Sembunyikan modal ekspor
+        closeExportModal();
+
+        // Tampilkan indikator loading
+        document.getElementById('loadingIndicator').style.display = 'block';
 
         // Mengirim permintaan ke server untuk mengekspor data
         $.ajax({
             url: '{{ route("fasilitas.export") }}',
             type: 'POST', // Pastikan ini adalah POST
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            data: { option: exportOption },
+            data: { option: exportOption, region: selectedRegion }, // Kirim region yang dipilih
             success: function(response) {
                 console.log('Response dari server:', response); // Log response dari server
                 if (response.success) {
                     // Jika berhasil, arahkan ke URL file PDF yang dihasilkan
                     window.location.href = response.file_url; // Mengunduh PDF
-                    closeExportModal(); // Tutup modal
                 } else {
                     Swal.fire('Gagal!', response.message, 'error'); // Tampilkan pesan kesalahan yang lebih spesifik
                 }
@@ -364,6 +360,10 @@
                 console.error('Kesalahan saat mengirim permintaan:', xhr); // Log kesalahan saat permintaan gagal
                 const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Terjadi kesalahan saat mengekspor data.';
                 Swal.fire('Error!', errorMessage, 'error'); // Tampilkan pesan kesalahan yang lebih spesifik
+            },
+            complete: function() {
+                // Sembunyikan indikator loading setelah proses selesai
+                document.getElementById('loadingIndicator').style.display = 'none';
             }
         });
     }
@@ -377,16 +377,81 @@
             <form id="exportForm">
                 <div>
                     <label>
-                        <input type="radio" name="export_option" value="all" checked> Semua Data
+                        <input type="checkbox" name="export_option" value="all" id="exportAll"> 
+                        <span style="margin-left: 10px;">Semua Data</span>
                     </label>
                 </div>
-                <div>
-                    <label>
-                        <input type="radio" name="export_option" value="unique"> Data Tidak Sama
-                    </label>
+                <div style="margin-top: 15px;">
+                    <label for="roSelect">Pilih Region:</label>
+                    <select id="roSelect" name="ro_option" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        <option value="">Pilih Region</option>
+                        @foreach ($regions as $region)
+                            <option value="{{ $region->kode_region }}">{{ $region->nama_region }}</option>
+                        @endforeach
+                    </select>
                 </div>
-                <button type="button" onclick="exportData()">Ekspor</button>
+                <div class="modal-footer">
+                    <button type="button" onclick="exportData()" class="export-button">Ekspor</button>
+                </div>
             </form>
         </div>
+        <!-- Indikator Loading -->
+        <div id="loadingIndicator" style="display: none; text-align: center; margin-top: 20px;">
+            <p>Loading... Mohon tunggu.</p>
+            <img src="path/to/loading.gif" alt="Loading" /> <!-- Ganti dengan path ke gambar loading Anda -->
+        </div>
     </div>
+
+    <style>
+        .modal-overlay {
+            position: fixed; /* Mengatur posisi tetap */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Latar belakang semi-transparan */
+            display: flex; /* Menggunakan flexbox untuk memusatkan konten */
+            justify-content: center; /* Memusatkan secara horizontal */
+            align-items: center; /* Memusatkan secara vertikal */
+            z-index: 1000; /* Pastikan modal berada di atas elemen lain */
+        }
+
+        .modal-content {
+            background-color: white; /* Latar belakang konten modal */
+            padding: 20px; /* Padding di dalam konten modal */
+            border-radius: 5px; /* Sudut melengkung */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Bayangan untuk efek kedalaman */
+            width: 400px; /* Lebar konten modal */
+            max-width: 90%; /* Maksimal lebar 90% dari viewport */
+            position: relative; /* Pastikan konten modal memiliki posisi relatif */
+        }
+
+        .modal-close-btn {
+            cursor: pointer; /* Pointer saat hover */
+            font-size: 20px; /* Ukuran font untuk tombol tutup */
+            float: right; /* Mengatur posisi tombol tutup di kanan */
+        }
+
+        .export-button {
+            background-color: #4f52ba; /* Warna latar belakang tombol */
+            color: white; /* Warna teks tombol */
+            border: none; /* Menghilangkan border default */
+            padding: 10px; /* Padding tombol */
+            border-radius: 5px; /* Sudut melengkung tombol */
+            cursor: pointer; /* Pointer saat hover */
+            font-size: 16px; /* Ukuran font tombol */
+            transition: background-color 0.3s; /* Transisi warna latar belakang */
+            width: 100%; /* Tombol mengisi lebar penuh */
+        }
+
+        .export-button:hover {
+            background-color: #6f86e0; /* Warna latar belakang saat hover */
+        }
+
+        .modal-footer {
+            display: flex; /* Menggunakan flexbox untuk mengatur posisi */
+            justify-content: flex-end; /* Mengatur tombol ke kanan */
+            margin-top: 20px; /* Jarak atas untuk pemisahan */
+        }
+    </style>
 @endsection
