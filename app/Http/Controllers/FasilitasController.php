@@ -577,15 +577,42 @@ class FasilitasController extends Controller
     {
         try {
             $request->validate([
-                'option' => 'required|in:all,unique'
+                'option' => 'required|in:all,unique',
+                'region' => 'nullable|string' // Validasi untuk region
             ]);
 
             // Ambil data berdasarkan opsi yang dipilih
             if ($request->option === 'all') {
-                $fasilitas = ListFasilitas::all(); // Ambil semua data
+                // Ambil semua data jika opsi "Semua Data" dipilih
+                $fasilitas = ListFasilitas::all();
             } else {
-                // Ambil data yang tidak sama (misalnya, berdasarkan kriteria tertentu)
+                // Jika opsi "unique" dipilih, ambil data yang tidak sama
                 $fasilitas = ListFasilitas::distinct()->get(); // Sesuaikan dengan logika Anda
+            }
+
+            // Jika ada region yang dipilih, filter data berdasarkan region
+            if ($request->region) {
+                $fasilitas = $fasilitas->where('kode_region', $request->region);
+            }
+
+            // Jika tidak ada data setelah filter, kembalikan pesan kesalahan
+            if ($fasilitas->isEmpty()) {
+                return response()->json(['success' => false, 'message' => 'Tidak ada data untuk region yang dipilih.']);
+            }
+
+            // Menyiapkan data hostname
+            foreach ($fasilitas as $item) {
+                $item->hostname = collect([
+                    $item->kode_region, 
+                    $item->kode_site, 
+                    $item->no_rack, 
+                    $item->kode_fasilitas, 
+                    $item->fasilitas_ke, 
+                    $item->kode_brand, 
+                    $item->type
+                ])->filter(function($val) {
+                    return !is_null($val) && $val !== '';
+                })->join('-');
             }
 
             // Buat PDF
