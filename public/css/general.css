@@ -48,3 +48,20 @@
 .pagination-btn.active {
     background-color: #9697D6;
 }
+
+
+.back-section {
+    display: flex; /* Menggunakan Flexbox untuk tata letak */
+    align-items: center; /* Menyelaraskan item di tengah secara vertikal */
+    gap: 10px; /* Jarak antara tombol dan judul */
+    margin-bottom: 20px;
+}
+
+.back-btn {
+    background: #4f52ba; /* Menghilangkan latar belakang */
+    border: none; /* Menghilangkan border */
+    cursor: pointer; /* Menampilkan kursor pointer saat hover */
+    padding: 10px;
+    border-radius: 10px;
+    color: white;
+}

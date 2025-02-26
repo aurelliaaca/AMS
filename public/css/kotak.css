@@ -21,21 +21,26 @@
 
 .kotak-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 25px;
+}
+
+.kotak-containerhistori {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
     gap: 25px;
 }
 
 .kotak {
     background: rgba(209, 210, 241, 0.316);
     border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     overflow: hidden;
 }
 
 .kotak:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
 .kotak-header {
@@ -113,3 +118,4 @@
         grid-template-columns: 1fr;
     }
 }
+
