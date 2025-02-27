@@ -164,6 +164,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/jaringan/{id_jaringan}/detail', [JaringanController::class, 'getDetail'])->name('jaringan.detail');
     Route::get('/get-last-kode-site-insan', [JaringanController::class, 'getLastKodeSiteInsan']);
     Route::post('/jaringan/import', [JaringanController::class, 'import'])->name('jaringan.import');
+    Route::post('/jaringan/export', [JaringanController::class, 'export'])->name('jaringan.export');
+    Route::get('/jaringan/{id}/lihat-detail', [JaringanController::class, 'lihatDetail'])->name('jaringan.lihatDetail');
     
 
     // ALAT UKUR
