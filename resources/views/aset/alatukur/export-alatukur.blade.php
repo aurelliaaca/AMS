@@ -39,19 +39,38 @@
         th:nth-child(9), td:nth-child(9) { width: 5%; }  /* Keterangan */
 
         .footer {
-            margin-top: 20px; /* Jarak atas untuk footer */
-            text-align: center; /* Memusatkan teks */
-            font-size: 12px; /* Ukuran font footer */
+            position: absolute; /* Mengatur posisi footer */
+            bottom: 5px; /* Jarak dari bawah, ditingkatkan untuk menjauh dari tabel */
+            left: 20px; /* Jarak dari kiri */
+            font-size: 10px; /* Ukuran font footer */
         }
 
         .signature-container {
-            text-align: right; /* Mengatur posisi signature ke kanan */
-            margin-top: 40px; /* Jarak atas untuk signature */
+            position: absolute; /* Mengatur posisi tanda tangan */
+            right: 20px; /* Jarak dari kanan */
+            bottom: 20px; /* Jarak dari bawah */
+            text-align: right; /* Menyelaraskan tanda tangan ke kanan */
+            width: 200px; /* Lebar kolom tanda tangan */
+        }
+
+        .signature {
+            border-top: 1px solid black; /* Garis untuk tanda tangan */
+            margin-top: 5px; /* Jarak atas untuk tanda tangan */
+            padding-top: 10px; /* Jarak dalam untuk tanda tangan */
+            width: 100%; /* Lebar garis sesuai dengan kolom */
+            text-align: center; /* Menyelaraskan garis ke tengah */
+        }
+
+        .title {
+            text-align: center; /* Menyelaraskan judul ke tengah */
+            font-size: 16px; /* Ukuran font judul */
+            font-weight: bold; /* Menebalkan font judul */
+            margin-bottom: 10px; /* Jarak bawah judul */
         }
     </style>
 </head>
 <body>
-    <h1>Data Alatukur</h1>
+    <div class="title">Data Alatukur</div> <!-- Judul di tengah -->
     <table>
         <thead>
             <tr>
@@ -83,12 +102,9 @@
         </tbody>
     </table>
 
-    <div class="footer">
-        <p>Dicetak pada: {{ date('d-m-Y H:i:s') }}</p> <!-- Tanggal cetak -->
-    </div>
-
+    <div class="footer">Tanggal Ekspor: {{ date('d-m-Y H:i:s') }}</div> <!-- Tanggal dan waktu di kiri paling bawah -->
     <div class="signature-container">
-        <p style="text-align: center; margin: 0;">Tanda Tangan</p> <!-- Label untuk tanda tangan, diselaraskan ke kanan -->
+        <p style="text-align: center; margin: 0;">Tanda Tangan</p> <!-- Label untuk tanda tangan, diselaraskan ke tengah -->
         <p style="margin: 0; padding-top: 5px;">__________________________</p> <!-- Garis untuk tanda tangan -->
     </div>
 </body>
