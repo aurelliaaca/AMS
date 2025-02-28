@@ -217,7 +217,7 @@ class HomeController extends Controller
         $request->validate([
             'photo' => 'required|image|mimes:jpg,jpeg,png,gif|max:5120', // Ubah menjadi 5120 untuk 5 MB
             'title' => 'required|string|max:255',
-            'text' => 'required|string|max:500',
+            'text' => 'nullable|string|max:500', // Tetap nullable
         ]);
 
         try {
@@ -227,7 +227,7 @@ class HomeController extends Controller
 
             $photo = new Photos();
             $photo->title = $request->input('title');
-            $photo->text = $request->input('text');
+            $photo->text = $request->input('text') ?? null; // Pastikan text bisa null
             $photo->file_path = 'img/' . $filename;
             $photo->save();
 

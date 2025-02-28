@@ -61,6 +61,7 @@
         width: 100%;
         height: 150px;
         object-fit: cover;
+        cursor: pointer;
     }
 
     .card-body {
@@ -267,6 +268,12 @@ button:hover {
         position: relative; /* Pastikan header memiliki posisi relatif */
         z-index: 1; /* Z-index lebih rendah dari modal */
     }
+
+    /* Gaya untuk label saat hover */
+    label:hover {
+        color: #4f52ba; /* Ubah warna saat hover */
+        cursor: pointer; /* Ubah kursor menjadi pointer */
+    }
 </style>
 
 <div class="main">
@@ -338,9 +345,10 @@ button:hover {
             </div>
         </div>
 
-        <div id="uploadModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('uploadModal')">&times;</span>
+        <div id="uploadModal" class="modal" style="display: none;">
+            <div class="modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+            <div class="modal-content" style="position: relative; z-index: 1000; background: white; padding: 20px; border-radius: 5px; max-width: 500px; margin: auto; top: 50%; transform: translateY(-50%);">
+                <span class="close" onclick="closeModal('uploadModal')" style="cursor: pointer;">&times;</span>
                 <h5 class="modal-title" style="font-size: 24px; font-weight: bold;">Upload Foto</h5>
                 <form id="uploadPhotoForm" enctype="multipart/form-data">
                     @csrf
@@ -354,7 +362,7 @@ button:hover {
                     </div>
                     <div>
                         <label for="text">Teks</label>
-                        <textarea id="text" name="text" rows="3" required></textarea>
+                        <textarea id="text" name="text" rows="3"></textarea>
                     </div>
                     <div style="text-align: right;">
                         <button type="submit" class="button">Upload</button>
@@ -365,14 +373,14 @@ button:hover {
 
         <div id="photoGallery" style="display: flex; flex-wrap: wrap;">
             @foreach($photos as $photo)
-                <div style="flex: 0 0 48%; margin-right: 2%; margin-bottom: 20px;">
-                    <div class="card">
-                        <img src="{{ asset($photo->file_path) }}" alt="Card image cap" onclick="showImage('{{ asset($photo->file_path) }}', '{{ $photo->title }}')">
-                        <div class="card-body">
+                <div style="flex: 0 0 calc(50% - 10px); margin: 5px;">
+                    <div class="card" style="height: 300px; display: flex; flex-direction: column;">
+                        <img src="{{ asset($photo->file_path) }}" alt="Card image cap" onclick="showImage('{{ asset($photo->file_path) }}', '{{ $photo->title }}')" style="width: 100%; height: 150px; object-fit: cover;">
+                        <div class="card-body" style="flex: 1;">
                             <h5>{{ $photo->title }}</h5>
                             <p>{{ $photo->text }}</p>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer" style="display: flex; justify-content: space-between; align-items: center;">
                             <small class="text-muted">Uploaded on: {{ $photo->created_at }}</small>
                             <form action="{{ route('photos.delete', $photo->id) }}" method="POST" style="display:inline;" class="delete-form">
                                 @csrf
@@ -386,9 +394,10 @@ button:hover {
         </div>
 
         <div id="imageModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('imageModal')">&times;</span>
-                <img id="modalImage" src="" alt="Foto Besar">
+            <div class="modal-content" style="position: relative; z-index: 1000; background: white; padding: 20px; border-radius: 5px; max-width: 80%; margin: auto; top: 50%; transform: translateY(-50%);">
+                <span class="close" onclick="closeModal('imageModal')" style="cursor: pointer;">&times;</span>
+                <h5 id="modalImageTitle" style="text-align: center;"></h5>
+                <img id="modalImage" src="" alt="Foto Besar" style="width: 100%; height: auto; max-height: 80vh; object-fit: contain;">
             </div>
         </div>
     </div>
@@ -443,6 +452,10 @@ button:hover {
                     title: 'Berhasil!',
                     text: 'Foto berhasil diupload.',
                 });
+                  // Tutup modal
+                  closeModal('uploadModal'); // Menutup modal upload
+                // Reload halaman
+                location.reload(); // Reload halaman untuk memperbarui galeri foto
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -461,8 +474,9 @@ button:hover {
         });
     });
 
-    function showImage(src, title) {
-        document.getElementById('modalImage').src = src;
+    function showImage(imageUrl, title) {
+        document.getElementById('modalImage').src = imageUrl;
+        document.getElementById('modalImageTitle').innerText = title;
         document.getElementById('imageModal').style.display = 'block';
         
         // Sembunyikan elemen yang ingin disembunyikan
