@@ -6,7 +6,7 @@
 
     <head>
         <link rel="stylesheet" href="{{ asset('css/general.css') }}">        
-        <link rel="stylesheet" href="{{ asset(path: 'css/tabel.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/tabelaset.css') }}">
         <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
         <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
         <script src="https://kit.fontawesome.com/bdb0f9e3e2.js" crossorigin="anonymous"></script>
@@ -14,19 +14,18 @@
 
     <div class="main">
         <div class="container">
-            <div class="header">
+        <div class="header">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Alatukur</h3>
-                    <div class="button-container">
+                    <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Alat ukur</h3>
+                    <div style="display: flex; gap: 10px;">
                         @if(auth()->user()->role == '1')
-                            <button class="add-button" style="width: 150px;" onclick="importData()">Import</button>
-                            <button class="add-button" style="width: 150px;" onclick="openAddAlatukurModal()">Tambah Alatukur</button>
-                            <button class="add-button" style="width: 150px; margin-left: 10px;" onclick="showExportModal()">Export</button>
-                        @endif  
+                            <button class="add-button" onclick="openAddAlatukurModal()">Tambah Alat ukur</button>
+                            <button class="add-button" onclick="importData()">Import Alat ukur</button>
+                            <button class="add-button" onclick="showExportModal()">Export Alat ukur</button>
+                        @endif             
                     </div>
                 </div>
             </div>
-            
             <div class="filter-container">
                 <div>
                     <select id="region" name="region[]" multiple data-placeholder="Pilih Region">
@@ -118,71 +117,7 @@
     </div>
 
     <style>
-        .modal-overlay {
-            position: fixed; /* Mengatur posisi tetap */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7); /* Latar belakang semi-transparan */
-            display: flex; /* Menggunakan flexbox untuk memusatkan konten */
-            justify-content: center; /* Memusatkan secara horizontal */
-            align-items: center; /* Memusatkan secara vertikal */
-            z-index: 1000; /* Pastikan modal berada di atas elemen lain */
-        }
-
-        .modal-content {
-            background-color: white; /* Latar belakang konten modal */
-            padding: 20px; /* Padding di dalam konten modal */
-            border-radius: 5px; /* Sudut melengkung */
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Bayangan untuk efek kedalaman */
-            width: 400px; /* Lebar konten modal */
-            max-width: 90%; /* Maksimal lebar 90% dari viewport */
-            position: relative; /* Pastikan konten modal memiliki posisi relatif */
-        }
-
-        .modal-close-btn {
-            cursor: pointer; /* Pointer saat hover */
-            font-size: 20px; /* Ukuran font untuk tombol tutup */
-            float: right; /* Mengatur posisi tombol tutup di kanan */
-        }
-
-        .export-button {
-            background-color: #4f52ba; /* Warna latar belakang tombol */
-            color: white; /* Warna teks tombol */
-            border: none; /* Menghilangkan border default */
-            padding: 10px; /* Padding tombol */
-            border-radius: 5px; /* Sudut melengkung tombol */
-            cursor: pointer; /* Pointer saat hover */
-            font-size: 16px; /* Ukuran font tombol */
-            transition: background-color 0.3s; /* Transisi warna latar belakang */
-            width: 100%; /* Tombol mengisi lebar penuh */
-        }
-
-        .export-button:hover {
-            background-color: #6f86e0; /* Warna latar belakang saat hover */
-        }
-
-        .modal-footer {
-            display: flex; /* Menggunakan flexbox untuk mengatur posisi */
-            justify-content: flex-end; /* Mengatur tombol ke kanan */
-            margin-top: 20px; /* Jarak atas untuk pemisahan */
-        }
-
-        .add-button {
-            background-color: #4f52ba; /* Warna latar belakang tombol */
-            color: white; /* Warna teks tombol */
-            border: none; /* Menghilangkan border default */
-            padding: 10px 20px; /* Padding tombol */
-            border-radius: 5px; /* Sudut melengkung tombol */
-            font-size: 13px; /* Ukuran font tombol */
-            font-weight: 600; /* Ketebalan font tombol */
-            cursor: pointer; /* Pointer saat hover */
-            transition: background-color 0.3s ease; /* Transisi warna latar belakang */
-            width: auto; /* Lebar tombol otomatis */
-            margin-top: 10px; /* Jarak atas tombol */
-            margin-right: 10px; /* Jarak kanan tombol */
-        }
+        
     </style>
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />

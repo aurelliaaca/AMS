@@ -8,7 +8,7 @@
 
     <head>
         <link rel="stylesheet" href="{{ asset('css/general.css') }}">
-        <link rel="stylesheet" href="{{ asset('css/tabel.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/tabelaset.css') }}">
         <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
         <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
         <script src="https://kit.fontawesome.com/bdb0f9e3e2.js" crossorigin="anonymous"></script>

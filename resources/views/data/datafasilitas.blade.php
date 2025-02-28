@@ -30,9 +30,11 @@
                         <span><i class="fas fa-tags" style="font-size: 18px;"></i></span>
                         <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin-left: 5px;">Jenis</h3>
                     </div>
+                    @if(auth()->user()->role == '1')
                     <button class="add-button-data" onclick="openAddJenisModal()">
                         <span><i class="fas fa-plus"></i></span>
                     </button>
+                    @endif
                 </div>
                 <div class="table-container">
                     <div class="table-wrapper">
@@ -58,9 +60,11 @@
                         <span><i class="fas fa-building" style="font-size: 18px;"></i></span>
                         <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin-left: 5px;">Brand</h3>
                         </div>
+                        @if(auth()->user()->role == '1')
                     <button class="add-button-data" onclick="openAddBrandModal()">
                         <span><i class="fas fa-plus"></i></span>
                     </button>
+                    @endif
                 </div>
                 <div class="table-container">
                     <div class="table-wrapper">
@@ -109,6 +113,7 @@
                             <td>${brand.nama_brand}</td>
                             <td>${brand.kode_brand}</td>
                             <td>
+                                                @if(auth()->user()->role == '1')
                                 <div class="action-buttons">
                                     <button class="edit-btn" onclick="editBrand('${brand.kode_brand}')">
                                         <i class="fas fa-edit"></i>
@@ -117,6 +122,7 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
+                                @endif
                             </td>
                         </tr>
                     `);
@@ -130,6 +136,8 @@
                             <td>${jenis.nama_fasilitas}</td>
                             <td>${jenis.kode_fasilitas}</td>
                             <td>
+                                                @if(auth()->user()->role == '1')
+
                                 <div class="action-buttons">
                                     <button class="edit-btn" onclick="editJenis('${jenis.kode_fasilitas}')">
                                         <i class="fas fa-edit"></i>
@@ -138,6 +146,7 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
+                                @endif
                             </td>
                         </tr>
                     `);

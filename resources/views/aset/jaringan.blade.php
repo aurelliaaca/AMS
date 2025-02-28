@@ -174,8 +174,8 @@
         }
         
         th {
-            background-color: #4f52ba;
-            color: #fff;
+            background-color: rgba(209, 210, 241, 0.316);
+            color: #4f52ba;
             position: sticky;
             top: 0;
             z-index: 1;
@@ -191,7 +191,7 @@
         }
         
         tr:hover {
-            background-color: rgba(79, 82, 186, 0.2);
+            background-color: rgba(209, 210, 241, 0.316);
         }
 
     /* -------------------------- MODAL -------------------------- */
