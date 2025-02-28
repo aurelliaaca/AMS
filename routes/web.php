@@ -176,6 +176,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/update-alatukur/{id_alatukur}', [AlatukurController::class, 'update']);
     Route::delete('/delete-alatukur/{id_alatukur}', [AlatukurController::class, 'destroy']);
     Route::get('/histori-alatukur/{id_alatukur}', [AlatukurController::class, 'showHistori']);
+    Route::post('/export-alatukur', [AlatukurController::class, 'export'])->name('alatukur.export');
+    Route::post('/alatukur/import', [AlatukurController::class, 'import']);
 
     // AKUN
     // PROFIL

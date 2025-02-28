@@ -9,6 +9,9 @@ use App\Models\HistoriAlatukur;
 use Illuminate\Support\Facades\DB;
 use App\Models\Region;
 use App\Models\Site;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
+USE App\Imports\AlatUkurImport;
 
 class AlatukurController extends Controller
 {
@@ -376,6 +379,7 @@ public function showHistori($id_alatukur)
 
     public function import(Request $request)
     {
+        // Validasi file yang diunggah
         $request->validate([
             'file' => 'required|mimes:csv,xlsx,xls'
         ]);
@@ -388,11 +392,69 @@ public function showHistori($id_alatukur)
         \Log::info('File yang diupload: ', [$request->file('file')->getClientOriginalName()]);
 
         try {
+            // Mengimpor data menggunakan AlatUkurImport
             Excel::import(new AlatUkurImport, $request->file('file'));
             return response()->json(['success' => true, 'message' => 'Data berhasil diimpor.']);
         } catch (\Exception $e) {
             \Log::error('Error importing file: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage()]);
+        }
+    }
+
+    public function export(Request $request)
+    {
+        try {
+            $request->validate([
+                'option' => 'required|in:all,unique',
+                'region' => 'nullable|string' // Validasi untuk region
+            ]);
+
+            // Ambil data berdasarkan opsi yang dipilih
+            if ($request->option === 'all') {
+                // Ambil semua data jika opsi "Semua Data" dipilih
+                $alatukur = ListAlatukur::all();
+            } else {
+                // Jika opsi "unique" dipilih, ambil data yang tidak sama
+                $alatukur = ListAlatukur::distinct()->get(); // Sesuaikan dengan logika Anda
+            }
+
+            // Jika ada region yang dipilih, filter data berdasarkan region
+            if ($request->region) {
+                $alatukur = $alatukur->where('kode_region', $request->region);
+            }
+
+            // Jika tidak ada data setelah filter, kembalikan pesan kesalahan
+            if ($alatukur->isEmpty()) {
+                return response()->json(['success' => false, 'message' => 'Tidak ada data untuk region yang dipilih.']);
+            }
+
+            // Menyiapkan data hostname
+            foreach ($alatukur as $item) {
+                $item->hostname = collect([
+                    $item->kode_region, 
+                    $item->kode_alatukur, 
+                    $item->kode_brand, 
+                    $item->type,
+                    $item->serialnumber,
+                    $item->tahunperolehan,
+                    $item->kondisi,
+                    $item->keterangan
+                ])->filter(function($val) {
+                    return !is_null($val) && $val !== '';
+                })->join('-');
+            }
+
+            // Buat PDF
+            $pdf = PDF::loadView('aset.alatukur.export-alatukur', compact('alatukur'));
+
+            // Simpan PDF ke file dan kembalikan URL
+            $filePath = 'exports/data_alatukur_' . time() . '.pdf';
+            $pdf->save(public_path($filePath));
+
+            return response()->json(['success' => true, 'file_url' => url($filePath)]);
+        } catch (\Exception $e) {
+            \Log::error('Kesalahan saat mengekspor data: ' . $e->getMessage()); // Log kesalahan
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat mengekspor data: ' . $e->getMessage()]);
         }
     }
 }
