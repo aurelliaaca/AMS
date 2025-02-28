@@ -9,17 +9,26 @@
     <link rel="stylesheet" href="{{ asset('css/data.css') }}">
     <link rel="stylesheet" href="{{ asset('css/general.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/tabel.css') }}">
-</head>
+    <link rel="stylesheet" href="{{ asset('css/tabeldata.css') }}">
+    </head>
 
 <div class="main">
-    <div class="container">
-        <div class="titles-container">
+<div class="container">
+        <div class="header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center;">
+                    <button class="back-btn" onclick="window.location.href='/data'">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin-left: 10px;">Data Perangkat</h3>
+                </div>
+            </div>
+        </div>        <div class="titles-container">
         <div class="section">
                 <div class="section-title">
                     <div class="title-wrapper">
                         <span><i class="fas fa-tags" style="font-size: 18px;"></i></span>
-                        <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin-left: 5px;">Jenis Perangkat</h3>
+                        <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin-left: 5px;">Jenis</h3>
                     </div>
                     <button class="add-button-data" onclick="openAddJenisModal()">
                         <span><i class="fas fa-plus"></i></span>
@@ -47,7 +56,7 @@
                 <div class="section-title">
                     <div class="title-wrapper">
                         <span><i class="fas fa-building" style="font-size: 18px;"></i></span>
-                        <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin-left: 5px;">Brand Perangkat</h3>
+                        <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin-left: 5px;">Brand</h3>
                         </div>
                     <button class="add-button-data" onclick="openAddBrandModal()">
                         <span><i class="fas fa-plus"></i></span>

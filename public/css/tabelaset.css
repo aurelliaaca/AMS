@@ -1,0 +1,140 @@
+.table-responsive {
+    width: 100%;
+    max-height: 80vh; /* Biar gak sampai bawah full */
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    background-color: transparent;
+}
+
+table thead th,
+table tbody td {
+    text-align: center; /* Center text for both headers and data cells */
+}
+
+table thead {
+    background-color: rgba(209, 210, 241, 0.316);
+    border-top-left-radius: 10px; /* Apply border radius to the top left */
+    border-top-right-radius: 10px; /* Apply border radius to the top right */
+    overflow: hidden; /* Ensure the radius applies correctly */
+    display: block; /* Pastikan thead tetap di tempatnya */
+
+}
+
+table tbody {
+    display: block; /* Pisahkan tbody agar bisa di-scroll sendiri */
+    max-height: 70vh; /* Biar ada sisa kosong di bawah */
+    overflow-y: auto; /* Biar tbody bisa di-scroll */
+}
+
+
+table thead th {
+    color: #4f52ba;
+    border-bottom: 2px solid #e3e6f0;
+    font-weight: bold;
+    padding: 15px;
+    font-size: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed; /* Pastikan kolom sejajar dengan thead */
+}
+
+table tbody td {
+    padding: 15px;
+    border-bottom: 1px solid #e3e6f0;
+    color: #5a5c69;
+    font-size: 14px;
+    vertical-align: middle;
+    font-weight: normal;
+}
+
+/* Remove alternating colors */
+table tbody tr:hover {
+    background-color: rgba(209, 210, 241, 0.316);
+}
+
+/* Commented out odd/even row background colors
+table tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+*/
+
+.no-data {
+    text-align: center;
+    color: rgba(79, 82, 186, 0.2);
+}
+
+/* Width settings for specific columns */
+th:nth-child(1), td:nth-child(1) { 
+    width: 2.5%;
+}
+
+th:nth-child(2), td:nth-child(2) {
+    width: 2.5%;
+}
+
+th:nth-child(3), td:nth-child(3) { 
+    width: 15%;
+}
+
+th:nth-child(4), td:nth-child(4) { 
+    width: 7%;
+}
+
+th:nth-last-child(2), td:nth-last-child(2) {
+    width: 10%;
+}
+
+th:last-child, td:last-child {
+    width: 15%;
+}
+
+/* Action buttons styles */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.action-buttons button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 5px;
+    transition: color 0.3s ease;
+}
+
+.action-buttons .edit-btn {
+    color: #4f52ba;
+}
+
+.action-buttons .edit-btn:hover {
+    color: #3a3e9b;
+}
+
+.action-buttons .delete-btn {
+    color: #e63946;
+}
+
+.action-buttons .delete-btn:hover {
+    color: #b71c1c;
+}
+
+.action-buttons i {
+    font-size: 17.5px; /* Sesuaikan ukuran ikon */
+}

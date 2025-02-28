@@ -6,7 +6,7 @@
 
     <head>
         <link rel="stylesheet" href="{{ asset('css/general.css') }}">
-        <link rel="stylesheet" href="{{ asset('css/tabel.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/tabelaset.css') }}">
         <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
         <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
     </head>
@@ -19,9 +19,13 @@
             <div class="header">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Perangkat</h3>
-                    @if(auth()->user()->role == '1')
-                        <button class="add-button" onclick="openAddPerangkatModal()">Tambah Perangkat</button>
-                    @endif                
+                    <div style="display: flex; gap: 10px;">
+                        @if(auth()->user()->role == '1')
+                            <button class="add-button" onclick="openAddPerangkatModal()">Tambah Perangkat</button>
+                            <button class="add-button" onclick="openImportPerangkatModal()">Import Perangkat</button>
+                            <button class="add-button" onclick="openExportPerangkatModal()">Export Perangkat</button>
+                        @endif             
+                    </div>
                 </div>
             </div>
             
@@ -68,7 +72,9 @@
                 <table id="tablePerangkat">
                     <thead>
                         <tr>
-                            <th></th>
+                            <th onclick="sortTableByStatus()" style="cursor: pointer;">
+                                <i id="statusSortIcon" class="fa-solid fa-sort"></i>
+                            </th>
                             <th>No</th>
                             <th>Hostname</th>
                             <th>Region</th>
@@ -89,123 +95,13 @@
     @include('aset.perangkat.add-perangkat')
     @include('aset.perangkat.edit-perangkat')
     @include('aset.perangkat.lihat-perangkat')
+    @include('aset.perangkat.import-perangkat')
 
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Modal Import -->
-    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Import Data Perangkat</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('import.perangkat') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <div class="mb-3">
-                            <div class ="form-group">
-                            <input type="file" name="file" accept=".xlsx, .xls, .csv" required>
-                        </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn-primary">Save changes</button>
-                </div>
-            </div>
-            </form>
-        </div>
-    </div>
-    
-<!-- Di bagian bawah view, sebelum closing body -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const importButton = document.getElementById('btnImport');
-        if (importButton) { // Pastikan elemen ada sebelum menambahkan event listener
-            importButton.addEventListener('click', function() {
-                // Tampilkan modal atau lakukan aksi lain
-            });
-        } else {
-            console.error('Element with ID "btnImport" not found.');
-        }
-    });
-</script>
-
-    <style>
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .modal-dialog {
-            margin-top: 20px;
-        }
-
-        .modal-content {
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .modal-header {
-            border-bottom: none;
-            padding: 20px;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            padding: 0;
-            margin: 0;
-            line-height: 1;
-            cursor: pointer;
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .modal-footer {
-            border-top: none;
-            padding: 20px;
-        }
-
-        .btn-primary, .btn-secondary {
-            padding: 8px 16px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background-color: #4f52ba;
-            color: white;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-    </style>
-
-    
 
     <script>
     $(document).ready(function() {
@@ -318,6 +214,50 @@
     });
 }
 
+let originalRows = [];
+let sortState = 0; 
+
+function sortTableByStatus() {
+    const table = document.getElementById("tablePerangkat");
+    const tbody = table.querySelector("tbody");
+
+    // Initialize originalRows only once
+    if (originalRows.length === 0) {
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        originalRows = rows.map(row => row.cloneNode(true)); // Store a clone of the original rows
+    }
+
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+
+    if (sortState === 0) {
+        // If currently unsorted, set to ascending
+        sortState = 1;
+        document.getElementById("statusSortIcon").className = "fa-solid fa-sort-up";
+    } else if (sortState === 1) {
+        // If currently ascending, set to descending
+        sortState = 2;
+        document.getElementById("statusSortIcon").className = "fa-solid fa-sort-down";
+    } else {
+        // If currently descending, reset to unsorted
+        sortState = 0;
+        document.getElementById("statusSortIcon").className = "fa-solid fa-sort";
+        tbody.innerHTML = ""; // Clear current rows
+        originalRows.forEach(row => tbody.appendChild(row.cloneNode(true))); // Restore original rows
+        return; // Exit the function
+    }
+
+    // Sort rows based on the current state
+    rows.sort((a, b) => {
+        const statusA = a.cells[0].querySelector("div").style.backgroundColor === "green" ? 1 : 0;
+        const statusB = b.cells[0].querySelector("div").style.backgroundColor === "green" ? 1 : 0;
+
+        return sortState === 1 ? statusA - statusB : statusB - statusA;
+    });
+
+    // Clear and append sorted rows
+    tbody.innerHTML = "";
+    rows.forEach(row => tbody.appendChild(row));
+}
 
 
     function deletePerangkat(id_perangkat) {
@@ -375,5 +315,63 @@
         }
     }
     
+    function openImportPerangkatModal() {
+        document.getElementById('importPerangkatModal').style.display = 'block';
+    }
+
+    function closeImportPerangkatModal() {
+        document.getElementById('importPerangkatModal').style.display = 'none';
+        document.getElementById('importPerangkatForm').reset();
+    }
+
+    // Handle Import Form Submission
+    $('#importPerangkatForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        let formData = new FormData(this);
+        
+        $.ajax({
+            url: '/import-perangkat',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                closeImportPerangkatModal();
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Data perangkat berhasil diimport',
+                        confirmButtonColor: '#4f52ba'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            LoadData(); // Refresh the table
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: response.message || 'Terjadi kesalahan saat import data',
+                        confirmButtonColor: '#4f52ba'
+                    });
+                }
+            },
+            error: function(xhr) {
+                closeImportPerangkatModal();
+                let errorMessage = 'Terjadi kesalahan saat import data';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: errorMessage,
+                    confirmButtonColor: '#4f52ba'
+                });
+            }
+        });
+    });
     </script>
 @endsection

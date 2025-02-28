@@ -155,7 +155,7 @@ Route::middleware('auth')->group(function () {
 
     // JARINGAN
     Route::get('/jaringan', [AsetController::class, 'jaringan'])->name('jaringan');
-    Route::post('/jaringan/store', [AsetController::class, 'storeJaringan'])->name('jaringan.store');
+    Route::post('/store-jaringan', [JaringanController::class, 'store'])->name('jaringan.store');
     Route::get('/jaringan/tipes/{tipe}', [AsetController::class, 'getTipeJaringan']);
     Route::get('/jaringan/filter', [AsetController::class, 'getJaringanByRegionAndTipe']);
     Route::delete('/delete-jaringan/{id_jaringan}', [AsetController::class, 'deleteJaringan'])->name('jaringan.delete');
@@ -241,7 +241,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/histori/jaringan/{id_jaringan}', [MenuController::class, 'getHistoriJaringan']);
 
     //IMPORT
-    Route::post('/import-perangkat', [PerangkatController::class, 'importPerangkat'])->name('import.perangkat');
+    Route::post('/import-perangkat', [PerangkatController::class, 'import'])->name('perangkat.import');
 
     Route::post('/import-alatukur', [AlatUkurController::class, 'importAlatUkur'])->name('import.alatukur');
 

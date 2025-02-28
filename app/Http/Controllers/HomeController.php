@@ -7,10 +7,9 @@ use App\Models\ListPerangkat;
 use App\Models\ListFasilitas;
 use App\Models\Region;
 use App\Models\Site;
-use App\Models\Fasilitas;
-use App\Models\AlatUkur;
 use App\Models\ListJaringan;
 use App\Models\Photos;
+use App\Models\ListAlatukur;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; // Pastikan ini ditambahkan untuk menggunakan Auth
@@ -43,9 +42,9 @@ class HomeController extends Controller
         $popCount = Site::where('jenis_site', 'POP')->count();     
         $pocCount = Site::where('jenis_site', 'POC')->count();     
         $perangkatCount = ListPerangkat::count();
-        $fasilitasCount = Fasilitas::count();
+        $fasilitasCount = ListFasilitas::count();
         $jaringanCount = ListJaringan::count();
-        $alatukurCount = AlatUkur::count();
+        $alatukurCount = ListAlatukur::count();
 
         $totalRacksPOP = Site::where('jenis_site', 'POP')->sum('jml_rack');
         $totalRacksPOC = Site::where('jenis_site', 'POC')->sum('jml_rack');

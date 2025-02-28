@@ -20,11 +20,8 @@ class DataController extends Controller
 {
     public function index()
     {
-        $popCount = DB::table('pop')->count();
-        $perangkatCount = DB::table('listperangkat')->count();
-        $perangkatCount = DB::table('listperangkat')->count();
-        $regionCount = DB::table('region')->count();
-        return view('data.datapage', compact('popCount', 'perangkatCount', 'perangkatCount', 'regionCount'));
+      
+        return view('data.datapage');
     }
 
     // ------------------- DATA FASILITAS -------------------

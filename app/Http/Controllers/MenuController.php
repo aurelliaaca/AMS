@@ -6,9 +6,9 @@ use App\Models\HistoriAlatukur;
 use App\Models\HistoriFasilitas;
 use Illuminate\Http\Request;
 use App\Models\ListPerangkat;
-use App\Models\Fasilitas;
+use App\Models\ListFasilitas;
 use App\Models\ListJaringan;
-use App\Models\AlatUkur;
+use App\Models\ListAlatukur;
 use App\Models\HistoriPerangkat;
 use App\Models\HistoriJaringan;
 use Illuminate\Support\Facades\Log;
@@ -18,9 +18,9 @@ class MenuController extends Controller
     public function histori()
     {
         $perangkatCount = ListPerangkat::count();
-        $fasilitasCount = Fasilitas::count();
+        $fasilitasCount = ListFasilitas::count();
         $jaringanCount = ListJaringan::count();
-        $alatukurCount = AlatUkur::count();
+        $alatukurCount = ListAlatukur::count();
 
         return view('menu.histori', compact(
             'perangkatCount',

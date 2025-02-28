@@ -29,11 +29,11 @@
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Fasilitas</h3>
                     <div class="button-container">
-                        <button class="add-button" style="width: 150px;" onclick="importData()">Import</button>
                         @if(auth()->user()->role == '1')
+                        <button class="add-button" style="width: 150px;" onclick="importData()">Import</button>
                             <button class="add-button" style="width: 150px;" onclick="openAddFasilitasModal()">Tambah Fasilitas</button>
-                        @endif  
                         <button class="add-button" style="width: 150px;" onclick="openExportModal()">Export</button>
+                        @endif  
                     </div>
                 </div>
             </div>
@@ -81,7 +81,9 @@
                 <table id="tableFasilitas">
                     <thead>
                         <tr>
-                            <th></th>
+                            <th onclick="sortTableByStatus()" style="cursor: pointer;">
+                                <i id="statusSortIcon" class="fa-solid fa-sort"></i>
+                            </th>
                             <th>No</th>
                             <th>Hostname</th>
                             <th>Region</th>
@@ -214,6 +216,53 @@
             tbody.empty().append('<tr><td colspan="8" class="text-center">Terjadi kesalahan dalam memuat data</td></tr>');
         });
     }
+
+
+let originalRows = [];
+let sortState = 0; 
+
+function sortTableByStatus() {
+    const table = document.getElementById("tableFasilitas");
+    const tbody = table.querySelector("tbody");
+
+    // Initialize originalRows only once
+    if (originalRows.length === 0) {
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        originalRows = rows.map(row => row.cloneNode(true)); // Store a clone of the original rows
+    }
+
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+
+    if (sortState === 0) {
+        // If currently unsorted, set to ascending
+        sortState = 1;
+        document.getElementById("statusSortIcon").className = "fa-solid fa-sort-up";
+    } else if (sortState === 1) {
+        // If currently ascending, set to descending
+        sortState = 2;
+        document.getElementById("statusSortIcon").className = "fa-solid fa-sort-down";
+    } else {
+        // If currently descending, reset to unsorted
+        sortState = 0;
+        document.getElementById("statusSortIcon").className = "fa-solid fa-sort";
+        tbody.innerHTML = ""; // Clear current rows
+        originalRows.forEach(row => tbody.appendChild(row.cloneNode(true))); // Restore original rows
+        return; // Exit the function
+    }
+
+    // Sort rows based on the current state
+    rows.sort((a, b) => {
+        const statusA = a.cells[0].querySelector("div").style.backgroundColor === "green" ? 1 : 0;
+        const statusB = b.cells[0].querySelector("div").style.backgroundColor === "green" ? 1 : 0;
+
+        return sortState === 1 ? statusA - statusB : statusB - statusA;
+    });
+
+    // Clear and append sorted rows
+    tbody.innerHTML = "";
+    rows.forEach(row => tbody.appendChild(row));
+}
+
 
     function deleteFasilitas(id_fasilitas) {
         console.log("Delete function called with id_fasilitas:", id_fasilitas); // Debugging line

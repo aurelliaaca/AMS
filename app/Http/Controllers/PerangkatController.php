@@ -13,6 +13,9 @@ use Exception;
 use Illuminate\Support\Facades\Storage;
 // use App\Imports\ImportPerangkat;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\PerangkatImport;
 
 class PerangkatController extends Controller
 {
@@ -507,139 +510,47 @@ class PerangkatController extends Controller
         ]);
     }
 
-
-//     public function importPerangkat(Request $request)
-//     {
-//         try {
-//             Log::info('Mulai proses import');
-
-            $request->validate([
-                'file' => 'required|file|mimes:csv,txt|max:2048'
+    public function import(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'file' => 'required|mimes:xlsx,xls|max:10240', // max 10MB
             ]);
-//             // Validasi file
-//             $request->validate([
-//                 'file' => 'required|mimes:xlsx,xls,csv|max:2048'
-//             ]);
 
-            if ($request->hasFile('file')) {
-                $file = $request->file('file');
-                $handle = fopen($file->getPathname(), "r");
-                $header = fgetcsv($handle, 0, ';');
-
-                // Ambil id_perangkat terakhir
-                $maxIdPerangkat = ListPerangkat::max('id_perangkat') ?? 0;
-                $currentIdPerangkat = $maxIdPerangkat;
-
-                while (($row = fgetcsv($handle, 0, ';')) !== false) {
-                    try {
-                        DB::beginTransaction();
-
-                        // Debug row data
-                        Log::info('Raw row data:', $row);
-
-                        // Pastikan jumlah kolom sesuai
-                        if (count($header) != count($row)) {
-                            Log::warning('Jumlah kolom tidak sesuai. Header: ' . count($header) . ', Row: ' . count($row));
-                            continue;
-                        }
-
-                        // Bersihkan data dari karakter BOM dan whitespace
-                        $row = array_map(function ($value) {
-                            return trim(str_replace("\xEF\xBB\xBF", '', $value));
-                        }, $row);
-
-                        // Konversi ke array asosiatif
-                        $data = array_combine($header, $row);
-
-                        // Debug processed data
-                        Log::info('Processed data:', $data);
-
-                        // Increment id_perangkat
-                        $currentIdPerangkat++;
-
-                        // Hitung perangkat_ke
-                        $lastPktKe = ListPerangkat::where('kode_region', $data['kode_region'])
-                            ->where('kode_site', $data['kode_site'])
-                            ->count();
-
-                        $pktKe = $lastPktKe + 1;
-
-                        // Buat record baru dengan id_perangkat
-                        $perangkat = ListPerangkat::create([
-                            'id_perangkat' => $currentIdPerangkat,
-                            'kode_region' => $data['kode_region'],
-                            'kode_site' => $data['kode_site'],
-                            'no_rack' => $data['no_rack'],
-                            'kode_perangkat' => $data['kode_perangkat'],
-                            'perangkat_ke' => $pktKe,
-                            'kode_brand' => $data['kode_brand'],
-                            'type' => $data['type'],
-                            'uawal' => $data['uawal'] ?: null,
-                            'uakhir' => $data['uakhir'] ?: null
-                        ]);
-
-                        // Tambah histori untuk setiap perangkat yang diimpor
-                        HistoriPerangkat::create([
-                            'idHiPe' => $perangkat->id_perangkat,
-                            'aksi' => 'Import Perangkat Baru',
-                            'tanggal_perubahan' => now()
-                        ]);
-
-                        DB::commit();
-
-                    } catch (Exception $e) {
-                        DB::rollBack();
-                        Log::error('Error processing row: ' . json_encode($row));
-                        Log::error($e->getMessage());
-                        continue;
-                    }
-                }
-                fclose($handle);
-//             if ($request->hasFile('file')) {
-//                 $file = $request->file('file');
-//                 $namafile = time() . '-' . $file->getClientOriginalName();
-//                 $filePath = 'ImportPerangkat/' . $namafile;
-
-//                 // Simpan file ke storage Laravel
-//                 Storage::put($filePath, file_get_contents($file));
-
-//                 Log::info('File berhasil disimpan di storage: ' . $filePath);
-
-// }
-
-//                 // Debugging: Pastikan file ada
-//                 if (!Storage::exists($filePath)) {
-//                     Log::error('File tidak ditemukan setelah disimpan!');
-//                     return back()->with('error', 'Gagal menyimpan file.');
-//                 }
-
-//                 // Debug: Cek path file
-//                 Log::info('Path file: ' . storage_path('app/' . $filePath));
-
-//                 // Import ke database
-//                 Excel::import(new ImportPerangkat, storage_path('app/' . $filePath));
-
-                Log::info('Import selesai');
-                return back()->with('success', 'Data perangkat berhasil diimpor.');
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'File harus berformat Excel (.xlsx atau .xls)'
+                ], 422);
             }
 
-            return back()->with('error', 'Tidak ada file yang diunggah.');
+            DB::beginTransaction();
 
-        } catch (Exception $e) {
-            Log::error('Error saat import: ' . $e->getMessage());
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            $import = new PerangkatImport;
+            Excel::import($import, $request->file('file'));
+
+            if ($import->errors->count() > 0) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => implode("\n", $import->errors->all())
+                ], 422);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil diimport'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Import error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
         }
     }
-//                 Log::info('Import selesai tanpa error');
-
-//                 return back()->with('success', 'Data perangkat berhasil diimpor.');
-//             } else {
-//                 Log::warning('Tidak ada file yang diunggah');
-//                 return back()->with('error', 'Tidak ada file yang diunggah.');
-//             }
-//         } catch (Exception $e) {
-//             Log::error('Error saat import: ' . $e->getMessage());
-//             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
-//         }
-//     }
 }

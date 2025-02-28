@@ -11,7 +11,7 @@ class ListJaringan extends Model
 {
     use HasFactory;
 
-    protected $table = 'list_jaringan';
+    protected $table = 'listjaringan';
     protected $primaryKey = 'id_jaringan';
     public $incrementing = true;
     protected $keyType = 'int';

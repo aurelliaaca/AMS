@@ -19,8 +19,15 @@
     <div class="container">
         <div class="header">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Region</h3>
+                <div style="display: flex; align-items: center;">
+                    <button class="back-btn" onclick="window.location.href='/data'">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin-left: 10px;">Data Region</h3>
+                </div>
+                @if(auth()->user()->role == '1')
                 <button type="button" class="add-button" onclick="openAddRegionModal()">Tambah Region</button>
+                @endif  
             </div>
         </div>
         <div class="card-grid" id="regionCardsContainer">
@@ -72,13 +79,10 @@
                                     <div class="count-details">${region.email || ''}</div>
                                 </div>
                                 <div class="action-buttons">
+                                    @if(auth()->user()->role == '1')
                                     <button onclick="event.stopPropagation(); openAddSiteModal(${region.id_region})"
                                         style="background-color:rgb(209, 210, 241); color: white; border: none; padding: 5px; border-radius: 3px; cursor: pointer; margin-right: 5px; margin-right: -1px;">
                                         <i class="fa-solid fa-plus"></i>
-                                    </button>
-                                    <button onclick="event.stopPropagation(); lihatRegion(${region.id_region})"
-                                        style="background-color: #9697D6; color: white; border: none; padding: 5px; border-radius: 3px; cursor: pointer; margin-right: 5px; margin-right: -1px;">
-                                        <i class="fa-solid fa-eye"></i>
                                     </button>
                                     <button onclick="event.stopPropagation(); editRegion(${region.id_region})"
                                         style="background-color: #4f52ba; color: white; border: none; padding: 5px; border-radius: 3px; margin-right: 5px; cursor: pointer; margin-right: -1px; margin-left: -1px;">
@@ -88,6 +92,7 @@
                                         style="background-color: #dc3545; color: white; border: none; padding: 5px; border-radius: 3px; cursor: pointer; margin-left: -1px;">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
+                                    @endif
                                 </div>
                             </div>
                             <div class="toggle-table" id="table-${region.kode_region}">
@@ -99,7 +104,9 @@
                                                 <th>Kode Site</th>
                                                 <th>Jenis Site</th>
                                                 <th>Jumlah Rack</th>
+                                                @if(auth()->user()->role == '1')
                                                 <th>Aksi</th>
+                                                @endif
                                             </tr>
                                         </thead>
                                         <tbody>`;
@@ -111,6 +118,7 @@
                                                                     <td>${site.kode_site || ''}</td>
                                                                     <td>${site.jenis_site || ''}</td>
                                                                     <td>${site.jml_rack || ''}</td>
+                                                                    @if(auth()->user()->role == '1')
                                                                     <td>
                                                                         <div class="action-buttons">
                                                                             <button onclick="event.stopPropagation(); editSite(${site.id_site})"
@@ -121,6 +129,7 @@
                                                                                 style="background-color: #dc3545; color: white; border: none; padding: 5px; border-radius: 3px; cursor: pointer; margin-left: -1px;">
                                                                                 <i class="fa-solid fa-trash-can"></i>
                                                                             </button>
+                                                                            @endif
                                                                         </div>
                                                                     </td>
                                                                 </tr>`;
