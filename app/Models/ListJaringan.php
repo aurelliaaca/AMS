@@ -44,8 +44,9 @@ class ListJaringan extends Model
 
     public function region()
     {
-        return $this->belongsTo(Region::class, 'RO', 'kode_region');
+        return $this->belongsTo(Region::class, 'RO', 'kode_region')->select(['kode_region', 'nama_region']);
     }
+    
 
     public function historiJaringan()
     {

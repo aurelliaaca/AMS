@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\JaringanImport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class JaringanController extends Controller
 {
@@ -84,4 +85,88 @@ class JaringanController extends Controller
             return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage()]);
         }
     }
+    
+    public function export(Request $request)
+    {
+        // Meningkatkan batas memori dan waktu eksekusi
+        ini_set('memory_limit', '1G'); // Atur batas memori jadi 1GB
+        set_time_limit(300); // Atur batas waktu eksekusi jadi 5 menit
+    
+        try {
+            $request->validate([
+                'option' => 'required|in:all,unique',
+                'region' => 'nullable|string'
+            ]);
+    
+            $query = ListJaringan::with('region')->select([
+                'id_jaringan', 'RO', 'tipe_jaringan', 'segmen', 'jartatup_jartaplok',
+                'mainlink_backuplink', 'panjang', 'panjang_drawing', 'jumlah_core',
+                'jenis_kabel', 'tipe_kabel', 'status', 'ket', 'ket2', 'kode_site_insan',
+                'update', 'route', 'dci_eqx'
+            ]);
+    
+            if ($request->option === 'unique') {
+                $query->distinct();
+            }
+    
+            if ($request->region) {
+                $query->whereHas('region', function ($q) use ($request) {
+                    $q->where('kode_region', $request->region);
+                });
+            }
+    
+            // Pakai streaming agar tidak overload memori
+            $pdf = app('dompdf.wrapper');
+            $pdf->getDomPDF()->set_option('isHtml5ParserEnabled', true);
+            $pdf->getDomPDF()->set_option('isPhpEnabled', true);
+    
+            $pdf->loadHTML(view('aset.export-jaringan', ['jaringan' => $query->cursor()])->render())
+                ->setPaper('a4', 'landscape');
+    
+            // Simpan ke file dengan stream
+            $filePath = 'exports/data_jaringan_' . time() . '.pdf';
+            file_put_contents(public_path($filePath), $pdf->output());
+    
+            return response()->json(['success' => true, 'file_url' => url($filePath)]);
+        } catch (\Exception $e) {
+            \Log::error('Kesalahan saat mengekspor data: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat mengekspor data.']);
+        }
+    }   
+    
+    public function lihatDetail($id_jaringan)
+    {
+        $jaringan = ListJaringan::with(['region', 'tipe'])->find($id_jaringan);
+
+        if (!$jaringan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan.'
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'region' => $jaringan->region ? $jaringan->region->nama_region : 'Region Tidak Ditemukan',
+                'tipe_jaringan' => $jaringan->tipe ? $jaringan->tipe->nama_tipe : 'Tipe Tidak Ditemukan',
+                'segmen' => $jaringan->segmen,
+                'jartatup_jartaplok' => $jaringan->jartatup_jartaplok,
+                'mainlink_backuplink' => $jaringan->mainlink_backuplink,
+                'panjang' => $jaringan->panjang,
+                'panjang_drawing' => $jaringan->panjang_drawing,
+                'jumlah_core' => $jaringan->jumlah_core,
+                'jenis_kabel' => $jaringan->jenis_kabel,
+                'tipe_kabel' => $jaringan->tipe_kabel,
+                'status' => $jaringan->status,
+                'ket' => $jaringan->ket,
+                'ket2' => $jaringan->ket2,
+                'kode_site_insan' => $jaringan->kode_site_insan,
+                'dci_eqx' => $jaringan->dci_eqx,
+                'update' => $jaringan->update,
+                'route' => $jaringan->route,
+            ]
+        ]);
+    }
+    
 }
