@@ -3,80 +3,91 @@
 <head>
     <title>Data Jaringan</title>
     <style>
-        /* Tambahkan gaya CSS sesuai kebutuhan */
+        @page {
+            size: A4 landscape; /* Mengatur ukuran halaman menjadi landscape */
+            margin: 20mm; /* Mengatur margin halaman */
+        }
         body {
-            margin: 0;
-            padding: 0;
-            position: relative; /* Untuk posisi tanda tangan */
-            font-family: Arial, sans-serif; /* Font untuk dokumen */
+            font-family: Arial, sans-serif;
+            background-color: white;
+            color: black;
+            position: relative;
+            height: 100vh;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: auto; /* Mengatur lebar kolom otomatis */
-            margin-bottom: 100px; /* Memberikan ruang untuk tanda tangan */
+            margin: 20px 0;
+            table-layout: fixed;
         }
         th, td {
             border: 1px solid black;
-            padding: 5px; /* Mengurangi padding untuk menghemat ruang */
-            text-align: center; /* Menyelaraskan teks ke tengah */
-            word-wrap: break-word; /* Memungkinkan teks panjang untuk memecah ke baris berikutnya */
+            padding: 4px;
+            text-align: left;
+            font-size: 10px;
+            word-wrap: break-word;
+            vertical-align: top;
         }
         th {
             background-color: #f2f2f2;
-            font-size: 10px; /* Mengurangi ukuran font untuk header */
+            text-align: center;
         }
-        td {
-            font-size: 9px; /* Mengurangi ukuran font untuk data */
-        }
-        /* Menentukan lebar kolom */
-        th:nth-child(1) { width: 5%; } /* No */
-        th:nth-child(2) { width: 10%; } /* Kode Region */
-        th:nth-child(3) { width: 10%; } /* Tipe Jaringan */
-        th:nth-child(4) { width: 10%; } /* No Rack */
-        th:nth-child(5) { width: 10%; } /* Kode Jaringan */
-        th:nth-child(6) { width: 10%; } /* Jaringan Ke */
-        th:nth-child(7) { width: 10%; } /* Kode Brand */
-        th:nth-child(8) { width: 10%; } /* Type */
-        th:nth-child(9) { width: 10%; } /* Segmen */
-        th:nth-child(10) { width: 10%; } /* Jartatup/Jartaplok */
-        th:nth-child(11) { width: 10%; } /* Mainlink/Backuplink */
-        th:nth-child(12) { width: 10%; } /* Panjang */
-        th:nth-child(13) { width: 10%; } /* Panjang Drawing */
-        th:nth-child(14) { width: 10%; } /* Jumlah Core */
-        th:nth-child(15) { width: 10%; } /* Jenis Kabel */
-        th:nth-child(16) { width: 10%; } /* Tipe Kabel */
-        th:nth-child(17) { width: 10%; } /* Status */
-        th:nth-child(18) { width: 10%; } /* Keterangan */
+        /* Atur lebar kolom */
+        th:nth-child(1), td:nth-child(1) { width: 30px; } /* No */
+        th:nth-child(2), td:nth-child(2) { width: 100px; } /* Region */
+        th:nth-child(3), td:nth-child(3) { width: 70px; } /* Tipe Jaringan */
+        th:nth-child(4), td:nth-child(4) { width: 70px; } /* Segmen */
+        th:nth-child(5), td:nth-child(5) { width: 70px; } /* Jartatup/Jartaplok */
+        th:nth-child(6), td:nth-child(6) { width: 70px; } /* Mainlink/Backuplink */
+        th:nth-child(7), td:nth-child(7) { width: 50px; } /* Panjang */
+        th:nth-child(8), td:nth-child(8) { width: 50px; } /* Panjang Drawing */
+        th:nth-child(9), td:nth-child(9) { width: 50px; } /* Jumlah Core */
+        th:nth-child(10), td:nth-child(10) { width: 70px; } /* Jenis Kabel */
+        th:nth-child(11), td:nth-child(11) { width: 70px; } /* Tipe Kabel */
+        th:nth-child(12), td:nth-child(12) { width: 50px; } /* Status */
+        th:nth-child(13), td:nth-child(13) { width: 70px; } /* Keterangan */
+        th:nth-child(14), td:nth-child(14) { width: 70px; } /* Keterangan 2 */
+        th:nth-child(15), td:nth-child(15) { width: 70px; } /* Kode Site Insan */
+        th:nth-child(16), td:nth-child(16) { width: 70px; } /* DCI EQX */
+        th:nth-child(17), td:nth-child(17) { width: 70px; } /* Update */
+        th:nth-child(18), td:nth-child(18) { width: 70px; } /* Route */
 
         .title {
-            text-align: center; /* Menyelaraskan judul ke tengah */
-            font-size: 16px; /* Ukuran font judul */
-            font-weight: bold; /* Menebalkan font judul */
-            margin-bottom: 10px; /* Jarak bawah judul */
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
         .footer {
-            position: absolute; /* Mengatur posisi footer */
-            bottom: 50px; /* Jarak dari bawah */
-            left: 20px; /* Jarak dari kiri */
-            font-size: 10px; /* Ukuran font footer */
+            position: absolute;
+            bottom: 5px;
+            left: 20px;
+            font-size: 10px;
+            display: flex;
+            justify-content: space-between;
+            width: calc(100% - 40px);
+            padding-right: 20px;
         }
         .signature-container {
-            position: absolute; /* Mengatur posisi tanda tangan */
-            right: 20px; /* Jarak dari kanan */
-            text-align: right; /* Menyelaraskan tanda tangan ke kanan */
-            width: 200px; /* Lebar kolom tanda tangan */
+            position: static;
+            text-align: right;
+            width: 200px;
+            margin-left: auto;
         }
-        .signature {
-            margin-top: 5px; /* Jarak atas untuk tanda tangan */
-            padding-top: 10px; /* Jarak dalam untuk tanda tangan */
-            width: 100%; /* Lebar garis sesuai dengan kolom */
-            text-align: center; /* Menyelaraskan garis ke tengah */
+        .signature-container p {
+            margin: 0;
+            text-align: center;
+        }
+        .signature-container p:nth-child(2) {
+            margin-top: 30px;
+        }
+        .signature-container p:last-child {
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <h1 class="title">Data Jaringan</h1>
+    <div class="title">Data Jaringan</div>
     <table>
         <thead>
             <tr style="background-color: #f8f8f8;">
@@ -126,11 +137,13 @@
         </tbody>
     </table>
 
-    <div class="footer">Tanggal Ekspor: {{ date('d-m-Y H:i:s') }}</div> <!-- Tanggal dan waktu di kiri paling bawah -->
-    <div class="signature-container">
-        <p style="text-align: center; margin: 0;">Tanda Tangan</p> <!-- Label untuk tanda tangan, diselaraskan ke kiri -->
-        <p class="signature"></p>
-        <p style="margin: 0; padding-top: 5px;">__________________________</p> <!-- Garis untuk tanda tangan -->
+    <div class="footer">
+        <span>Tanggal Ekspor: {{ now()->setTimezone('Asia/Jakarta')->format('d-m-Y H:i:s') }}</span>
+        <div class="signature-container">
+            <p>Tanda Tangan</p>
+            <p></p>
+            <p style="padding-top: 5px;">__________________________</p>
+        </div>
     </div>
 </body>
 </html>

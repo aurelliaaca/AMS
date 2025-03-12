@@ -1,79 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Export Alatukur</title>
+    <title>Data Alatukur</title>
     <style>
         @page {
-            size: A4 landscape; /* Mengatur ukuran halaman menjadi landscape */
-            margin: 20mm; /* Margin halaman */
+            size: A4 landscape;
+            margin: 20mm;
         }
-
         body {
-            font-family: Arial, sans-serif; /* Mengatur font */
+            font-family: Arial, sans-serif;
+            background-color: white;
+            color: black;
+            position: relative;
+            height: 100vh;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
+            margin: 20px 0;
+            table-layout: fixed;
         }
-
         th, td {
             border: 1px solid black;
-            padding: 8px;
+            padding: 4px;
             text-align: left;
+            font-size: 10px;
+            word-wrap: break-word;
+            vertical-align: top;
         }
-
         th {
             background-color: #f2f2f2;
+            text-align: center;
         }
-
         /* Mengatur lebar kolom */
-        th:nth-child(1), td:nth-child(1) { width: 15%; } /* Hostname */
-        th:nth-child(2), td:nth-child(2) { width: 15%; } /* Region */
-        th:nth-child(3), td:nth-child(3) { width: 15%; } /* Alatukur */
-        th:nth-child(4), td:nth-child(4) { width: 15%; } /* Brand */
-        th:nth-child(5), td:nth-child(5) { width: 10%; } /* Type */
-        th:nth-child(6), td:nth-child(6) { width: 10%; } /* Serial Number */
-        th:nth-child(7), td:nth-child(7) { width: 10%; } /* Tahun Perolehan */
-        th:nth-child(8), td:nth-child(8) { width: 5%; }  /* Kondisi */
-        th:nth-child(9), td:nth-child(9) { width: 5%; }  /* Keterangan */
-
-        .footer {
-            position: absolute; /* Mengatur posisi footer */
-            bottom: 5px; /* Jarak dari bawah, ditingkatkan untuk menjauh dari tabel */
-            left: 20px; /* Jarak dari kiri */
-            font-size: 10px; /* Ukuran font footer */
-        }
-
-        .signature-container {
-            position: absolute; /* Mengatur posisi tanda tangan */
-            right: 20px; /* Jarak dari kanan */
-            bottom: 20px; /* Jarak dari bawah */
-            text-align: right; /* Menyelaraskan tanda tangan ke kanan */
-            width: 200px; /* Lebar kolom tanda tangan */
-        }
-
-        .signature {
-            border-top: 1px solid black; /* Garis untuk tanda tangan */
-            margin-top: 5px; /* Jarak atas untuk tanda tangan */
-            padding-top: 10px; /* Jarak dalam untuk tanda tangan */
-            width: 100%; /* Lebar garis sesuai dengan kolom */
-            text-align: center; /* Menyelaraskan garis ke tengah */
-        }
+        th:nth-child(1), td:nth-child(1) { width: 30px; } /* No */
+        th:nth-child(2), td:nth-child(2) { width: 100px; } /* Hostname */
+        th:nth-child(3), td:nth-child(3) { width: 70px; } /* Region */
+        th:nth-child(4), td:nth-child(4) { width: 70px; } /* Alatukur */
+        th:nth-child(5), td:nth-child(5) { width: 70px; } /* Brand */
+        th:nth-child(6), td:nth-child(6) { width: 50px; } /* Type */
+        th:nth-child(7), td:nth-child(7) { width: 70px; } /* Serial Number */
+        th:nth-child(8), td:nth-child(8) { width: 50px; } /* Tahun Perolehan */
+        th:nth-child(9), td:nth-child(9) { width: 50px; } /* Kondisi */
+        th:nth-child(10), td:nth-child(10) { width: 50px; } /* Keterangan */
 
         .title {
-            text-align: center; /* Menyelaraskan judul ke tengah */
-            font-size: 16px; /* Ukuran font judul */
-            font-weight: bold; /* Menebalkan font judul */
-            margin-bottom: 10px; /* Jarak bawah judul */
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .footer {
+            position: absolute;
+            bottom: 5px;
+            left: 20px;
+            font-size: 10px;
+            display: flex;
+            justify-content: space-between;
+            width: calc(100% - 40px);
+            padding-right: 20px;
+        }
+        .signature-container {
+            position: static;
+            text-align: right;
+            width: 200px;
+            margin-left: auto;
+        }
+        .signature-container p {
+            margin: 0;
+            text-align: center;
+        }
+        .signature-container p:nth-child(2) {
+            margin-top: 30px;
+        }
+        .signature-container p:last-child {
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="title">Data Alatukur</div> <!-- Judul di tengah -->
+    <div class="title">Data Alatukur</div>
     <table>
         <thead>
             <tr>
+                <th>No</th>
                 <th>Hostname</th>
                 <th>Region</th>
                 <th>Alatukur</th>
@@ -86,8 +96,12 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $counter = 1;
+            @endphp
             @foreach ($alatukur as $item)
                 <tr>
+                    <td>{{ $counter++ }}</td>
                     <td>{{ $item->hostname }}</td>
                     <td>{{ $item->kode_region }}</td>
                     <td>{{ $item->kode_alatukur }}</td>
@@ -102,10 +116,13 @@
         </tbody>
     </table>
 
-    <div class="footer">Tanggal Ekspor: {{ date('d-m-Y H:i:s') }}</div> <!-- Tanggal dan waktu di kiri paling bawah -->
-    <div class="signature-container">
-        <p style="text-align: center; margin: 0;">Tanda Tangan</p> <!-- Label untuk tanda tangan, diselaraskan ke tengah -->
-        <p style="margin: 0; padding-top: 5px;">__________________________</p> <!-- Garis untuk tanda tangan -->
+    <div class="footer">
+        <span>Tanggal Ekspor: {{ now()->setTimezone('Asia/Jakarta')->format('d-m-Y H:i:s') }}</span>
+        <div class="signature-container">
+            <p>Tanda Tangan</p>
+            <p></p>
+            <p style="padding-top: 5px;">__________________________</p>
+        </div>
     </div>
 </body>
 </html>

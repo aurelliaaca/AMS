@@ -379,22 +379,24 @@ public function showHistori($id_alatukur)
 
     public function import(Request $request)
     {
-        // Validasi file yang diunggah
-        $request->validate([
-            'file' => 'required|mimes:csv,xlsx,xls'
-        ]);
-
-        // Cek apakah file diterima
-        if (!$request->hasFile('file')) {
-            return response()->json(['success' => false, 'message' => 'Tidak ada file yang diunggah.']);
-        }
-
-        \Log::info('File yang diupload: ', [$request->file('file')->getClientOriginalName()]);
-
         try {
+            $file = $request->file('file');
+            
+            // Cek apakah file diterima
+            if (!$file) {
+                return response()->json(['success' => false, 'message' => 'File tidak ditemukan']);
+            }
+
+            // Cek format file
+            if ($file->getClientOriginalExtension() != 'xlsx' && $file->getClientOriginalExtension() != 'xls') {
+                return response()->json(['success' => false, 'message' => 'Format file harus Excel (.xlsx atau .xls)']);
+            }
+
             // Mengimpor data menggunakan AlatUkurImport
-            Excel::import(new AlatUkurImport, $request->file('file'));
+            Excel::import(new AlatUkurImport, $file);
+
             return response()->json(['success' => true, 'message' => 'Data berhasil diimpor.']);
+
         } catch (\Exception $e) {
             \Log::error('Error importing file: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage()]);

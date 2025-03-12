@@ -671,9 +671,11 @@ input[type="text"] {
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Jaringan</h3>
             <div class="button-container">
-                <button class="add-button" style="width: 150px;" onclick="importData()">Import</button>
+            @if(auth()->user()->role == '1')
                 <button class="add-button" style="width: 150px;" onclick="storeJaringan()">Tambah Jaringan</button>
-                <button class="add-button" style="width: 150px;" onclick="showExportModal()">Export</button>
+                <button class="add-button" style="width: 150px;" onclick="importData()">Import Jaringan</button>
+                <button class="add-button" style="width: 150px;" onclick="showExportModal()">Export Jaringan</button>
+            @endif
             </div>
         </div>
         
@@ -741,12 +743,14 @@ input[type="text"] {
                         <button class="detail-button" onclick="lihatDetail(this)" style="background-color: #9697D6; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-right: 5px;">
                             <i class="fa-solid fa-eye"></i> 
                         </button>
+                    @if(auth()->user()->role == '1')
                         <button class="edit-btn" onclick="editJaringan('{{ $data->id_jaringan }}')" style="background-color: #4f52ba; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-right: 5px;">
                             <i class="fa-solid fa-pen"></i> 
                         </button>
                         <button class="delete-btn" onclick="deleteJaringan('{{ $data->id_jaringan }}')" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
                             <i class="fa-solid fa-trash-can"></i> 
                         </button>
+                    @endif
                     </div>
                 </td>
             </tr>

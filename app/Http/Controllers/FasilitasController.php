@@ -538,38 +538,35 @@ class FasilitasController extends Controller
 
     public function import(Request $request)
     {
-        $request->validate([
-            'file' => 'required|mimes:csv,xlsx,xls'
-        ]);
-
-        // Mengambil data dari file yang diunggah
-        $file = $request->file('file');
-        $data = Excel::toArray(new FasilitasImport, $file); // Menggunakan Laravel Excel untuk mengimpor data
-
-        foreach ($data[0] as $row) {
-            // Misal $row berisi data yang diimpor
-            $fasilitas = new ListFasilitas();
-            
-            // Mengisi data fasilitas dari baris yang diimpor
-            $fasilitas->kode_region = $row['kode_region'];
-            $fasilitas->kode_site = $row['kode_site'];
-            // ... isi data lainnya sesuai kebutuhan
-
-            // Hitung fasilitas_ke
-            $lastPktKe = ListFasilitas::where('kode_region', $fasilitas->kode_region)
-                            ->where('kode_site', $fasilitas->kode_site)
-                            ->count();
-            $fasilitas->fasilitas_ke = $lastPktKe + 1; // Menetapkan nilai fasilitas_ke
-
-            // Simpan data fasilitas ke database
-            $fasilitas->save();
-        }
-
         try {
-            Excel::import(new FasilitasImport, $request->file('file'));
-            return response()->json(['success' => true, 'message' => 'Data berhasil diimpor.']);
+            $file = $request->file('file');
+            
+            if (!$file) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'File tidak ditemukan'
+                ]);
+            }
+
+            if ($file->getClientOriginalExtension() != 'xlsx' && $file->getClientOriginalExtension() != 'xls') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Format file harus Excel (.xlsx atau .xls)'
+                ]);
+            }
+
+            Excel::import(new FasilitasImport, $file);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil diimport'
+            ]);
+
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ]);
         }
     }
 
@@ -578,7 +575,7 @@ class FasilitasController extends Controller
         try {
             $request->validate([
                 'option' => 'required|in:all,unique',
-                'region' => 'nullable|string' // Validasi untuk region
+                'region' => 'nullable|string'
             ]);
 
             // Ambil data berdasarkan opsi yang dipilih
@@ -615,6 +612,12 @@ class FasilitasController extends Controller
                 })->join('-');
             }
 
+            // Buat direktori exports jika belum ada
+            $exportPath = public_path('exports');
+            if (!file_exists($exportPath)) {
+                mkdir($exportPath, 0777, true);
+            }
+
             // Buat PDF
             $pdf = PDF::loadView('aset.fasilitas.export-fasilitas', compact('fasilitas'));
 
@@ -624,7 +627,7 @@ class FasilitasController extends Controller
 
             return response()->json(['success' => true, 'file_url' => url($filePath)]);
         } catch (\Exception $e) {
-            \Log::error('Kesalahan saat mengekspor data: ' . $e->getMessage()); // Log kesalahan
+            \Log::error('Kesalahan saat mengekspor data: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat mengekspor data: ' . $e->getMessage()]);
         }
     }
