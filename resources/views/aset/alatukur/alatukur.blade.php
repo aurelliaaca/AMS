@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
         <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
         <script src="https://kit.fontawesome.com/bdb0f9e3e2.js" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     </head>
 
     <div class="main">
@@ -19,10 +20,10 @@
                     <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Alat ukur</h3>
                     <div style="display: flex; gap: 10px;">
                         @if(auth()->user()->role == '1')
-                            <button class="add-button" onclick="openAddAlatukurModal()">Tambah Alat ukur</button>
-                            <button class="add-button" onclick="importData()">Import Alat ukur</button>
-                            <button class="add-button" onclick="showExportModal()">Export Alat ukur</button>
-                        @endif             
+                            <button class="add-button" style="width: 150px;" onclick="openAddAlatukurModal()">Tambah Alatukur</button>
+                            <button class="add-button" style="width: 150px;" onclick="importData()">Import Alatukur</button>
+                            <button class="add-button" style="width: 150px; margin-left: 10px;" onclick="showExportModal()">Export Alatukur</button>
+                        @endif  
                     </div>
                 </div>
             </div>
@@ -82,6 +83,7 @@
     @include('aset.alatukur.add-alatukur')
     @include('aset.alatukur.edit-alatukur')
     @include('aset.alatukur.lihat-alatukur')
+    @include('aset.alatukur.import-alatukur')
 
     <!-- Modal Export -->
     <div id="exportModal" class="modal-overlay" style="display: none;">
@@ -112,7 +114,7 @@
         <!-- Indikator Loading -->
         <div id="loadingIndicator" style="display: none; text-align: center; margin-top: 20px;">
             <p>Loading... Mohon tunggu.</p>
-            <img src="path/to/loading.gif" alt="Loading" /> <!-- Ganti dengan path ke gambar loading Anda -->
+            <img src="{{ asset('images/loading.gif') }}" alt="Loading" />
         </div>
     </div>
 
@@ -256,57 +258,80 @@
         }
     }
 
-
     function importData() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.csv, .xlsx, .xls';
-    input.onchange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append('file', file);
+        document.getElementById('importModal').style.display = 'flex';
+    }
 
-            $.ajax({
-                url: '{{ route("alatukur.import") }}',
-                type: 'POST',
-                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    if (response.success) {
-                        Swal.fire({
-                            title: "Berhasil!",
-                            text: "Data berhasil diimpor.",
-                            icon: "success",
-                            confirmButtonText: "OK"
-                        }).then(() => {
-                            updateTable(response.data); // Update tabel tanpa reload
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Gagal!",
-                            text: response.message,
-                            icon: "error",
-                            confirmButtonText: "OK"
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    console.error(xhr.responseText);
+    function closeImportModal() {
+    document.getElementById('importModal').style.display = 'none';
+    
+    // Reset input file agar pengguna bisa upload file baru tanpa refresh
+    document.getElementById('importFile').value = '';
+}
+
+
+    function submitImport() {
+        const fileInput = document.getElementById('importFile');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            Swal.fire({
+                title: "Error!",
+                text: "Silakan pilih file terlebih dahulu.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        document.getElementById('importLoadingIndicator').style.display = 'block';
+
+        $.ajax({
+            url: '{{ route("alatukur.import") }}',
+            type: 'POST',
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                console.log(response);
+                closeImportModal();
+                if (response.success) {
                     Swal.fire({
-                        title: "Error!",
-                        text: "Terjadi kesalahan saat mengunggah file.",
+                        title: "Berhasil!",
+                        text: "Data alatukur berhasil diimpor.",
+                        icon: "success",
+                        confirmButtonText: "OK"
+                    }).then(() => {
+                        LoadData();
+                        closeImportModal();
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Gagal!",
+                        text: response.message,
                         icon: "error",
                         confirmButtonText: "OK"
                     });
                 }
-            });
-        }
-    };
-    input.click();
-}
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                Swal.fire({
+                    title: "Error!",
+                    text: "Terjadi kesalahan saat mengunggah file.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
+            },
+            complete: function() {
+                document.getElementById('importLoadingIndicator').style.display = 'none';
+            }
+        });
+    }
 
     function showExportModal() {
         document.getElementById('exportModal').style.display = 'flex'; // Menampilkan modal

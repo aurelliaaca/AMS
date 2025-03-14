@@ -97,6 +97,37 @@
     @include('aset.perangkat.lihat-perangkat')
     @include('aset.perangkat.import-perangkat')
 
+    <!-- Modal Export Perangkat -->
+    <div id="exportPerangkatModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <span class="modal-close-btn" onclick="closeExportPerangkatModal()">&times;</span>
+            <h2>Pilih Opsi Ekspor</h2>
+            <form id="exportPerangkatForm">
+                <div>
+                    <label>
+                        <input type="checkbox" name="export_option" value="all" id="exportAllPerangkat"> 
+                        <span style="margin-left: 10px;">Semua Data</span>
+                    </label>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label for="roSelectPerangkat">Pilih Region:</label>
+                    <select id="roSelectPerangkat" name="ro_option" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        <option value="">Pilih Region</option>
+                        @foreach ($regions as $region)
+                            <option value="{{ $region->kode_region }}">{{ $region->nama_region }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="exportPerangkatData()" class="export-button">Ekspor</button>
+                </div>
+            </form>
+        </div>
+        <div id="loadingIndicatorPerangkat" style="display: none; text-align: center; margin-top: 20px;">
+            <p>Loading... Mohon tunggu.</p>
+            <img src="path/to/loading.gif" alt="Loading" />
+        </div>
+    </div>
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -373,5 +404,100 @@ function sortTableByStatus() {
             }
         });
     });
+
+    function openExportPerangkatModal() {
+        document.getElementById('exportPerangkatModal').style.display = 'flex';
+    }
+
+    function closeExportPerangkatModal() {
+        document.getElementById('exportPerangkatModal').style.display = 'none';
+    }
+
+    function exportPerangkatData() {
+        const isAllDataChecked = document.getElementById('exportAllPerangkat').checked;
+        const selectedRegion = document.getElementById('roSelectPerangkat').value;
+        const exportOption = isAllDataChecked ? 'all' : 'unique';
+
+        closeExportPerangkatModal();
+        document.getElementById('loadingIndicatorPerangkat').style.display = 'block';
+
+        $.ajax({
+            url: '{{ route("perangkat.export") }}',
+            type: 'POST',
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            data: { option: exportOption, region: selectedRegion },
+            success: function(response) {
+                if (response.success) {
+                    window.location.href = response.file_url;
+                } else {
+                    Swal.fire('Gagal!', response.message, 'error');
+                }
+            },
+            error: function(xhr) {
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.message 
+                    ? xhr.responseJSON.message 
+                    : 'Terjadi kesalahan saat mengekspor data.';
+                Swal.fire('Error!', errorMessage, 'error');
+            },
+            complete: function() {
+                document.getElementById('loadingIndicatorPerangkat').style.display = 'none';
+            }
+        });
+    }
     </script>
+
+    <style>
+    /*EXPORT*/
+    .modal-overlay {
+        position: fixed; /* Mengatur posisi tetap */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7); /* Latar belakang semi-transparan */
+        display: flex; /* Menggunakan flexbox untuk memusatkan konten */
+        justify-content: center; /* Memusatkan secara horizontal */
+        align-items: center; /* Memusatkan secara vertikal */
+        z-index: 1000; /* Pastikan modal berada di atas elemen lain */
+        }
+
+    .modal-content {
+        background-color: white; /* Latar belakang konten modal */
+        padding: 20px; /* Padding di dalam konten modal */
+        border-radius: 5px; /* Sudut melengkung */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Bayangan untuk efek kedalaman */
+        width: 400px; /* Lebar konten modal */
+        max-width: 90%; /* Maksimal lebar 90% dari viewport */
+        position: relative; /* Pastikan konten modal memiliki posisi relatif */
+        }
+
+        .modal-close-btn {
+        cursor: pointer; /* Pointer saat hover */
+        font-size: 20px; /* Ukuran font untuk tombol tutup */
+        float: right; /* Mengatur posisi tombol tutup di kanan */
+        }
+
+    .export-button {
+        background-color: #4f52ba; /* Warna latar belakang tombol */
+        color: white; /* Warna teks tombol */
+        border: none; /* Menghilangkan border default */
+        padding: 10px; /* Padding tombol */
+        border-radius: 5px; /* Sudut melengkung tombol */
+        cursor: pointer; /* Pointer saat hover */
+        font-size: 16px; /* Ukuran font tombol */
+        transition: background-color 0.3s; /* Transisi warna latar belakang */
+        width: 100%; /* Tombol mengisi lebar penuh */
+        }
+
+    .export-button:hover {
+        background-color: #6f86e0; /* Warna latar belakang saat hover */
+        }
+    
+    .modal-footer {
+        display: flex; /* Menggunakan flexbox untuk mengatur posisi */
+        justify-content: flex-end; /* Mengatur tombol ke kanan */
+        margin-top: 20px; /* Jarak atas untuk pemisahan */
+        }
+    </style>
+
 @endsection

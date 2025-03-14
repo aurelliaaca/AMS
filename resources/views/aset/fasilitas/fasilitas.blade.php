@@ -30,9 +30,9 @@
                     <h3 style="font-size: 18px; font-weight: 600; color: #4f52ba; margin: 0;">Data Fasilitas</h3>
                     <div class="button-container">
                         @if(auth()->user()->role == '1')
-                        <button class="add-button" style="width: 150px;" onclick="importData()">Import</button>
-                            <button class="add-button" style="width: 150px;" onclick="openAddFasilitasModal()">Tambah Fasilitas</button>
-                        <button class="add-button" style="width: 150px;" onclick="openExportModal()">Export</button>
+                        <button class="add-button" style="width: 150px;" onclick="openAddFasilitasModal()">Tambah Fasilitas</button>
+                        <button class="add-button" style="width: 150px;" onclick="importData()">Import Fasilitas</button>
+                        <button class="add-button" style="width: 150px;" onclick="openExportModal()">Export Fasilitas</button>
                         @endif  
                     </div>
                 </div>
@@ -103,6 +103,7 @@
     @include('aset.fasilitas.add-fasilitas')
     @include('aset.fasilitas.edit-fasilitas')
     @include('aset.fasilitas.lihat-fasilitas')
+    @include('aset.fasilitas.import-fasilitas')
 
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
@@ -319,55 +320,6 @@ function sortTableByStatus() {
         }
     }
 
-    function importData() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.csv, .xlsx, .xls'; // Format yang diterima
-        input.onchange = (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const formData = new FormData();
-                formData.append('file', file);
-
-                $.ajax({
-                    url: '{{ route("fasilitas.import") }}', // Pastikan ini sesuai dengan route yang benar
-                    type: 'POST',
-                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        if (response.success) {
-                            Swal.fire({
-                                title: "Berhasil!",
-                                text: "Data berhasil diimpor.",
-                                icon: "success",
-                                confirmButtonText: "OK"
-                            }).then(() => {
-                                location.reload(); // Muat ulang halaman untuk melihat perubahan
-                            });
-                        } else {
-                            Swal.fire({
-                                title: "Gagal!",
-                                text: response.message,
-                                icon: "error",
-                                confirmButtonText: "OK"
-                            });
-                        }
-                    },
-                    error: function(xhr) {
-                        Swal.fire({
-                            title: "Error!",
-                            text: "Terjadi kesalahan saat mengunggah file. Lihat konsol untuk detail.",
-                            icon: "error",
-                            confirmButtonText: "OK"
-                        });
-                    }
-                });
-            }
-        };
-        input.click(); // Membuka dialog file
-    }
 
     function openExportModal() {
         document.getElementById('exportModal').style.display = 'flex'; // Menggunakan flex untuk memusatkan
@@ -415,6 +367,68 @@ function sortTableByStatus() {
                 document.getElementById('loadingIndicator').style.display = 'none';
             }
         });
+    }
+
+    function openImportFasilitasModal() {
+        document.getElementById('importFasilitasModal').style.display = 'flex';
+    }
+
+    function closeImportFasilitasModal() {
+        document.getElementById('importFasilitasModal').style.display = 'none';
+    }
+
+    // Menangani submit form import
+    document.getElementById('importFasilitasForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        let formData = new FormData(this);
+        
+        $.ajax({
+            url: '/import-fasilitas',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                closeImportFasilitasModal();
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Data fasilitas berhasil diimport',
+                        confirmButtonColor: '#4f52ba'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            LoadData(); // Refresh the table
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: response.message || 'Terjadi kesalahan saat import data',
+                        confirmButtonColor: '#4f52ba'
+                    });
+                }
+            },
+            error: function(xhr) {
+                closeImportFasilitasModal();
+                let errorMessage = 'Terjadi kesalahan saat import data';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: errorMessage,
+                    confirmButtonColor: '#4f52ba'
+                });
+            }
+        });
+    });
+
+    function importData() {
+        document.getElementById('importFasilitasModal').style.display = 'flex';
     }
     </script>
 

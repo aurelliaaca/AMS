@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\PerangkatImport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PerangkatController extends Controller
 {
@@ -550,6 +551,69 @@ class PerangkatController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function export(Request $request)
+    {
+        try {
+            \Log::info('Starting export process');
+            
+            $query = ListPerangkat::with(['region', 'site', 'jenisperangkat', 'brand']);
+            
+            if ($request->region) {
+                $query->where('kode_region', $request->region);
+            }
+
+            $perangkat = $query->get();
+            
+            \Log::info('Data fetched successfully', ['count' => $perangkat->count()]);
+
+            // Gunakan public_path alih-alih storage_path
+            $directory = public_path('exports');
+            if (!file_exists($directory)) {
+                mkdir($directory, 0755, true);
+            }
+
+            $filename = 'data-perangkat-' . date('YmdHis') . '.pdf';
+            $filepath = $directory . '/' . $filename;
+
+            \Log::info('Generating PDF', ['filepath' => $filepath]);
+
+            try {
+                $pdf = PDF::loadView('aset.perangkat.export-perangkat', [
+                    'perangkat' => $perangkat
+                ]);
+                
+                $pdf->setPaper('A4', 'landscape');
+                $pdf->save($filepath);
+
+                \Log::info('PDF generated successfully');
+
+                // Ubah URL yang dikembalikan
+                return response()->json([
+                    'success' => true,
+                    'file_url' => url('exports/' . $filename)
+                ]);
+
+            } catch (\Exception $e) {
+                \Log::error('PDF generation failed', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                throw $e;
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Export failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengekspor data: ' . $e->getMessage()
             ], 500);
         }
     }

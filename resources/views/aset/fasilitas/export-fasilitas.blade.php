@@ -54,23 +54,30 @@
             margin-bottom: 10px; /* Jarak bawah judul */
         }
         .footer {
-            position: absolute; /* Mengatur posisi footer */
-            bottom: 5px; /* Jarak dari bawah, ditingkatkan untuk menjauh dari tabel */
-            left: 20px; /* Jarak dari kiri */
-            font-size: 10px; /* Ukuran font footer */
+            position: absolute;
+            bottom: 5px;
+            left: 20px;
+            font-size: 10px;
+            display: flex;
+            justify-content: space-between;
+            width: calc(100% - 40px);
+            padding-right: 20px;
         }
         .signature-container {
-            position: absolute; /* Mengatur posisi tanda tangan */
-            right: 20px; /* Jarak dari kanan */
-            text-align: right; /* Menyelaraskan tanda tangan ke kanan */
-            width: 200px; /* Lebar kolom tanda tangan */
+            position: static;
+            text-align: right;
+            width: 200px;
+            margin-left: auto; /* Memastikan container berada di kanan */
         }
-        .signature {
-            border-top: 1px solid black; /* Garis untuk tanda tangan */
-            margin-top: 5px; /* Jarak atas untuk tanda tangan */
-            padding-top: 10px; /* Jarak dalam untuk tanda tangan */
-            width: 100%; /* Lebar garis sesuai dengan kolom */
-            text-align: center; /* Menyelaraskan garis ke tengah */
+        .signature-container p {
+            margin: 0;
+            text-align: center; /* Mengatur semua teks menjadi center */
+        }
+        .signature-container p:nth-child(2) {
+            margin-top: 30px;
+        }
+        .signature-container p:last-child {
+            text-align: center; /* Memastikan garis berada di tengah */
         }
     </style>
 </head>
@@ -96,9 +103,19 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($fasilitas as $index => $item)
+            @php
+                $currentRegion = null;
+                $counter = 1;
+            @endphp
+            @foreach($fasilitas as $item)
+                @if($currentRegion !== $item->kode_region)
+                    @php
+                        $currentRegion = $item->kode_region;
+                        $counter = 1;
+                    @endphp
+                @endif
                 <tr>
-                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $counter++ }}</td>
                     <td>{{ $item->hostname }}</td>
                     <td>{{ $item->kode_region }}</td>
                     <td>{{ $item->kode_site }}</td>
@@ -116,11 +133,13 @@
             @endforeach
         </tbody>
     </table>
-    <div class="footer">Tanggal Ekspor: {{ date('d-m-Y H:i:s') }}</div> <!-- Tanggal dan waktu di kiri paling bawah -->
-    <div class="signature-container">
-        <p style="text-align: center; margin: 0;">Tanda Tangan</p> <!-- Label untuk tanda tangan, diselaraskan ke kiri -->
-        <p></p>
-        <p style="margin: 0; padding-top: 5px;">__________________________</p> <!-- Garis untuk tanda tangan -->
+    <div class="footer">
+        <span>Tanggal Ekspor: {{ now()->setTimezone('Asia/Jakarta')->format('d-m-Y H:i:s') }}</span>
+        <div class="signature-container">
+            <p>Tanda Tangan</p>
+            <p></p>
+            <p style="padding-top: 5px;">__________________________</p>
+        </div>
     </div>
 </body>
 </html>
