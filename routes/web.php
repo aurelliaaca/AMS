@@ -17,6 +17,7 @@ use App\Models\Site;
 use App\Http\Controllers\AsetController;
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\RackController;
 use App\Models\DataPerangkat;
 use App\Models\DataFasilitas;
 use App\Models\DataAlatUkur;
@@ -54,7 +55,14 @@ Route::middleware('auth')->group(function () {
     
     // RACK
     Route::get('/rack', [HomeController::class, 'rack'])->name('rack');
-    Route::get('/get-racks-by-region/{kode_region}', [HomeController::class, 'getRacksByRegion']);
+    Route::get('/rack2', [App\Http\Controllers\RackController::class, 'rack2'])->name('rack2');
+    Route::post('/load-racks', [App\Http\Controllers\RackController::class, 'loadRacks'])->name('load.racks');
+        Route::get('/get-racks-by-region/{kode_region}', [HomeController::class, 'getRacksByRegion']);
+    Route::get('/get-filtered-racks', [RackController::class, 'getFilteredRacks']);
+Route::get('/get-sites', [RackController::class, 'getSites'])->name(name: 'get.sites');
+Route::post('/rack/store', [RackController::class, 'store'])->name('rack.store');
+
+
     
     // DATA
     Route::get('/data', [DataController::class, 'index'])->name('data');

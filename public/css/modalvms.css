@@ -1,0 +1,48 @@
+.form-container {
+    display: flex;
+    gap: 20px;
+}
+
+.left-column, .right-column {
+    flex: 1;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.rekanan-section {
+    width: 100%;
+    margin: 20px 0;
+}
+
+.rekanan-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.rekanan-item input {
+    flex: 1;
+}
+
+.rekanan-item .btn-remove-rekanan {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-container {
+    text-align: right;
+    margin-top: 20px;
+}

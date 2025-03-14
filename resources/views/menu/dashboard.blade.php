@@ -281,11 +281,14 @@ button:hover {
         <div class="header">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h1 style="color: #4f52ba; font-size: 20px;">Dasbor</h1>
+                @if(auth()->user()->role == '1' || auth()->user()->role == '2')
                 <button class="button" style="margin-left: auto;" onclick="showModal('uploadModal')">
                     Tambah Foto
                 </button>
+                @endif
+                <button class="add-button" onclick="openAddPendaftaranModal()">Daftar</button>
             </div>
-
+        
             <div class="welcome-banner" style="background-color: #f4f5ff; padding: 20px; border-radius: 10px; display: flex; align-items: center; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                 <img src="{{ asset('img/avatars/1.png') }}" alt="Foto Profil" style="width: 80px; height: 80px; border-radius: 50%; margin-right: 15px; border: 2px solid #4f52ba;">
                 <div>
@@ -295,8 +298,7 @@ button:hover {
             </div>
         </div>
 
-
-        <!-- Konten lainnya tetap sama -->
+        @if(auth()->user()->role == '1' || auth()->user()->role == '2')
         <div class="card-grid">
             <div class="card-counter device-icon">
             <i class="fa-solid fa-city"></i>
@@ -344,6 +346,7 @@ button:hover {
                 <div class="count-name">Jaringan</div>
             </div>
         </div>
+        
 
         <div id="uploadModal" class="modal" style="display: none;">
             <div class="modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
@@ -400,8 +403,11 @@ button:hover {
                 <img id="modalImage" src="" alt="Foto Besar" style="width: 100%; height: auto; max-height: 80vh; object-fit: contain;">
             </div>
         </div>
+        @endif
     </div>
 </div>
+
+@include('menu.pendaftaran-vms')
 
 <script>
     document.getElementById('uploadPhotoForm').addEventListener('submit', function(e) {

@@ -18,7 +18,7 @@ class UsersTableSeeder extends Seeder
         // 1 = superadmin
         // 2 = admin
         // 3 = guest
-
+        DB::table('users')->truncate();
         DB::table('users')->insert([
             [
                 'name' => 'Super Admin User',
@@ -34,6 +34,15 @@ class UsersTableSeeder extends Seeder
                 'email' => 'admin@example.com',
                 'password' => Hash::make('password123'),
                 'role' => 2,
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Customer User',
+                'email' => 'cust@example.com',
+                'password' => Hash::make('password123'),
+                'role' => 3,
                 'email_verified_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),

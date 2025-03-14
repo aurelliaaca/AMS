@@ -1,6 +1,6 @@
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
 }
 
@@ -33,6 +33,20 @@
     transform: translateY(-50%); /* Center the icon vertically */
     width: 60px; /* Adjust size */
     height: 60px; /* Adjust size */
+    border-radius: 12px; /* Match existing styling */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1; /* Ensure it is on top */
+}
+
+.icon-wrapper-chart {
+    position: absolute; /* Absolute positioning for the icon */
+    top: 50%; /* Center vertically */
+    left: 5px; /* Adjust distance from the left */
+    transform: translateY(-50%); /* Center the icon vertically */
+    width: 120px; /* Adjust size */
+    height: 120px; /* Adjust size */
     border-radius: 12px; /* Match existing styling */
     display: flex;
     align-items: center;
@@ -94,6 +108,7 @@
     padding: 5px;
     text-align: center;
     border-radius: 4px;
+    font-weight: normal;
 }
 
 .toggle-table tr th {
@@ -130,4 +145,28 @@
 /* Jika ingin menambahkan sedikit padding ke tombol */
 .action-buttons button {
     margin: 0; /* Menghapus padding agar ukuran tombol tetap 30x30 */
+}
+
+.region-wrapper {
+    padding: 10px;
+    border: 1px solid #4f52ba;
+    border-radius: 8px;
+    margin-bottom: 15px; /* Biar ada gap antar elemen */
+}
+.region-wrapper:last-child {
+    margin-bottom: 0; /* Biar elemen terakhir gak ada gap bawah */
+}
+
+.region-header {
+    display: flex;
+    justify-content: space-between; /* Menjadikan teks dan tombol berada di ujung kanan dan kiri */
+    align-items: center; /* Agar teks dan tombol sejajar secara vertikal */
+    width: 100%; /* Memastikan elemen memenuhi lebar parent */
+    padding: 5px 0; /* Opsional: Memberikan sedikit padding */
+}
+
+.region-title {
+    font-size: 16px;
+    color: #4f52ba;
+    font-weight: 600;
 }
