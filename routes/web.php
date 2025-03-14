@@ -22,6 +22,7 @@ use App\Models\DataFasilitas;
 use App\Models\DataAlatUkur;
 use App\Models\Poc;
 use App\Http\Controllers\JaringanController;
+use App\Http\Controllers\SemantikController;
 
 
 Route::get('/', function () {
@@ -137,6 +138,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-sites', [PerangkatController::class, 'getSites']);
     Route::get('/histori-perangkat/{id_perangkat}', [PerangkatController::class, 'showHistori']);
     Route::get('/get-site-rack', [PerangkatController::class, 'getSiteRack']);
+    Route::post('/perangkat/export', [PerangkatController::class, 'export'])->name('perangkat.export');
     
 
     // FASILITAS
@@ -149,7 +151,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-sites', [FasilitasController::class, 'getSites']);
     Route::get('/histori-fasilitas/{id_fasilitas}', [FasilitasController::class, 'showHistori']);
     Route::get('/get-site-rack', [FasilitasController::class, 'getSiteRack']);
-    Route::post('/fasilitas/import', [FasilitasController::class, 'import'])->name('fasilitas.import');
     Route::post('/fasilitas/export', [FasilitasController::class, 'export'])->name('fasilitas.export');
 
 
@@ -177,7 +178,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/delete-alatukur/{id_alatukur}', [AlatukurController::class, 'destroy']);
     Route::get('/histori-alatukur/{id_alatukur}', [AlatukurController::class, 'showHistori']);
     Route::post('/export-alatukur', [AlatukurController::class, 'export'])->name('alatukur.export');
-    Route::post('/alatukur/import', [AlatukurController::class, 'import']);
+    Route::post('/alatukur/import', [AlatukurController::class, 'import'])->name('alatukur.import');
 
     // AKUN
     // PROFIL
@@ -246,14 +247,14 @@ Route::middleware('auth')->group(function () {
 
     //IMPORT
     Route::post('/import-perangkat', [PerangkatController::class, 'import'])->name('perangkat.import');
-
-    Route::post('/import-alatukur', [AlatUkurController::class, 'importAlatUkur'])->name('import.alatukur');
-
-    Route::post('/alatukur/import', [AlatUkurController::class, 'import'])->name('alatukur.import');
+    Route::post('/import-fasilitas', [FasilitasController::class, 'import'])->name('fasilitas.import');
 
     // Route untuk upload foto
-    Route::post('/upload-photo', [HomeController::class, 'uploadPhoto'])->name('upload.photo');
+    Route::post('/upload-photo', [SemantikController::class, 'uploadPhoto'])->name('upload.photo');
 
     // Route untuk menghapus foto
-    Route::delete('/photos/{id}', [HomeController::class, 'deletePhoto'])->name('photos.delete');
+    Route::delete('/photos/{id}', [SemantikController::class, 'deletePhoto'])->name('photos.delete');
+
+    // Semantik
+    Route::get('/semantik', [SemantikController::class, 'semantik'])->name('semantik');
 });

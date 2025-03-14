@@ -239,6 +239,9 @@
                     <a href="{{ route('rack') }}"><span class="material-symbols-outlined"> dataset </span>Rack</a>
                 </li>
                 <li>
+                    <a href="{{ route('semantik') }}"><span class="material-symbols-outlined"> photo </span>Semantik</a>
+                </li>
+                <li>
                     <a href="{{ route('histori') }}"><span class="material-symbols-outlined"> history </span>Histori</a>
                 </li>
             <h4>
